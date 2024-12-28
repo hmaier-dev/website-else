@@ -21,8 +21,17 @@ img {
 nav {
   float: left;
   position: fixed;
-  top: 25%;
+  top: 10%;
   height: 50%;
   width: 30%;
 
+}
+
+nav > ul > a {
+    color: #222;
+    font-weight: 600;
+    -webkit-transition: color 0.2s;
+    transition: color 0.2s;
+    cursor: pointer;
+    text-decoration: none;
 }
