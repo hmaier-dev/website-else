@@ -1,0 +1,8 @@
+
+<nav>
+{{ range site.RegularPages }}
+    <ul>
+        <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+    </ul>
+{{ end }}
+</nav>
