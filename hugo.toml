@@ -4,3 +4,16 @@ languageCode = "de-de"
 title = "elisa-adam"
 disablePathToLower = true
 
+[menus]
+  [[menus.main]]
+    name = 'home'
+    pageRef = '/'
+    weight = 10
+  [[menus.main]]
+    name = 'about-me'
+    pageRef = '/about-me'
+    weight = 20
+  [[menus.main]]
+    name = 'workshops'
+    pageRef = '/workshops'
+    weight = 30

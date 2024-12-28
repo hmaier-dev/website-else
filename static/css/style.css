@@ -14,3 +14,12 @@ img {
     height: 75%;
     object-fit: cover;
 }
+
+nav {
+  float: left;
+  position: fixed;
+  top: 25%;
+  height: 50%;
+  width: 30%;
+
+}

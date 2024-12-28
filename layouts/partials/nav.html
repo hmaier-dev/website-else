@@ -1,8 +1,8 @@
 
 <nav>
-{{ range site.RegularPages }}
+{{ range site.Menus.main }}
     <ul>
-        <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+        <a href="{{ .URL }}">{{ .Name }}</a>
     </ul>
 {{ end }}
 </nav>
