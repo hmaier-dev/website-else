@@ -1,0 +1,6 @@
+# baseURL = "https://elisa-adam.com/"
+baseURL = "http://localhost:1313/"
+languageCode = "de-de"
+title = "elisa-adam"
+disablePathToLower = true
+
