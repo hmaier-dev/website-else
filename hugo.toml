@@ -1,4 +1,4 @@
-# baseURL = "https://elisa-adam.com/"
+# baseURL = "https://elisa-adam.com/preview"
 baseURL = "http://localhost:1313/"
 languageCode = "de-de"
 title = "elisa-adam"
