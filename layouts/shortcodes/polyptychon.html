@@ -1,0 +1,15 @@
+{{ $img1 := .Get 0 }}
+{{ $img2 := .Get 1 }}
+{{ $img3 := .Get 2 }}
+{{ $img4 := .Get 3 }}
+
+<div class="polyptychon-wrapper">
+    <div>
+        <img src="{{ $img1 }}">
+        <img src="{{ $img2 }}">
+    </div>
+    <div>
+        <img src="{{ $img3 }}">
+        <img src="{{ $img4 }}">
+    </div>
+</div>
