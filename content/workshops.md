@@ -6,4 +6,4 @@ Else kann Euch verschiedene Dinge zeigen, wie zum Beispiel:
 
 - Jonglieren
 
-![kreis4](media/kreis4.webp){#kreis4}
+{{< image src="media/kreis4.webp" alt="kreis4" id="kreis4" >}}

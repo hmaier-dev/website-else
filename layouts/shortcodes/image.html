@@ -1,0 +1,10 @@
+{{- $class := or (.Get "class") "" }}
+{{- $alt := or (.Get "alt") "" }}
+{{- $id := or (.Get "id") "" }}
+{{- $src := or (.Get "src") "" }}
+<img
+  {{- with $class }} class="{{ . }}" {{- end }}
+  {{- with $alt }} alt="{{ . }}" {{- end }}
+  {{- with $id }} id="{{ . }}" {{- end }}
+  {{- with $src }} src="{{ . }}" {{- end }}
+>
