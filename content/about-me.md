@@ -2,6 +2,8 @@
 title: Über mich 
 ---
 
+{{< blocksatz >}}
+
 **Erzähl doch mal: Wer bist du eigentlich?**
 
 Ich bin Elisa Adam, 26 und gebürtige Leipzigerin. Ich habe
@@ -85,3 +87,6 @@ schaut gerne noch beim Shop vorbei.
 
 **Gerne Elisa Adam.** **(Ich habe mich selbst interviewt, damit es
 leichter zu lesen ist für die Gäste auf der Website)**
+
+
+{{< /blocksatz >}}

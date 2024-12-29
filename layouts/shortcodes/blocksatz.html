@@ -1,0 +1,17 @@
+
+{{- /*
+Centers text
+
+@examples
+
+  {{< blocksatz >}}
+    some text
+  {{< /blocksatz >}}
+
+
+*/}}
+
+
+<span class="blocksatz">
+    {{ .Inner | markdownify }}
+</span>
