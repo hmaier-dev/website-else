@@ -36,10 +36,14 @@ etwas ruhiger geworden, dennoch weiterhin aktiv organisiert Einfach Else untersc
 
 {{< parallax-image src="media/zettel-in-hand.webp" id="zettel-in-hand" >}}
 
+</br>
+</br>
 
-Hier nochmal der Link zum Instagram:
+{{< centered >}}
+Gerne kannst du mich über instagram kontaktieren.
 
-- [Einfach Else](https://www.instagram.com/einfach_else/)
+{{< instagram url="https://www.instagram.com/einfach_else/">}}
 
+{{< /centered >}}
 
 

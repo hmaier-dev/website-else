@@ -1,8 +1,16 @@
-<!-- {{< centered >}} -->
-<!-- some other text -->
-<!-- {{< /centered >}} -->
+{{- /*
+Centers text
+
+@examples
+
+  {{< centered >}}
+    some text
+  {{< /centered >}}
 
 
-<span class="text-center">
+*/}}
+
+
+<span class="centered">
     {{ .Inner | markdownify }}
 </span>
