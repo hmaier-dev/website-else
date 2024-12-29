@@ -1,7 +1,14 @@
 {{ define "main" }}
-<main>
 
-    {{ .Content }}
+    <!-- Is needed to seperate nav from header -->
+    <div class="layout">
 
-</main>
+        {{ partial "nav.html" .}}
+
+        <main>
+            {{ .Content }}
+        </main>
+
+    </div>
+
 {{ end }}
