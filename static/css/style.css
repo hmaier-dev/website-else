@@ -38,3 +38,22 @@ nav > ul > a {
     cursor: pointer;
     text-decoration: none;
 }
+
+.header-image{
+    background-image:url(http://localhost:1313/media/jesus1.webp);
+    background-size:cover;
+    position:relative;
+    height:100vh;
+}
+
+.header-text{
+    position:absolute;
+    top:50%;
+    text-align:center;
+    width:100%;
+    color:#fff;
+    font-size:36px;
+    -ms-transform: translate(0,-50%); /* IE 9 */
+    -webkit-transform: translate(0,-50%); /* Safari */
+    transform: translate(0,-50%);  
+}
