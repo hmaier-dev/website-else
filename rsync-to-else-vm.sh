@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-rsync -rav ./public/* else:/var/www/html/else-static-html/
+rsync -rav ./public/ else:~/public/
