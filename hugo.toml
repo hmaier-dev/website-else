@@ -4,6 +4,10 @@ languageCode = "de-de"
 title = "elisa-adam"
 disablePathToLower = true
 
+[markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
 [menus]
   [[menus.main]]
     name = 'home'
