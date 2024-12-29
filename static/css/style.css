@@ -62,3 +62,14 @@ nav > ul > a {
     display: block;
     text-align:center;
 }
+
+.polyptychon-wrapper{
+    display: flex;
+    flex-direction: column;
+}
+
+.polyptychon-wrapper div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
