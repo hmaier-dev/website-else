@@ -10,6 +10,12 @@ main {
     width: 66%;
 }
 
+footer{
+    width: 100%;
+    text-align: center;
+    font-size: 0.7rem;
+}
+
 /* Make all Image same size */
 img {
     width:  75%;
