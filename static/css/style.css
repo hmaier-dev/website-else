@@ -15,7 +15,6 @@ img {
     width:  75%;
     height: 75%;
     object-fit: cover;
-    margin: 5px auto;
     display: block;
 }
 
@@ -72,4 +71,9 @@ nav > ul > a {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+}
+.polyptychon-wrapper img{
+    width: 50%;
+    height: 50%;
+    margin: 5px;
 }
