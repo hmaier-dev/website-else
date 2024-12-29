@@ -1,6 +1,8 @@
-
 {{- $src := or (.Get "src") "" }}
 {{- $id := or (.Get "id") "" }}
+<!-- I need to add the css here, -->
+<!-- because I need to change the url() dynamically. -->
+<!-- I know it dirty, but it works... -->
 <style>
 #parallax-{{ $id }} {
   /* The image used */
