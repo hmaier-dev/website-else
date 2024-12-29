@@ -20,7 +20,12 @@ Egal ob Akt oder mit Klamotten. Mittlerweile steht Einfach Else fürs Zeichnen o
 **Organisatorin**:
 etwas ruhiger geworden, dennoch weiterhin aktiv organisiert Einfach Else unterschiedlichste Events in und um Leipzig. Sei es HipHop, Soli-Veranstaltungen oder bunte Bühnen, Elisa Adam kennt für jede Veranstaltung die passenden Menschen.
 
-{{< image src="media/zettel-in-hand.webp" alt="nahaufnahme beim vorlesen" id="zettel-in-hand" >}}
+{{< parallax-image src="media/zettel-in-hand.webp" id="zetttel-in-hand" >}}
 
 
-    
+Hier nochmal der Link zum Instagram:
+
+- [Einfach Else](https://www.instagram.com/einfach_else/)
+
+
+
