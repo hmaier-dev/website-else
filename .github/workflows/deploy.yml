@@ -44,3 +44,18 @@ jobs:
         path: public/
     - name: Debug
       run: ls -la
+    - name: Change ownership and permissions
+      run: |
+        sudo chmod -R 755 ./public/
+        sudo chown -R www-data:www-data ./public/
+    - name: Set up ssh and rsync to vm
+      uses: mschmitt/rsync-with-ssh-agent@v2
+      with:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          RSYNC_LOCAL_PATH: ./public/
+          RSYNC_REMOTE_PATH: ~/public/
+          RSYNC_OPTIONS: '--recursive --archive  --verbose --dry-run'
+
