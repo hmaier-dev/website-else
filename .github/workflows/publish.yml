@@ -1,4 +1,16 @@
 on:
-  push:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Earthly +build"]
+    types: ["completed"]
     branches:
-      - 'publish-page'
+      - 'main'
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run some action
+        run: echo "Hello, World!"
+
