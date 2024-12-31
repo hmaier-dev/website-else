@@ -60,3 +60,10 @@ jobs:
         print_summary: true
         print_statistics: true
         debug: false
+  test:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - name: curl for domain
+      run: |
+        curl -I https://www.elisa-adam.com/preview
