@@ -9,7 +9,7 @@ hugo:
     COPY --dir content static layouts ./
     COPY hugo.toml hugo.toml
 
-    COPY +css/tailwindcss ./
+    COPY +css/tailwindcss ./tailwindcss
 
     RUN hugo
     RUN ls -la public

@@ -1,4 +1,17 @@
 <meta charset="UTF-8">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 <base href="{{ .Site.BaseURL }}">
-<link rel="stylesheet" href=" {{ .Site.BaseURL }}css/style.css">
+
+{{ with resources.Get "css/base.css" }}
+  {{ .RelPermalink }}
+  {{ $opts := dict "minify" true }}
+  {{ with . | css.TailwindCSS $opts }}
+    {{ if hugo.IsDevelopment }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{ else }}
+      {{ with . | fingerprint }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
