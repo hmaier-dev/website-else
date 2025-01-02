@@ -4,6 +4,11 @@ languageCode = "de-de"
 title = "elisa-adam"
 disablePathToLower = true
 
+## Needed for css.TailwindCSS
+[[build.cachebusters]]
+    source = 'layouts/.*'
+    target = 'css'
+
 [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
