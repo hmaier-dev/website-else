@@ -18,7 +18,7 @@ hugo:
 css:
     FROM alpine:3.20
     RUN apk add --no-cache curl
-    RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.17/tailwindcss-linux-x64
+    RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.0-beta.8/tailwindcss-linux-x64
     RUN chmod +x tailwindcss-linux-x64
     RUN mv tailwindcss-linux-x64 tailwindcss
     SAVE ARTIFACT tailwindcss
