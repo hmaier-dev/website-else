@@ -7,6 +7,12 @@ body {
     font-style: normal;
 }
 
+@layer base{
+    .parallax{
+        @apply bg-fixed h-80;
+    }
+}
+
 main {
     margin: 0 auto;
     width: 66%;

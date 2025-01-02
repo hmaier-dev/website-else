@@ -5,21 +5,12 @@
 <!-- I know it dirty, but it works... -->
 <style>
 #parallax-{{ $id }} {
-  /* The image used */
     {{ $pic := resources.Get $src }}
     background-image: url( {{ $pic.RelPermalink }} );
-    /* Set a specific height */
-    min-height: 500px;
-
-    /* Create the parallax scrolling effect */
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
 }
 </style>
 
-<div id="parallax-{{ $id }}">
+<div class="parallax" id="parallax-{{ $id }}">
 </div>
 
 
