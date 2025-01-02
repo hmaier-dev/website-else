@@ -8,6 +8,10 @@ disablePathToLower = true
     [markup.goldmark.renderer]
       unsafe = true
 
+[markup]
+    [markup.highlight]
+        style = 'github'
+
 [menus]
   [[menus.main]]
     name = 'home'
