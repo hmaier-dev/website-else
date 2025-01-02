@@ -14,8 +14,9 @@ hugo:
 
     # Hugo cannot work in root (/)
     WORKDIR tmp
-    COPY --dir content static layouts ./
+    COPY --dir content assets layouts ./
     COPY hugo.toml hugo.toml
+    COPY tailwind.config.js tailwind.config.js
 
     RUN hugo
     RUN ls -la public

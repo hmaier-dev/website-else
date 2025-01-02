@@ -5,8 +5,7 @@ title = "elisa-adam"
 disablePathToLower = true
 
 ## Needed for css.TailwindCSS
-[build]
-  [[build.cachebusters]]
+[[build.cachebusters]]
     source = 'layouts/.*'
     target = 'css'
 
