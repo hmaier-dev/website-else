@@ -6,7 +6,8 @@
 <style>
 #parallax-{{ $id }} {
   /* The image used */
-    background-image: url( {{ absURL $src }} );
+    {{ $pic := resources.Get $src }}
+    background-image: url( {{ $pic.RelPermalink }} );
     /* Set a specific height */
     min-height: 500px;
 
