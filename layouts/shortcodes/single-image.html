@@ -8,6 +8,6 @@ Load a single image
 
 {{- $src := or (.Get "src") "" }}
 {{ $pic := resources.Get $src }}
-<div class="flex justify-center items-center">
-  <img src="{{ $pic.RelPermalink }}">
+<div class="flex justify-center">
+  <img src="{{ $pic.RelPermalink }}" class="w-1/3 h-1/3 max-sm:w-full max-sm:h-auto">
 </div>
