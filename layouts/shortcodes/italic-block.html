@@ -1,0 +1,17 @@
+{{- /*
+Centers text
+
+@examples
+
+  {{< italic-block >}}
+    some text
+  {{< /italic-block >}}
+
+
+*/}}
+
+
+<div class="italic">
+    {{ .Inner | markdownify }}
+</div>
+
