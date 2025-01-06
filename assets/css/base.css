@@ -10,10 +10,10 @@
 }
 
 body {
-    font-family: "Libre Franklin", serif;
-    font-optical-sizing: auto;
-    /* font-weight: <weight>; */
-    font-style: normal;
+  font-family: "Libre Franklin", serif;
+  font-optical-sizing: auto;
+  /* font-weight: <weight>; */
+  font-style: normal;
 }
 
 main {
@@ -73,3 +73,6 @@ img {
     margin-bottom: 2rem;
 
 }
+
+
+
