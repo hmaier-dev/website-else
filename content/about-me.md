@@ -2,17 +2,17 @@
 title: Über mich 
 ---
 
-{{< blocksatz >}}
+</br>
+</br>
 
-**Erzähl doch mal: Wer bist du eigentlich?**
+{{< italic-block >}}
+Elisa Adam, Jahrgang 1998, studierte erfolgreich Sonderpädagogik in Oldenburg. Danach zog es sie in ihre Heimatstadt Leipzig zurück. 
+Mittlerweise nutzt sie Ihr Wesen, um Ihre Mitmenschen als Poetry-Slammerin sowie zum Schmunzeln als auch zum Nachdenken zu bringen.
+Außerdem ist sie als Host verschiedener Veranstaltungen anzutreffen, und leitet dabei das Publikum humorvoll durch den Abend.
+Aktuell widmet sie sich mit großer Begeisterung dem Schreiben.
+{{< /italic-block >}}
 
-Ich bin Elisa Adam, 26 und gebürtige Leipzigerin. Ich habe
-Sonderpädagogik in Oldenburg studiert, doch bin nach drei Jahren zurück
-in meine Heimatstadt gezogen. Mittlerweile trete ich regelmäßig als
-Poetry Slammerin oder Moderatorin auf und organisiere auch selber
-Veranstaltungen.
-
-**Seit wann schreibst du?**
+**Sag mal, seit wann schreibst du eigentlich?**
 
 Uuff.. Das ist eine gute Frage. Also eigentlich habe ich meine ersten
 Kindergeschichten bereits in der Grundschule geschrieben. Zwar mit
@@ -43,11 +43,10 @@ Open Air Bühne in der Moritz Bast in Leipzig.
 
 **Welche Veranstaltungen moderierst du mittlerweile?**
 
-Ich moderiere den Queer Slam Leipzig im Werk und weiterhin Poetry and
+Ich moderiere den Queer Slam Leipzig im [Werk](https://www.werk-2.de/) und weiterhin Poetry and
 HipHop in der Moritz Bastei. Zwei sehr schöne Bühnen, wo ich immer viel
 Freude habe. Außerdem bekomme ich immer mehr Anfragen, was mich
-natürlich sehr freut. Darf jetzt diesen Sommer ein HipHop Event im Conne
-Island moderieren.
+natürlich sehr freut. Darf jetzt diesen Sommer ein HipHop Event im [Conne Island](https://conne-island.de/) moderieren.
 
 **Was ist dein Ziel bzw. sind deine Ziele?**
 
