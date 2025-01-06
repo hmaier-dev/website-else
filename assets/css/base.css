@@ -10,19 +10,15 @@
   main > p{
     @apply my-1;
   }
-  main a {
+  main > a {
     @apply font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline hover:text-gray-800;
   }
 }
 
 @layer utilities{
-
   /* Only apply the padding to the direct children of main */
-  main > *:not(.parallax) {
-    @apply max-sm:px-2;
-  }
-  main > *:not(.parallax) * {
-  @apply px-0; 
+  main > *:not(.parallax, .italic-block) {
+    @apply px-2;
   }
 }
 
