@@ -59,17 +59,7 @@ img {
     text-align:center;
 }
 
-.polyptychon-wrapper{
-    display: flex;
-    flex-direction: column;
-}
-
-.polyptychon-wrapper div{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
-.polyptychon-wrapper img{
+.polyptychon img{
     width: 400px;
     height: 300px;
     margin: 5px;

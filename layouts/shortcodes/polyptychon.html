@@ -7,12 +7,12 @@
 {{ $pic2 := resources.Get $img2 }}
 {{ $pic3 := resources.Get $img3 }}
 {{ $pic4 := resources.Get $img4 }}
-<div class="polyptychon-wrapper">
-    <div>
+<div class="polyptychon flex flex-col mb-4">
+    <div class="flex flex-row justify-center">
         <img src="{{ $pic1.RelPermalink}}">
         <img src="{{ $pic2.RelPermalink}}">
     </div>
-    <div>
+    <div class="flex flex-row justify-center">
         <img src="{{ $pic3.RelPermalink }}">
         <img src="{{ $pic4.RelPermalink }}">
     </div>
