@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@layer base {
+  h1 {
+    @apply text-xl font-bold mb-2 text-gray-800;
+  }
+  main > p{
+    @apply my-1;
+  }
+}
+
 body {
     font-family: "Libre Franklin", serif;
     font-optical-sizing: auto;
