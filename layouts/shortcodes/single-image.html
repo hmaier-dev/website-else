@@ -1,0 +1,13 @@
+{{- /*
+Load a single image
+@examples
+
+  {{< single-image src="/path/to/pic" >}}
+
+*/}}
+
+{{- $src := or (.Get "src") "" }}
+{{ $pic := resources.Get $src }}
+<div class="flex justify-center items-center">
+  <img src="{{ $pic.RelPermalink }}">
+</div>

@@ -5,6 +5,9 @@ title: Über mich
 </br>
 </br>
 
+
+{{< single-image src="media/spass-bei-der-arbeit.webp" >}}
+
 {{< italic-block >}}
 Elisa Adam, Jahrgang 1998, studierte erfolgreich Sonderpädagogik in Oldenburg. Danach zog es sie in ihre Heimatstadt Leipzig zurück. 
 Mittlerweise nutzt sie Ihr Wesen, um Ihre Mitmenschen als Poetry-Slammerin sowie zum Schmunzeln als auch zum Nachdenken zu bringen.
