@@ -1,9 +1,7 @@
 ---
 title: Workshops
 ---
-{{< centered >}}
-### Jonglieren
-{{< /centered  >}}
+# Jonglieren
 
 Du willst Deine Zirkus-Karriere in Gang bringen, Deine Freund:innen beeindrucken oder einfach eine coole Fertigkeit erlernen?
 Da passt Jonglieren doch perfekt! Zufällig biete ich demnächst einen Jonglier-Workshop an. Komme gerne vorbei.
@@ -11,9 +9,7 @@ Da passt Jonglieren doch perfekt! Zufällig biete ich demnächst einen Jonglier-
 
 {{< polyptychon "media/kreis4.webp" "media/explain5.webp" "media/kreis3.webp" "media/lachen1.webp">}}
 
-{{< centered >}}
-### Schreibworkshop
-{{< /centered  >}}
+# Schreibworkshop
 
 Du wolltest schon immer mal deine Gedanken aufschreiben oder schreibst bereits kleine Texte?
 Dann bist du bei unserem Schreibworkshop genau richtig!
