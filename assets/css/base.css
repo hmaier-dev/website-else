@@ -4,6 +4,9 @@
   h1 {
     @apply text-xl font-bold mb-2 text-gray-800;
   }
+  main {
+    @apply mx-32 max-sm:mx-auto;
+  }
   main > p{
     @apply my-1;
   }
@@ -15,14 +18,9 @@
 body {
   font-family: "Libre Franklin", serif;
   font-optical-sizing: auto;
-  /* font-weight: <weight>; */
   font-style: normal;
 }
 
-main {
-    margin: 0 auto;
-    width: 66%;
-}
 
 footer{
     width: 100%;
