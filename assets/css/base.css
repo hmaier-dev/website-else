@@ -28,43 +28,18 @@ body {
   font-style: normal;
 }
 
-
 footer{
-    width: 100%;
-    text-align: center;
-    font-size: 0.7rem;
+  width: 100%;
+  text-align: center;
+  font-size: 0.7rem;
 }
 
 /* Make all Image same size */
 img {
-    width:  75%;
-    height: 75%;
-    object-fit: cover;
-    display: block;
-}
-
-.header-image{
-    background-image:url(http://localhost:1313/media/jesus1.webp);
-    background-size:cover;
-    position:relative;
-    height:100vh;
-}
-
-.header-text{
-    position:absolute;
-    top:50%;
-    text-align:center;
-    width:100%;
-    color:#fff;
-    font-size:36px;
-    -ms-transform: translate(0,-50%); /* IE 9 */
-    -webkit-transform: translate(0,-50%); /* Safari */
-    transform: translate(0,-50%);  
-}
-
-.centered{
-    display: block;
-    text-align:center;
+  width:  75%;
+  height: 75%;
+  object-fit: cover;
+  display: block;
 }
 
 .polyptychon img{
@@ -72,15 +47,3 @@ img {
     height: 300px;
     margin: 5px;
 }
-
-.blocksatz{
-    text-align: justify;
-}
-
-.parallax{
-    margin-bottom: 2rem;
-
-}
-
-
-
