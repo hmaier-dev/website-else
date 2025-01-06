@@ -3,13 +3,17 @@
 {{ $img3 := .Get 2 }}
 {{ $img4 := .Get 3 }}
 
+{{ $pic1 := resources.Get $img1 }}
+{{ $pic2 := resources.Get $img2 }}
+{{ $pic3 := resources.Get $img3 }}
+{{ $pic4 := resources.Get $img4 }}
 <div class="polyptychon-wrapper">
     <div>
-        <img src="{{ $img1 }}">
-        <img src="{{ $img2 }}">
+        <img src="{{ $pic1.RelPermalink}}">
+        <img src="{{ $pic2.RelPermalink}}">
     </div>
     <div>
-        <img src="{{ $img3 }}">
-        <img src="{{ $img4 }}">
+        <img src="{{ $pic3.RelPermalink }}">
+        <img src="{{ $pic4.RelPermalink }}">
     </div>
 </div>
