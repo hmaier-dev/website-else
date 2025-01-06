@@ -19,7 +19,10 @@ Falls du Wünsche hast, die beim Schreibworkshop bearbeitet werden sollten, schr
 
 elisa.adam@ymail.com
 
-Ansonsten sehen wir uns am 20.04.2024
-10-14:00Uhr in der Stadtbibliothek Leipzig
+Ansonsten sehen wir uns am 
+20.04.2024, um 10:00-14:00Uhr in der Stadtbibliothek Leipzig
 
 Wir freuen uns!
+
+
+{{< instagram url="https://www.instagram.com/einfach_else/">}}

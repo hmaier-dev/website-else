@@ -37,11 +37,4 @@ etwas ruhiger geworden, dennoch weiterhin aktiv organisiert Einfach Else untersc
 </br>
 </br>
 
-{{< centered >}}
-Gerne kannst du mich über instagram kontaktieren.
-
 {{< instagram url="https://www.instagram.com/einfach_else/">}}
-
-{{< /centered >}}
-
-
