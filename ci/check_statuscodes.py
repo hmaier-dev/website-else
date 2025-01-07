@@ -9,6 +9,7 @@ from typing import Callable
 @dataclass
 class Response:
     uri: str
+    # use lambda here to get the needed requests-Object
     need: Callable
     want: str
 
@@ -27,11 +28,26 @@ def check_response(uri, need, want):
 
 
 uris = [
-    Response(uri="https://www.elisa-adam.com/preview", need=lambda r: r.status_code, want=200),
-    Response(uri="https://elisa-adam.com/preview/about-me", need=lambda r: r.status_code, want=200),
-    Response(uri="https://www.elisa-adam.com/preview/workshops/",need=lambda r: r.status_code, want=200),
-    Response(uri="https://www.elisa-adam.com/missing", need=lambda r: r.status_code, want=404),
-    Response(uri="https://elisa-adam.com/preview/media/spass-bei-der-arbeit.webp", need=lambda r: r.headers.get("Content-Type"), want="image/webp")
+    Response(
+        uri="https://www.elisa-adam.com/preview",
+        need=lambda r: r.status_code,
+        want=200),
+    Response(
+        uri="https://elisa-adam.com/preview/about-me",
+        need=lambda r: r.status_code,
+        want=200),
+    Response(
+        uri="https://www.elisa-adam.com/preview/workshops/",
+        need=lambda r: r.status_code,
+        want=200),
+    Response(
+        uri="https://www.elisa-adam.com/missing",
+        need=lambda r: r.status_code,
+        want=404),
+    Response(
+        uri="https://elisa-adam.com/preview/media/spass-bei-der-arbeit.webp",
+        need=lambda r: r.headers.get("Content-Type", ""),
+        want="image/webp")
 ]
 
 
