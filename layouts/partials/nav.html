@@ -1,7 +1,8 @@
 
 <nav class="fixed left-0 top-0 
-  h-full w-32 flex flex-col items-center py-4 shadow-md 
-  max-sm:h-16 max-sm:w-full max-sm:flex-row max-sm:justify-evenly max-sm:items-center">
+            h-full w-32 flex flex-col items-center py-4 shadow-md 
+            max-sm:h-16 max-sm:w-full max-sm:flex-row max-sm:justify-evenly max-sm:items-center 
+            backdrop-filter backdrop-blur-lg">
 {{ range site.Menus.main }}
     <ul>
         <a href="{{ .URL }}" class="block px-4 py-2 text-gray-700 font-semibold hover:text-blue-600 hover:underline">{{ .Name }}</a>
