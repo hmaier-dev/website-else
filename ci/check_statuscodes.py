@@ -1,39 +1,39 @@
 #!/usr/bin/env python3
 
 import requests
-import os
+import sys
 from dataclasses import dataclass
+from typing import Callable
 
 
-# Define a dataclass to hold the URIs and their expected status codes
 @dataclass
-class URI:
+class Response:
     uri: str
-    want: int
+    need: Callable
+    want: str
 
 
-# Function to check the status of a URL
-def check_status(uri, want):
+def check_response(uri, need, want):
     try:
         response = requests.get(uri)
-        print(f"Checking {uri}: Status code {response.status_code}")
-        if response.status_code == want:
-            print(f"Status matches expected ({want})")
+        actual = need(response)
+        if actual == want:
+            print(f"({actual}) matches expected ({want})")
         else:
-            print(f"Status does not match! Expected {want}, got {response.status_code}")
-            os.exit(2)
+            print(f"Expected {want}, got {actual}")
+            sys.exit(2)
     except requests.exceptions.RequestException as e:
         print(f"An error occurred while checking {uri}: {e}")
 
 
-# List of URIs to check
 uris = [
-    URI(uri="https://www.elisa-adam.com/preview", want=200),
-    URI(uri="https://elisa-adam.com/preview/about-me", want=200),
-    URI(uri="https://www.elisa-adam.com/preview/workshops/", want=200),
-    URI(uri="https://www.elisa-adam.com/missing", want=404),
+    Response(uri="https://www.elisa-adam.com/preview", need=lambda r: r.status_code, want=200),
+    Response(uri="https://elisa-adam.com/preview/about-me", need=lambda r: r.status_code, want=200),
+    Response(uri="https://www.elisa-adam.com/preview/workshops/",need=lambda r: r.status_code, want=200),
+    Response(uri="https://www.elisa-adam.com/missing", need=lambda r: r.status_code, want=404),
+    Response(uri="https://elisa-adam.com/preview/media/spass-bei-der-arbeit.webp", need=lambda r: r.headers.get("Content-Type"), want="image/webp")
 ]
 
-# Iterate through the list and check each URI
+
 for x in uris:
-    check_status(x.uri, x.want)
+    check_response(x.uri, x.need, x.want)
