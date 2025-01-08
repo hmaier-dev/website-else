@@ -1,4 +1,5 @@
 ---
+description: Für diese Workshops kannst du dich bei Elisa Adam melden.
 title: Workshops
 ---
 

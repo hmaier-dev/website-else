@@ -1,4 +1,5 @@
 ---
+description: Elisa Adam, Kunstschaffende lädt diversen Möglichkeiten ein.
 title: Home
 ---
 
