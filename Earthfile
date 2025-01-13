@@ -8,9 +8,7 @@ hugo:
     RUN chmod +x hugo
     RUN mv hugo /usr/local/bin/hugo
 
-    COPY +css/tailwindcss ./tailwindcss
-    RUN chmod +x tailwindcss
-    RUN mv tailwindcss /usr/local/bin/tailwindcss
+    COPY +css/tailwindcss /usr/local/bin/tailwindcss
 
     # Hugo cannot work in root (/)
     WORKDIR tmp
