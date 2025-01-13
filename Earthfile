@@ -1,14 +1,28 @@
 VERSION 0.8
 
-hugo:
+download:
   FROM debian:bullseye
   RUN apt-get update && apt-get install -y curl
+
+download-hugo:
+  FROM +download
   RUN curl -SLO https://github.com/gohugoio/hugo/releases/download/v0.140.2/hugo_0.140.2_linux-amd64.tar.gz
   RUN tar -xvzf hugo_0.140.2_linux-amd64.tar.gz
   RUN chmod +x hugo
-  RUN mv hugo /usr/local/bin/hugo
+  SAVE ARTIFACT hugo
 
-  COPY +css/tailwindcss /usr/local/bin/tailwindcss
+download-tailwindcss:
+  FROM +download
+  RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.0-beta.8/tailwindcss-linux-x64
+  RUN chmod +x tailwindcss-linux-x64
+  RUN mv tailwindcss-linux-x64 tailwindcss
+  RUN ./tailwindcss --help
+  SAVE ARTIFACT tailwindcss
+
+build:
+  FROM debian:bullseye
+  COPY +download-hugo/hugo /usr/local/bin/hugo
+  COPY +download-tailwindcss/tailwindcss /usr/local/bin/tailwindcss
 
   # Hugo cannot work in root (/)
   WORKDIR tmp
@@ -19,15 +33,31 @@ hugo:
   RUN hugo
   RUN ls -la public
   SAVE ARTIFACT ./public AS LOCAL ./public
+  SAVE ARTIFACT ./public 
 
-css:
+setup-ssh:
   FROM debian:bullseye
-  RUN apt-get update && apt-get install -y curl
-  RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.0-beta.8/tailwindcss-linux-x64
-  RUN chmod +x tailwindcss-linux-x64
-  RUN mv tailwindcss-linux-x64 tailwindcss
-  RUN ./tailwindcss --help
-  SAVE ARTIFACT tailwindcss
+  RUN apt-get update && apt-get install -y openssh-client rsync
+  RUN mkdir -p ~/.ssh
+  RUN --secret key echo "$key" > /root/.ssh/id_ed25519
+  RUN chmod 600 /root/.ssh/id_ed25519
+  RUN --secret known_hosts echo "$known_hosts" > /root/.ssh/known_hosts
+
+rsync:
+  FROM +setup-ssh
+  COPY +build/public ./public
+  RUN --secret port --secret username --secret host \
+      rsync --port=$port -rav \
+      -i ~/.ssh/id_ed25519 ./public $username@$host:~/
+
+deploy-test:
+  FROM +rsync
+  RUN --secret host --secret username ssh $username@$host "~/update-test.sh"
+
+deploy-prod:
+  FROM +rsync
+  RUN --secret host --secret username ssh $username@$host "~/update-prod.sh"
+
 
 test:
   FROM python:3.12
@@ -36,5 +66,3 @@ test:
   RUN pip install -r ci/requirements.txt
   RUN --no-cache python ci/check_response.py
 
-build:
-  BUILD +hugo
