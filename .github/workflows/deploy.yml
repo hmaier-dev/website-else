@@ -29,10 +29,10 @@ jobs:
       run: |
         earthly --secret host=${{ secrets.SSH_HOST }} \
         --secret username=${{ secrets.SSH_USER }} \
-        --secret key=${{ secrets.SSH_KEY }} \
-        --secret known_hosts=${{ secrets.SSH_KNOWN_HOSTS }} \
+        --secret key="${{ secrets.SSH_KEY }}" \
+        --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
         --secret port=${{ secrets.SSH_PORT }} \
-        \ +deploy-test
+        +deploy-test
     - name: Testing different endpoints
       run: |
         earthly +test
