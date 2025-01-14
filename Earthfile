@@ -20,9 +20,9 @@ download-tailwindcss:
   SAVE ARTIFACT tailwindcss
 
 build:
-  FROM debian:bullseye
-  COPY +download-hugo/hugo /usr/local/bin/hugo
-  COPY +download-tailwindcss/tailwindcss /usr/local/bin/tailwindcss
+  FROM hmaierdev/hugo-plus-tailwindcss
+  # COPY +download-hugo/hugo /usr/local/bin/hugo
+  # COPY +download-tailwindcss/tailwindcss /usr/local/bin/tailwindcss
 
   # Hugo cannot work in root (/)
   WORKDIR tmp
