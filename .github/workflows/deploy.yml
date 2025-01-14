@@ -1,5 +1,5 @@
 ---
-name: earthly +build and deployment to vm
+name: deployment to test
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
       - layouts/**
       - assets/**
 jobs:
-  deploy-test:
+  setup-earthly:
     runs-on: ubuntu-latest
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -25,6 +25,10 @@ jobs:
       run: docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
     - name: Download latest earthly
       run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.8.13/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
+  deploy-test:
+    needs: setup-earthly
+    runs-on: ubuntu-latest
+    steps:
     - name: Deploying to vm via earthly
       run: |
         earthly --secret host=${{ secrets.SSH_HOST }} \
@@ -33,6 +37,10 @@ jobs:
         --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
         --secret port=${{ secrets.SSH_PORT }} \
         +deploy-test
+  test:
+    needs: setup-earthly
+    runs-on: ubuntu-latest
+    steps:
     - name: Testing different endpoints
       run: |
         earthly +test
