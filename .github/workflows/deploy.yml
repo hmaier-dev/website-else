@@ -11,9 +11,10 @@ on:
       - layouts/**
       - assets/**
 jobs:
-  setup-earthly:
+  deploy-test:
     runs-on: ubuntu-latest
     env:
+      EARTHLY_TOKEN: ${{ secrets.EARTHLY_TOKEN }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       FORCE_COLOR: 1
@@ -25,22 +26,15 @@ jobs:
       run: docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
     - name: Download latest earthly
       run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.8.13/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
-  deploy-test:
-    needs: setup-earthly
-    runs-on: ubuntu-latest
-    steps:
     - name: Deploying to vm via earthly
       run: |
-        earthly --secret host=${{ secrets.SSH_HOST }} \
-        --secret username=${{ secrets.SSH_USER }} \
-        --secret key="${{ secrets.SSH_KEY }}" \
-        --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
-        --secret port=${{ secrets.SSH_PORT }} \
-        +deploy-test
-  test:
-    needs: setup-earthly
-    runs-on: ubuntu-latest
-    steps:
+        earthly --org "${{ secrets.EARTHLY_ORG }}" --satellite cache-machine \
+                --secret host=${{ secrets.SSH_HOST }} \
+                --secret username=${{ secrets.SSH_USER }} \
+                --secret key="${{ secrets.SSH_KEY }}" \
+                --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
+                --secret port=${{ secrets.SSH_PORT }} \
+                +deploy-test
     - name: Testing different endpoints
       run: |
         earthly +test
