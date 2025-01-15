@@ -46,9 +46,11 @@ setup-ssh:
 rsync:
   FROM +setup-ssh
   COPY +build/public ./public
-  RUN --secret port --secret username --secret host \
-      rsync --port=$port -rav \
-      -i ~/.ssh/id_ed25519 ./public $username@$host:~/
+  RUN --secret port \
+      --secret username \
+      --secret host \
+      --secret dest \
+      rsync --port=$port -rav ./public $username@$host:$dest
 
 deploy-test:
   FROM +rsync
