@@ -46,7 +46,7 @@ setup-ssh:
 rsync:
   FROM +setup-ssh
   COPY +build/public ./public
-  RUN --secret port \
+  RUN --no-cache --secret port \
       --secret username \
       --secret host \
       --secret dest \
