@@ -32,7 +32,8 @@ jobs:
         --secret key="${{ secrets.SSH_KEY }}" \
         --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
         --secret port=${{ secrets.SSH_PORT }} \
-        +deploy-test
+        --secret dest=${{ secrets.TEST_DESTINATION }} \
+        +rsync
   test:
     runs-on: ubuntu-latest
     needs: deploy-test
