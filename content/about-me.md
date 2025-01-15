@@ -43,7 +43,7 @@ Ich mag die Geschichte sehr. Meinen ersten Poetry Slam Auftritt hatte
 ich bei Poetry and HipHop in Leipzig. Jason Saint ist der
 Hauptorganisator des Events und fragte mich 2022, ob ich Lust hätte zu
 moderieren. Also begann meine Moderationskarriere im Sommer 2022 auf der
-Open Air Bühne in der Moritz Bast in Leipzig.
+Open Air Bühne in der [Moritz Bastei](https://www.moritzbastei.de/) in Leipzig.
 
 **Welche Veranstaltungen moderierst du mittlerweile?**
 
