@@ -27,7 +27,7 @@ jobs:
       run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.8.13/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
     - name: Deploying to vm via earthly
       run: |
-        earthly --secret host=${{ secrets.SSH_HOST }} \
+        earthly --ci --secret host=${{ secrets.SSH_HOST }} \
         --secret username=${{ secrets.SSH_USER }} \
         --secret key="${{ secrets.SSH_KEY }}" \
         --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
