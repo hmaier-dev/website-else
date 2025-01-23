@@ -38,6 +38,10 @@ jobs:
         chmod +x $EARTHLY_PATH/earthly
     - name: Add earthly to PATH
       run: echo "$EARTHLY_PATH" >> $GITHUB_PATH
+    - name: Cache Docker images for earthly
+      uses: ScribeMD/docker-cache@0.5.0
+      with:
+        key: docker-${{ runner.os }}-${{ hashFiles('Earthfile') }}
     - name: Docker Login
       run: docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
     - name: Deploying to vm via earthly
