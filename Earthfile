@@ -20,7 +20,7 @@ download-tailwindcss:
   SAVE ARTIFACT tailwindcss
 
 build:
-  FROM hmaierdev/hugo-plus-tailwindcss
+  FROM hmaierdev/hugo-plus-tailwind
   # COPY +download-hugo/hugo /usr/local/bin/hugo
   # COPY +download-tailwindcss/tailwindcss /usr/local/bin/tailwindcss
 
