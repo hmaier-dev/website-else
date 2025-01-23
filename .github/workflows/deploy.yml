@@ -17,14 +17,29 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       FORCE_COLOR: 1
+      EARTHLY_VERSION: v0.8.13
+      EARTHLY_PATH: /opt/earthly/v0.8.13
     permissions:
       contents: write
     steps:
     - uses: actions/checkout@v4
+    - name: Check cache for earthly binary
+      id: earthly-binary
+      uses: actions/cache@v4
+      with:
+        path: /opt/earthly/v0.8.13
+        # If version changes, a new binary will be downloaded
+        key: earthly-${{ runner.os }}-${{ env.EARTHLY_VERSION }}
+    - name: Download binary if not cached
+      if: steps.earthly-binary.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p "$EARTHLY_PATH"
+        curl -L -o "$EARTHLY_PATH"/earthly https://github.com/earthly/earthly/releases/download/$EARTHLY_VERSION/earthly-linux-amd64
+        chmod +x $EARTHLY_PATH/earthly
+    - name: Add earthly to PATH
+      run: echo "$EARTHLY_PATH" >> $GITHUB_PATH
     - name: Docker Login
       run: docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
-    - name: Download latest earthly
-      run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.8.13/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
     - name: Deploying to vm via earthly
       run: |
         earthly --ci --secret host=${{ secrets.SSH_HOST }} \
