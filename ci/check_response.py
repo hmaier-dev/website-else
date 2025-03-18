@@ -31,17 +31,17 @@ def check_response(uri, resp_type, need, want):
 
 uris = [
     Response(
-        uri="https://www.elisa-adam.com/preview",
+        uri="https://www.elisa-adam.com/",
         resp_type="Status Code",
         need=lambda r: r.status_code,
         want=200),
     Response(
-        uri="https://elisa-adam.com/preview/about-me",
+        uri="https://elisa-adam.com/about-me",
         resp_type="Status Code",
         need=lambda r: r.status_code,
         want=200),
     Response(
-        uri="https://www.elisa-adam.com/preview/workshops/",
+        uri="https://www.elisa-adam.com/workshops/",
         resp_type="Status Code",
         need=lambda r: r.status_code,
         want=200),
@@ -51,7 +51,7 @@ uris = [
         need=lambda r: r.status_code,
         want=404),
     Response(
-        uri="https://elisa-adam.com/preview/media/spass-bei-der-arbeit.webp",
+        uri="https://elisa-adam.com/media/spass-bei-der-arbeit.webp",
         resp_type="Content-Type",
         need=lambda r: r.headers.get("Content-Type", ""),
         want="image/webp")
