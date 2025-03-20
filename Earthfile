@@ -50,7 +50,7 @@ rsync:
       --secret username \
       --secret host \
       --secret dest \
-      rsync --port=$port -rav --delete ./public $username@$host:$dest
+      rsync --port=$port -rav --delete ./public/ $username@$host:$dest
 
 deploy-test:
   FROM +rsync
