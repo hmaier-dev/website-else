@@ -1,11 +1,12 @@
 ---
-name: html deployment to test
+name: Generate html and deploy it
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - preview
+      - prod
     paths:
       - content/**
       - layouts/**
@@ -52,14 +53,28 @@ jobs:
           done;
     - name: Docker Login
       run: docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
-    - name: Deploying to vm via earthly
+
+    ## Check out the ./Earthfile to understand how the html is generated
+    - name: Deploy to preview
+      if: github.ref == 'refs/heads/preview'
       run: |
         earthly --ci --secret host="${{ secrets.SSH_HOST }}" \
                      --secret username="${{ secrets.SSH_USER }}" \
                      --secret key="${{ secrets.SSH_KEY }}" \
                      --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
                      --secret port="${{ secrets.SSH_PORT }}" \
-                     --secret dest="${{ secrets.TEST_DESTINATION }}"\
+                     --secret dest="${{ secrets.PREVIEW_DESTINATION }}"\
+                     +rsync
+
+    - name: Deploy to prod
+      if: github.ref == 'refs/heads/prod'
+      run: |
+        earthly --ci --secret host="${{ secrets.SSH_HOST }}" \
+                     --secret username="${{ secrets.SSH_USER }}" \
+                     --secret key="${{ secrets.SSH_KEY }}" \
+                     --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
+                     --secret port="${{ secrets.SSH_PORT }}" \
+                     --secret dest="${{ secrets.PROD_DESTINATION }}"\
                      +rsync
   test:
     runs-on: ubuntu-latest
