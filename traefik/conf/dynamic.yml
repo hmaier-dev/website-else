@@ -1,0 +1,13 @@
+http:
+  routers:
+    checklist:
+      entrypoints: web
+      rule: Host(`elisa-adam.com`)
+      service: website
+  services:
+    website:
+      loadBalancer:
+        servers:
+          - url: "http://website:80"
+
+

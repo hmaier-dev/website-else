@@ -1,0 +1,27 @@
+networks:
+  traefik-net:
+    name: traefik-net
+    driver: bridge
+
+services:
+  traefik:
+    image: "traefik:v3.3"
+    container_name: "traefik"
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "./traefik.yml:/etc/traefik/traefik.yml:ro"
+      - "./conf:/etc/traefik/conf:ro"
+    networks:
+      - traefik-net
+  # Declare your own services below here
+  website:
+    image: "myselfbuildimage"
+    container_name: "website"
+    networks:
+      - traefik-net
+

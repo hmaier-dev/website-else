@@ -1,0 +1,23 @@
+## Static Configuration
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+log:
+  level: debug
+
+api:
+  insecure: false
+  dashboard: false
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: traefik-net
+  file:
+    directory: "/etc/traefik/conf"
+    watch: true
+
+entryPoints:
+  web:
+    address: ":80"
