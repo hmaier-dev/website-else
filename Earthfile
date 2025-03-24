@@ -68,3 +68,7 @@ test:
   RUN pip install -r ci/requirements.txt
   RUN --no-cache python ci/check_response.py
 
+build-image:
+  COPY +build/public ./public
+
+
