@@ -1,3 +1,6 @@
+
+## This is used as a build-image
+
 FROM debian:bullseye
 RUN apt-get update && apt-get install -y curl 
 RUN curl -SLO https://github.com/gohugoio/hugo/releases/download/v0.140.2/hugo_0.140.2_linux-amd64.tar.gz
