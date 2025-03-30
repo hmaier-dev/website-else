@@ -35,6 +35,13 @@ build:
   SAVE ARTIFACT ./public AS LOCAL ./public
   SAVE ARTIFACT ./public 
 
+build-image:
+  FROM nginx:1.27.4
+  LABEL org.opencontainers.image.source = "https://github.com/hmaier-dev/website-else"
+  COPY +build-html/public /usr/share/nginx/html
+  EXPOSE 8080
+  SAVE IMAGE --push ghcr.io/hmaier-dev/website-else/public-html
+
 setup-ssh:
   FROM debian:bullseye
   RUN apt-get update && apt-get install -y openssh-client rsync
@@ -68,5 +75,3 @@ test:
   RUN pip install -r ci/requirements.txt
   RUN --no-cache python ci/check_response.py
 
-build-image:
-  COPY +build/public ./public
