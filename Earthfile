@@ -70,5 +70,3 @@ test:
 
 build-image:
   COPY +build/public ./public
-
-
