@@ -16,9 +16,10 @@ build-html:
 
 build-image:
   FROM nginx:1.27.4
+  LABEL org.opencontainers.image.source = "https://github.com/hmaier-dev/website-else"
   COPY +build-html/public /usr/share/nginx/html
   EXPOSE 8080
-  SAVE IMAGE ghcr.io/hmaier-dev/website-else/public-html
+  SAVE IMAGE --push ghcr.io/hmaier-dev/website-else/public-html
 
 setup-ssh:
   FROM debian:bullseye
