@@ -11,16 +11,15 @@ services:
       - "--configFile=/etc/traefik/traefik.yml"
     ports:
       - "80:80"
-      - "443:443"
-      - "8080:8080"
     volumes:
+      # static conf
       - "./traefik.yml:/etc/traefik/traefik.yml:ro"
+      # dir for dynamic conf
       - "./conf:/etc/traefik/conf:ro"
     networks:
       - traefik-net
-  # Declare your own services below here
   website:
-    image: "myselfbuildimage"
+    image: "ghcr.io/hmaier-dev/website-else/public-html"
     container_name: "website"
     networks:
       - traefik-net
