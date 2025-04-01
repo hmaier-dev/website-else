@@ -5,9 +5,9 @@ build-html:
 
   # Hugo cannot work in root (/)
   WORKDIR tmp
-  COPY --dir hugo/content hugo/assets hugo/layouts ./
-  COPY hugo/hugo.toml hugo.toml
-  COPY hugo/tailwind.config.js tailwind.config.js
+  COPY --dir content assets layouts ./
+  COPY hugo.toml hugo.toml
+  COPY tailwind.config.js tailwind.config.js
 
   RUN hugo
   RUN ls -la public
