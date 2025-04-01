@@ -30,4 +30,6 @@ setup-ssh:
   RUN --secret known_hosts echo "$known_hosts" > /root/.ssh/known_hosts
 
 deploy:
+  BUILD +build-image
   FROM +setup-ssh
+  RUN --secret username --secret host --secret dir ssh $username@$host "cd $dir; docker compose pull; docker compose up -d"
