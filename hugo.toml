@@ -30,3 +30,7 @@ disablePathToLower = true
     name = 'workshops'
     pageRef = '/workshops'
     weight = 30
+  [[menus.main]]
+    name = 'events'
+    pageRef = '/events'
+    weight = 40
