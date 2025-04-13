@@ -4,6 +4,10 @@
   h1 {
     @apply text-xl font-bold mb-2 text-gray-800;
   }
+  /* Used in about-me as interviewer  */
+  h2 {
+    @apply italic mb-1 mt-2 text-gray-800;
+  }
   main {
     @apply mx-32 max-sm:mx-auto;
   }
