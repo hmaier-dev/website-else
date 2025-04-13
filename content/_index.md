@@ -5,29 +5,36 @@ title: Home
 
 {{< parallax-image src="media/jesus1.webp" id="jesus1" >}}
 
-Elisa Adam auch bekannt unter [Einfach Else](https://www.instagram.com/einfach_else/) lädt mit dieser Website zu vielen Möglichkeiten ein.
-Also schaut rein & viel Spaß.
+Elisa Adam – [Einfach Else](https://www.instagram.com/einfach_else/) Willkommen auf meiner Website!
+Hier erwartet dich eine vielfältige Person, mit zahlreichen Interessen und Talenten.- Nimm dir die Zeit und stöbere ein bisschen.
+In Liebe Einfach Else
 
 
 # Moderation
-    
-Für eine einzigartige, authentische und ehrliche Moderation gibt es nur einen Namen: Einfach Else
-
+Egal, ob für Abendveranstaltungen, Events oder Hochzeiten:
+**Einfach Else** sorgt mit ihrer authentischen Art für eine Atmosphäre, bei der sich jeder Mensch wohlfühlt.
+Sie schafft einen Rahmen, der gleichzeitig locker und professionell ist.
+Auch bei Gesprächsrunden oder Talks nimmt sie eine neutrale, aber spannende Rolle ein und sorgt für lebendige Diskussionsrunden.
 
 # Poetry Slam
-Wer Wort Akrobatinnen liebt ist genau richtig bei Elisa Adam. Ihr eigener Stil lässt sie durch die bundesweiten Bühnen herumturnen. Frech. Lebendig. Gesellschaftskritisch. Einfach Else.
-
+Wenn du Wortakrobatik liebst, bist du bei Elisa Adam genau richtig.
+Ihr einzigartiger Stil lässt sie auf Bühnen im ganzen Land glänzen – frech, lebendig und gesellschaftskritisch.
+Das ist **Einfach Else**.
 
 # Illustratorin
-In der Schule hat niemand an ihr malerisches Talent geglaubt. Mittlerweile zeichnet Einfach Else wild drauf los und verzaubert mit ihrem psychedelischen, einfallsreichen Stil die Menschen.
-
+In der Schule hat niemand an ihr malerisches Talent geglaubt.
+Heute zaubert **Einfach Else** mit ihrem psychedelischen, einfallsreichen Stil Bilder, die begeistern.
+Ihre Werke sind nicht nur einzigartig, sondern auch eine wahre Augenweide.
+Schau doch mal in der Galerie vorbei – ein Druck kann jederzeit bestellt werden.
 
 # Model
-Egal ob Akt oder mit Klamotten. Mittlerweile steht Einfach Else fürs Zeichnen oder Fotografieren vor der Kamera.
-
+Ob als Aktmodell oder in stilvollen Outfits – **Einfach Else** steht für Zeichnungen und Fotografien auch vor der Kamera.
+Hast du eine Anfrage? Dann melde dich gerne per E-Mail.
 
 # Organisatorin
-etwas ruhiger geworden, dennoch weiterhin aktiv organisiert Einfach Else unterschiedlichste Events in und um Leipzig. Sei es HipHop, Soli-Veranstaltungen oder bunte Bühnen, Elisa Adam kennt für jede Veranstaltung die passenden Menschen.
+Trotz allem, was sie noch tut, ist Einfach Else auch als Organisatorin von Events in und um Leipzig aktiv.
+Ob Hip-Hop-Konzerte, Soli-Veranstaltungen oder farbenfrohe Bühnenprogramme – sie weiß, wie man die richtigen Menschen zusammenbringt und unvergessliche Events kreiert.
+
 
 </br>
 </br>
