@@ -59,7 +59,7 @@ jobs:
                      --secret key="${{ secrets.SSH_KEY }}" \
                      --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
                      --secret port="${{ secrets.SSH_PORT }}" \
-                     --secret dest="${{ secrets.TEST_DESTINATION }}"\
+                     --secret dest="${{ secrets.COPY_DESTINATION }}"\
                      +rsync
   test:
     runs-on: ubuntu-latest
