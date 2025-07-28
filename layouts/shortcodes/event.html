@@ -1,0 +1,19 @@
+{{- /*
+single event block
+@examples
+
+  {{< event src="/path/to/pic" >}}
+
+*/}}
+
+{{- $datum := or (.Get "datum") "" }}
+{{- $ort := or (.Get "ort") "" }}
+{{- $event := or (.Get "event") "" }}
+{{- $stadt := or (.Get "ort") "" }}
+
+<div class="event">
+  <div>{{ $datum }}</div>
+  <div>{{ $ort }}</div>
+  <div>{{ $event }}</div>
+</div>
+
