@@ -1,25 +1,56 @@
 {{- $src := or (.Get "src") "" }}
 {{- $id := or (.Get "id") "" }}
-<!-- I need to add the css here, -->
-<!-- because I need to change the url() dynamically. -->
-<!-- I know it dirty, but it works... -->
-<style>
-#parallax-{{ $id }} {
-  /* The image used */
-    {{ $pic := resources.Get $src }}
-    background-image: url( {{ $pic.RelPermalink }} );
-    /* Set a specific height */
-    min-height: 500px;
+{{- $pic := resources.Get $src }}
 
-    /* Create the parallax scrolling effect */
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+<style>
+.parallax-wrapper-{{ $id }} {
+  position: relative;
+  height: 500px;
+  overflow: hidden;
+}
+
+.parallax-bg-{{ $id }} {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150%; /* größer als der Container */
+  background-image: url({{ $pic.RelPermalink }});
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  transform: translateY(0);
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+.parallax-content-{{ $id }} {
+  position: relative;
+  z-index: 1;
 }
 </style>
 
-<div class="parallax mb-6 max-sm:bg-fixed" id="parallax-{{ $id }}">
+<div class="parallax-wrapper-{{ $id }}">
+  <div class="parallax-bg-{{ $id }}" id="bg-{{ $id }}"></div>
 </div>
 
+<script>
+(function () {
+  const bg = document.getElementById("bg-{{ $id }}");
+  const wrapper = document.querySelector(".parallax-wrapper-{{ $id }}");
 
+  function updateParallax() {
+    const rect = wrapper.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const offsetTop = wrapper.offsetTop;
+    const speed = 0.2; // je kleiner, desto langsamer die Bewegung (mehr "statisch")
+
+    const distance = (scrollTop - offsetTop) * speed;
+    bg.style.transform = `translateY(${distance}px)`;
+  }
+
+  window.addEventListener("scroll", updateParallax);
+  window.addEventListener("resize", updateParallax);
+  updateParallax(); // initialer Aufruf
+})();
+</script>
