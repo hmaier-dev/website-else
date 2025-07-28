@@ -10,5 +10,5 @@ title: Veranstaltungen
 {{< event datum="27.09" event="Poetry Slam" ort="Schloss Fechenbach" stadt="Dieburg" >}}
 {{< event datum="14.10" event="Queer Slam" ort="Werk 2" stadt="Leipzig" >}}
 {{< event datum="15.10" event="Einfach Elses Late Night Show" ort="Moritzbastei" stadt="Leipzig" >}}
-{{< event datum="19.11" event="Poetry Slam" ort="tba" stadt="Hamburg" >}}
+{{< event datum="19.11" event="Safer Space Slam" ort="AStA Uni" stadt="Hamburg" >}}
 {{< event datum="13.12" event="Poetry Slam" ort="Moritzhof" stadt="Magdeburg" >}}
