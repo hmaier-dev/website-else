@@ -8,10 +8,10 @@
   h2 {
     @apply italic mb-1 mt-2 text-gray-800;
   }
-  main {
-    @apply mx-32 max-sm:mx-auto;
-  }
-  main > p{
+  /* main { */
+  /*   @apply mx-32 max-sm:mx-auto; */
+  /* } */
+  main > p {
     @apply my-1;
   }
   main > * > a {
@@ -19,12 +19,12 @@
   }
 }
 
-@layer utilities{
-  /* Only apply the padding to the direct children of main */
-  main > *:not(.parallax, .italic-block) {
-    @apply px-2;
-  }
-}
+/* @layer utilities{ */
+/*   /* Only apply the padding to the direct children of main */ */
+/*   main > *:not(.parallax, .italic-block) { */
+/*     @apply px-2; */
+/*   } */
+/* } */
 
 body {
   font-family: "Libre Franklin", serif;
