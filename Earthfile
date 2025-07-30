@@ -17,7 +17,7 @@ build:
 push:
   FROM nginx:1.27.4
   LABEL org.opencontainers.image.source='https://github.com/hmaier-dev/website-else'
-  COPY +build-html/public /usr/share/nginx/html
+  COPY +build/public /usr/share/nginx/html
   EXPOSE 8080
   SAVE IMAGE --push ghcr.io/hmaier-dev/website-else
 
