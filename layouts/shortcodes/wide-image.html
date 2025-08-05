@@ -1,0 +1,10 @@
+{{- $src := or (.Get "src") "" }}
+{{- $id := or (.Get "id") "" }}
+{{- $object := or (.Get "object") "" }}
+{{- $pic := resources.Get $src }}
+
+<div class="relative w-full h-fit sm:h-96 overflow-hidden">
+  <img src="{{ $pic.RelPermalink }}"
+       alt=""
+       class="absolute top-0 left-0 w-full h-full object-cover object-{{ $object }}" />
+</div>

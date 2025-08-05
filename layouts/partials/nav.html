@@ -1,11 +1,14 @@
-<nav class="fixed left-0 top-0 bg-violet-300
-            h-full w-48 flex flex-col items-center justify-center py-4 shadow-md 
-            max-sm:h-16 max-sm:w-full max-sm:flex-row max-sm:justify-evenly max-sm:items-center 
-            backdrop-filter backdrop-blur-lg text-2xl">
+<nav class="fixed left-0 top-0 bg-violet-300 z-50
+            flex flex-col items-center 
+            h-full w-48 justify-center shadow-md text-2xl
+            max-sm:h-16 max-sm:w-full 
+            max-sm:flex-row max-sm:justify-evenly 
+            max-sm:items-center max-sm:text-base">
+
     <ul class="flex flex-col items-center gap-4 max-sm:flex-row">
         {{ range site.Menus.main }}
             <li>
-                <a href="{{ .URL }}" class="block text-center px-4 py-2 text-gray-700 font-bold hover:text-blue-600 hover:underline">
+                <a href="{{ .URL }}" class="block text-center text-gray-700 font-bold hover:text-blue-600 hover:underline">
                     {{ .Name }}
                 </a>
             </li>

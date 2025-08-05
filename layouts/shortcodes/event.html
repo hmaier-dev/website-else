@@ -11,9 +11,9 @@ single event block
 {{- $event := or (.Get "event") "" }}
 {{- $stadt := or (.Get "stadt") "" }}
 
-<div class="event flex flex-row items-center gap-4 p-4 border-b border-gray-300 text-xl font-sans">
-  <div class="w-32 text-gray-700 font-semibold">{{ $datum }}:</div>
-  <div class="w-64 text-blue-800 font-bold">{{ $event }}</div>
-  <div class="w-40 text-gray-600">{{ $ort }}</div>
-  <div class="w-40 text-gray-500 italic">{{ $stadt }}</div>
+<div class="event flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-4 border-b border-gray-300 text-base sm:text-xl font-sans">
+  <div class="w-full sm:w-32 text-gray-700 font-semibold">{{ $datum }}:</div>
+  <div class="w-full sm:w-64 text-blue-800 font-bold">{{ $event }}</div>
+  <div class="w-full sm:w-40 text-gray-600">{{ $ort }}</div>
+  <div class="w-full sm:w-40 text-gray-500 italic">{{ $stadt }}</div>
 </div>
