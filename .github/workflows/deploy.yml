@@ -1,5 +1,5 @@
 ---
-name: html deployment to test
+name: Deploy latest container image to server
 
 on:
   workflow_dispatch:
@@ -55,12 +55,12 @@ jobs:
     - name: Deploying to vm via earthly
       run: |
         earthly --ci --secret host="${{ secrets.SSH_HOST }}" \
+                     --secret port="${{ secrets.SSH_PORT }}" \
                      --secret username="${{ secrets.SSH_USER }}" \
                      --secret key="${{ secrets.SSH_KEY }}" \
                      --secret known_hosts="${{ secrets.SSH_KNOWN_HOSTS }}" \
-                     --secret port="${{ secrets.SSH_PORT }}" \
-                     --secret dest="${{ secrets.COPY_DESTINATION }}"\
-                     +rsync
+                     --secret dir="${{ secrets.DIR }}"\
+                     +deploy
   test:
     runs-on: ubuntu-latest
     needs: deploy
