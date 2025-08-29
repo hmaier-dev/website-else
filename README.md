@@ -2,7 +2,7 @@
 If you want to develop the website further, do it locally. The following wiki entry can be helpful: [Hugo](https://hmaier-dev.github.io/wiki/hugo/#develop-locally-with-hugo).
 
 ## Deploy the image
-Use `earthly +deploy` to update the container running on the VM. Locally you will need a `.secret`-file containing the needed credentials. The secret file will look like this:
+Use `earthly --push +deploy` to update the container running on the VM. Locally you will need a `.secret`-file containing the needed credentials. The secret file will look like this:
 ```bash
 host=1223.445.667.88
 port=22
