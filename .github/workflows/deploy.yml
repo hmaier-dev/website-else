@@ -54,7 +54,7 @@ jobs:
       run: docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
     - name: Deploying to vm via earthly
       run: |
-        earthly --ci --secret host="${{ secrets.SSH_HOST }}" \
+        earthly --push --ci --secret host="${{ secrets.SSH_HOST }}" \
                      --secret port="${{ secrets.SSH_PORT }}" \
                      --secret username="${{ secrets.SSH_USER }}" \
                      --secret key="${{ secrets.SSH_KEY }}" \
