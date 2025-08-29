@@ -11,5 +11,6 @@ dest="/path/to/dest"
 key='-----BEGIN OPENSSH PRIVATE KEY-----
 -----END OPENSSH PRIVATE KEY-----'
 known_hosts=''
+dir=''
 ```
 On Github I strongly recommend you to store the credentials as repository secrets (Option can be found at: `settings/secrets/actions`).
