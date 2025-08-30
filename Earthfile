@@ -23,7 +23,7 @@ run:
 
 setup-ssh:
   FROM debian:bullseye
-  RUN apt-get update && apt-get install -y openssh-client rsync &>/dev/null
+  RUN apt-get update && apt-get install -y openssh-client rsync
   RUN mkdir -p ~/.ssh
   RUN --secret key echo "$key" > /root/.ssh/id_ed25519
   RUN chmod 600 /root/.ssh/id_ed25519
@@ -32,4 +32,5 @@ setup-ssh:
 deploy:
   BUILD +run
   FROM +setup-ssh
+  RUN sleep 10
   RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "cd $dir; docker compose down website; docker compose pull; docker compose up -d website"
