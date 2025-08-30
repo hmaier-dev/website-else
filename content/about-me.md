@@ -2,10 +2,7 @@
 description: Interview mit Elisa Adam über ihren Werdegang und ihre Person.
 title: Über Elisa Adam
 ---
-
 </br>
-</br>
-
 
 {{< wide-image src="media/spass-bei-der-arbeit.webp" >}}
 

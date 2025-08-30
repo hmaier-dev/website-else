@@ -4,9 +4,8 @@ title: Home
 ---
 
 <br>
-<br>
 
-{{< wide-image src="media/jesus1.webp" id="jesus1" object="center_30%" >}}
+{{< jesus1 >}}
 
 Elisa Adam – [Einfach Else](https://www.instagram.com/einfach_else/) Willkommen auf meiner Website!
 Hier erwartet dich eine vielfältige Person, mit zahlreichen Interessen und Talenten.- Nimm dir die Zeit und stöbere ein bisschen.
@@ -43,7 +42,7 @@ Ob Hip-Hop-Konzerte, Soli-Veranstaltungen oder farbenfrohe Bühnenprogramme – 
 </br>
 
 
-{{< wide-image src="media/zettel-in-hand.webp" id="zettel-in-hand" object="[50%_0%]">}}
+{{< zettel-in-hand >}}
 
 </br>
 </br>
