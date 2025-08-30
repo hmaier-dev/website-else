@@ -8,23 +8,11 @@
   h2 {
     @apply italic mb-1 mt-2 text-gray-800;
   }
-  /* main { */
-  /*   @apply mx-32 max-sm:mx-auto; */
-  /* } */
-  main > p {
-    @apply mb-10 mt-3;
-  }
   main > * > a {
     @apply font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline hover:text-gray-800;
   }
 }
 
-/* @layer utilities{ */
-/*   /* Only apply the padding to the direct children of main */ */
-/*   main > *:not(.parallax, .italic-block) { */
-/*     @apply px-2; */
-/*   } */
-/* } */
 
 body {
   font-family: "Libre Franklin", serif;
@@ -32,16 +20,3 @@ body {
   font-style: normal;
 }
 
-/* Make all Image same size */
-/* img { */
-/*   width:  75%; */
-/*   height: 75%; */
-/*   object-fit: cover; */
-/*   display: block; */
-/* } */
-
-/* .polyptychon img{ */
-/*     width: 400px; */
-/*     height: 300px; */
-/*     margin: 5px; */
-/* } */

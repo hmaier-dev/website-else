@@ -2,7 +2,6 @@
 description: Bisherige und kommende Veranstaltungen von Elisa Adam
 title: Veranstaltungen
 ---
-
 {{< event datum="30.08" event="Kunstkomplex" ort="Theater K" stadt="Oldenburg" >}}
 {{< event datum="10.09" event="Lila Comdy" ort="Radtanke" stadt="Leipzig" >}}
 {{< event datum="11.09" event="Pinzette und Kneifzange (Lesebühne)" ort="Bayerhaus" stadt="Leipzig" >}}
