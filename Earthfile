@@ -32,5 +32,5 @@ setup-ssh:
 deploy:
   BUILD +run
   FROM +setup-ssh
-  RUN sleep 10
-  RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "cd $dir; docker compose down website; docker compose pull; docker compose up -d website"
+  RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "docker pull ghcr.io/hmaier-dev/website-else:latest"
+  RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "cd $dir; docker compose down website; docker compose up -d website"
