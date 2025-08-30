@@ -8,10 +8,30 @@
     <ul class="flex flex-col items-center gap-4 max-sm:flex-row">
         {{ range site.Menus.main }}
             <li>
-                <a href="{{ .URL }}" class="block text-center text-gray-700 font-bold hover:text-blue-600 hover:underline">
+                <a href="{{ .URL }}" 
+                   class="nav-link block text-center font-bold text-gray-700 hover:text-blue-600 hover:underline">
                     {{ .Name }}
                 </a>
             </li>
         {{ end }}
     </ul>
 </nav>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const currentUrl = window.location.pathname;
+    const links = document.querySelectorAll(".nav-link");
+
+    links.forEach(link => {
+      // Normalize trailing slashes
+      let linkPath = link.getAttribute("href");
+      if (linkPath.endsWith("/")) linkPath = linkPath.slice(0, -1);
+      let currentPath = currentUrl.endsWith("/") ? currentUrl.slice(0, -1) : currentUrl;
+
+      if (linkPath === currentPath) {
+        link.classList.add("text-blue-600", "underline");
+        link.classList.remove("text-gray-700");
+      }
+    });
+  });
+</script>
