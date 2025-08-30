@@ -1,12 +1,17 @@
 @import "tailwindcss";
 
 @layer base {
+  /*Für die Workshops benutzt*/
   h1 {
-    @apply text-xl font-bold mb-2 text-gray-800 bg-violet-200;
+    @apply text-2xl font-bold mb-2 text-gray-800 bg-violet-200;
   }
-  /* Used in about-me as interviewer  */
+  /*Auf der Index-Seite benutzt*/
   h2 {
-    @apply italic mb-1 mt-2 text-gray-800;
+    @apply text-xl font-bold mb-1 mt-2 text-gray-800 bg-violet-200;
+  }
+  /* Fürs Interview benutzt*/
+  h3 {
+    @apply text-lg font-bold mb-1 mt-2 text-gray-800;
   }
   main > * > a {
     @apply font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline hover:text-gray-800;
