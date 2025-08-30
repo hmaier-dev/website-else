@@ -1,10 +1,6 @@
 {{ define "main" }}
-
-{{ partial "nav.html" .}}
-
-<main class="max-sm:pt-16 min-h-[calc(100vh-3rem)]
-            max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+  <main class="min-h-[calc(100vh-3rem)] max-sm:mt-16 sm:ml-48 lg:px-40 md:px-20">
     {{ .Content }}
-</main>
-
+    {{ partial "footer.html" }}
+  </main>
 {{ end }}
