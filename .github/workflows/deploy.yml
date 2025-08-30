@@ -50,8 +50,6 @@ jobs:
           for image in $images; do
             docker pull $image
           done;
-    - name: Docker Login
-      run: docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
     - name: Deploying to vm via earthly
       run: |
         earthly --push --ci --secret host="${{ secrets.SSH_HOST }}" \
