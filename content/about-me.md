@@ -4,7 +4,7 @@ title: Über Elisa Adam
 ---
 </br>
 
-{{< wide-image src="media/spass-bei-der-arbeit.webp" >}}
+{{< spass-bei-der-arbeit >}}
 
 {{< italic-block >}}
 Elisa Adam, geboren 1998, studierte Sonderpädagogik in Oldenburg, bevor sie zurück in ihre Heimatstadt Leipzig zog.

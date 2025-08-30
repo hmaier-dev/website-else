@@ -1,0 +1,7 @@
+{{- $pic := resources.Get "media/zettel-in-hand.webp" }}
+
+<div class="relative w-full md:h-[500px] sm:h-72 max-sm:h-60">
+  <img src="{{ $pic.RelPermalink }}"
+       alt=""
+       class="absolute inset-0 w-full h-full object-cover object-[50%_80%] max-sm:object-contain" />
+</div>
