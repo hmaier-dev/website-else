@@ -1,5 +1,5 @@
 ---
-description: Bisherige und kommende Veranstaltungen von Elisa Adam
+description: Vergangene und zukünftige Veranstaltungen
 title: Veranstaltungen
 ---
 {{< event datum="30.08" event="Kunstkomplex" ort="Theater K" stadt="Oldenburg" >}}
