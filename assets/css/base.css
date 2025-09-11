@@ -16,6 +16,9 @@
   main > * > a {
     @apply font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline hover:text-gray-800;
   }
+  p {
+    @apply text-justify;
+  }
 }
 
 
