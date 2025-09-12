@@ -10,6 +10,8 @@ single event block
 {{- $ort := or (.Get "ort") "" }}
 {{- $event := or (.Get "event") "" }}
 {{- $stadt := or (.Get "stadt") "" }}
+{{- $link := or (.Get "link") "" }}
+
 
 {{- $microphone := resources.Get "media/microphone-with-stand.svg" }}
 <div class="event flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-4 border-b border-gray-300 text-base sm:text-xl font-sans">
@@ -22,5 +24,10 @@ single event block
     <div class="w-full sm:w-40 text-gray-600">Location: {{ $ort }}</div>
     <div class="w-full sm:w-40 text-gray-500 italic">({{ $stadt }})</div>
   </div>
+  {{ if $link }}
+  <div>
+    <div class="w-full sm:w-40 text-gray-600"><a href="{{ $link }}">Zur Veranstaltung</a></div>
+  </div>
+  {{ end }}
 
 </div>
