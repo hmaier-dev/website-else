@@ -18,6 +18,8 @@ Egal, ob für Abendveranstaltungen, Events oder Hochzeiten:
 Sie schafft einen Rahmen, der gleichzeitig locker und professionell ist.
 Auch bei Gesprächsrunden oder Talks nimmt sie eine neutrale, aber spannende Rolle ein und sorgt für lebendige Diskussionsrunden.
 
+{{< moderation1 >}}
+
 ## Poetry Slam
 Wenn du Wortakrobatik liebst, bist du bei Elisa Adam genau richtig.
 Ihr einzigartiger Stil lässt sie auf Bühnen im ganzen Land glänzen – frech, lebendig und gesellschaftskritisch.
