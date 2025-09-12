@@ -26,7 +26,17 @@ single event block
   </div>
   {{ if $link }}
   <div>
-    <div class="w-full sm:w-40 text-gray-600"><a href="{{ $link }}">Zur Veranstaltung</a></div>
+    <div class="w-full sm:w-40 text-gray-600 relative overflow-hidden group">
+        <!-- Pink background that slides up -->
+        <div class="absolute inset-0 bg-pink-500 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
+        <!-- Your link -->
+        <a
+          href="{{ $link }}"
+          class="relative z-5 block transition-colors duration-300 hover:text-black py-1 px-2 max-sm:text-blue-600 max-sm:underline"
+        >
+          Zur Veranstaltung
+        </a>
+    </div>
   </div>
   {{ end }}
 
