@@ -1,0 +1,22 @@
+deps:
+  FROM golang:1.24
+  WORKDIR /src
+  COPY go.mod go.sum ./
+  RUN go mod download
+
+build:
+  FROM +deps
+  COPY *.go ./
+  RUN --mount=type=cache,id=go-build-cache,target=/root/.cache/go-build \
+      GOOS=linux go build -o formular-receiver main.go
+  SAVE ARTIFACT ./formular-receiver
+
+run:
+  FROM debian:bookworm
+  LABEL org.opencontainers.image.source = "https://github.com/hmaier-dev/website-else/formular"
+  ARG tag
+  WORKDIR /root
+  COPY +build/formular-receiver .
+  EXPOSE 8080
+  ENTRYPOINT ["./formular-receiver"]
+  SAVE IMAGE --push ghcr.io/hmaier-dev/website-else/formular:$tag
