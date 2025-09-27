@@ -60,12 +60,14 @@ func NewServer() *Server {
 }
 
 // Incoming POST request from the html formular
+// TODO: Implement rate limiting at traefik
 func (s *Server) HandlerContactRequest(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	email := r.FormValue("email")
 	message := r.FormValue("message")
 	approval := r.FormValue("approval")
 	log.Println(name, email, message, approval)
+	// TODO: Sanatizing and validating the input
 	ctx := context.Background()
 	if approval != "false" {
 		err := s.Mailbox.AddMessage(ctx, mailbox.AddMessageParams{
@@ -86,6 +88,10 @@ func (s *Server) HandlerContactRequest(w http.ResponseWriter, r *http.Request) {
 
 // Serving GET request to return all messages
 func (s *Server) HandlerAllMessages(w http.ResponseWriter, r *http.Request) {
+	 
+	// TODO: Implement basic auth
+	// u, p, ok := r.BasicAuth()
+
 	ctx := context.Background()
 	all, err := s.Mailbox.GetAllMessages(ctx)
 	if err != nil {
