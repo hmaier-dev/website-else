@@ -5,12 +5,34 @@
             max-sm:flex-row max-sm:justify-evenly 
             max-sm:items-center max-sm:text-base">
 
-    <ul class="flex flex-col items-center gap-4 max-sm:flex-row">
+    <ul class="flex flex-col md:items-start sm:items-center gap-4 max-sm:flex-row">
         {{ range site.Menus.main }}
             <li>
                 <a href="{{ .URL }}" 
-                   class="nav-link block text-center font-bold text-gray-700 hover:text-blue-600 hover:underline">
-                    {{ .Name }}
+                   class="flex items-center space-x-2 hover:text-blue-600 cursor-pointer nav-link text-center font-bold text-gray-700 hover:underline">
+                    <div class="flex row">
+                      {{ if eq .Name "home" }}
+                      <span>
+                        <!--You can put svg here-->
+                      </span>
+                      {{ end }}
+                      {{ if eq .Name "about-me" }}
+                      <span>
+                        <!--You can put svg here-->
+                      </span>
+                      {{ end }}
+                      {{ if eq .Name "workshops" }}
+                      <span>
+                        <!--You can put svg here-->
+                      </span>
+                      {{ end }}
+                      {{ if eq .Name "events" }}
+                      <span>
+                        <!--You can put svg here-->
+                      </span>
+                      {{ end }}
+                      <span>{{ .Name }}</span>
+                    </div>
                 </a>
             </li>
         {{ end }}
