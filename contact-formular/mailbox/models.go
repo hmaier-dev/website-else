@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.30.0
 
-package db
+package mailbox
 
 import (
 	"database/sql"
@@ -12,6 +12,7 @@ type Mailbox struct {
 	ID       int64
 	Name     string
 	Email    string
+	Message  string
 	Date     int64
 	Approval sql.NullInt64
 	Isread   sql.NullInt64

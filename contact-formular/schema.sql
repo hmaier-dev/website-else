@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS mailbox (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
+  message TEXT NOT NULL,
   date INT NOT NULL,
   approval INT DEFAULT 0,
   IsRead INT

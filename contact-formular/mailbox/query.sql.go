@@ -3,7 +3,7 @@
 //   sqlc v1.30.0
 // source: query.sql
 
-package db
+package mailbox
 
 import (
 	"context"
@@ -12,9 +12,9 @@ import (
 
 const addMessage = `-- name: AddMessage :exec
 INSERT INTO mailbox (
-  id, name, email, date, approval, IsRead
+  id, name, email, message, date, approval, IsRead
 ) VALUES (
-  ?, ?, ?, ?, ?, ?
+  ?, ?, ?, ?, ?, ?, ?
 )
 `
 
@@ -22,6 +22,7 @@ type AddMessageParams struct {
 	ID       int64
 	Name     string
 	Email    string
+	Message  string
 	Date     int64
 	Approval sql.NullInt64
 	Isread   sql.NullInt64
@@ -32,6 +33,7 @@ func (q *Queries) AddMessage(ctx context.Context, arg AddMessageParams) error {
 		arg.ID,
 		arg.Name,
 		arg.Email,
+		arg.Message,
 		arg.Date,
 		arg.Approval,
 		arg.Isread,
@@ -40,7 +42,7 @@ func (q *Queries) AddMessage(ctx context.Context, arg AddMessageParams) error {
 }
 
 const getAllMessages = `-- name: GetAllMessages :many
-SELECT id, name, email, date, approval, IsRead FROM mailbox ORDER BY date ASC
+SELECT id, name, email, message, date, approval, IsRead FROM mailbox ORDER BY date ASC
 `
 
 func (q *Queries) GetAllMessages(ctx context.Context) ([]Mailbox, error) {
@@ -56,6 +58,7 @@ func (q *Queries) GetAllMessages(ctx context.Context) ([]Mailbox, error) {
 			&i.ID,
 			&i.Name,
 			&i.Email,
+			&i.Message,
 			&i.Date,
 			&i.Approval,
 			&i.Isread,
@@ -74,7 +77,7 @@ func (q *Queries) GetAllMessages(ctx context.Context) ([]Mailbox, error) {
 }
 
 const getUnreadMessage = `-- name: GetUnreadMessage :many
-SELECT id, name, email, date, approval, IsRead FROM mailbox WHERE IsRead IS NULL ORDER BY date ASC
+SELECT id, name, email, message, date, approval, IsRead FROM mailbox WHERE IsRead IS NULL ORDER BY date ASC
 `
 
 func (q *Queries) GetUnreadMessage(ctx context.Context) ([]Mailbox, error) {
@@ -90,6 +93,7 @@ func (q *Queries) GetUnreadMessage(ctx context.Context) ([]Mailbox, error) {
 			&i.ID,
 			&i.Name,
 			&i.Email,
+			&i.Message,
 			&i.Date,
 			&i.Approval,
 			&i.Isread,
