@@ -13,7 +13,7 @@ type Server struct {
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
-  const port = "8080"
+  const port = "3000"
   host := fmt.Sprintf("0.0.0.0:%s", port)
   srv := NewServer()
 	log.Printf("Starting tool on %s \n", host)
@@ -25,10 +25,19 @@ func main() {
 
 func NewServer() *Server {
 	router := mux.NewRouter()
-  router.HandleFunc("/booking/request", HandlerBookingRequest).Methods("POST")
+  router.HandleFunc("/contact", HandlerContactRequest).Methods("POST")
+  router.HandleFunc("/mailbox", HandlerMailboxRequest).Methods("GET")
 	return &Server{Router: router}
 }
 
-func HandlerBookingRequest(w http.ResponseWriter, r *http.Request){
+func HandlerContactRequest(w http.ResponseWriter, r *http.Request){
+	name := r.FormValue("name")
+	email := r.FormValue("email")
+	message := r.FormValue("message")
+	approval := r.FormValue("approval")
+	log.Println(name, email, message, approval)
+}
+func HandlerMailboxRequest(w http.ResponseWriter, r *http.Request){
+	log.Println("Mailbox was requested :))")
 
 }
