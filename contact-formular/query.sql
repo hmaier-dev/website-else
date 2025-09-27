@@ -10,3 +10,4 @@ SELECT id, name, email, message, date, approval, IsRead FROM mailbox ORDER BY da
 
 -- name: GetUnreadMessage :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox WHERE IsRead IS NULL ORDER BY date ASC;
+
