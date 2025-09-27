@@ -1,24 +1,22 @@
 ---
 description: Elisa Adam, Kunstschaffende lädt zu diversen Möglichkeiten ein.
-title:
+title: Home
 ---
 
 <br>
 
 {{< jesus1 >}}
 
+
 Elisa Adam – [Einfach Else](https://www.instagram.com/einfach_else/) Willkommen auf meiner Website!
 Hier erwartet dich eine vielfältige Person, mit zahlreichen Interessen und Talenten.- Nimm dir die Zeit und stöbere ein bisschen.
 In Liebe Einfach Else
-
 
 ## Moderation
 Egal, ob für Abendveranstaltungen, Events oder Hochzeiten:
 **Einfach Else** sorgt mit ihrer authentischen Art für eine Atmosphäre, bei der sich jeder Mensch wohlfühlt.
 Sie schafft einen Rahmen, der gleichzeitig locker und professionell ist.
 Auch bei Gesprächsrunden oder Talks nimmt sie eine neutrale, aber spannende Rolle ein und sorgt für lebendige Diskussionsrunden.
-
-{{< moderation1 >}}
 
 ## Poetry Slam
 Wenn du Wortakrobatik liebst, bist du bei Elisa Adam genau richtig.
