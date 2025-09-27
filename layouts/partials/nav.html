@@ -1,37 +1,56 @@
-<nav class="bg-violet-300 fixed top-0 left-0 z-10
+<nav class="fixed top-0 left-0 z-10
             flex flex-col items-center 
-            h-full w-48 justify-center shadow-md text-2xl
+            h-full w-48 justify-center 
+            backdrop-blur-md bg-violet-300/70 shadow-lg 
+            text-lg font-medium text-gray-700
             max-sm:h-16 max-sm:w-full 
             max-sm:flex-row max-sm:justify-evenly 
-            max-sm:items-center max-sm:text-base">
+            max-sm:items-center max-sm:text-sm max-sm:px-2">
 
-    <ul class="flex flex-col md:items-start sm:items-center gap-4 max-sm:flex-row">
+    <ul class="flex flex-col md:items-start sm:items-center gap-3 
+               max-sm:flex-row max-sm:gap-1 max-sm:w-full max-sm:justify-evenly">
         {{ range site.Menus.main }}
-            <li>
+            <li class="max-sm:flex-1">
                 <a href="{{ .URL }}" 
-                   class="flex items-center space-x-2 hover:text-blue-600 cursor-pointer nav-link text-center font-bold text-gray-700 hover:underline">
-                    <div class="flex row">
+                   class="nav-link flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 ease-in-out hover:bg-violet-400/30 hover:text-violet-900 max-sm:px-2 max-sm:py-1 max-sm:justify-center">
+                    <div class="flex items-center gap-1 max-sm:flex-col max-sm:gap-0">
                       {{ if eq .Name "home" }}
                       <span>
-                        <!--You can put svg here-->
+                        <!-- Home SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 max-sm:w-4 max-sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 9.75L12 3l9 6.75V21a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 21V9.75z" />
+                        </svg>
                       </span>
                       {{ end }}
                       {{ if eq .Name "about-me" }}
                       <span>
-                        <!--You can put svg here-->
+                        <!-- User SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 max-sm:w-4 max-sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 12a5 5 0 100-10 5 5 0 000 10zm7 9a7 7 0 00-14 0h14z" />
+                        </svg>
                       </span>
                       {{ end }}
                       {{ if eq .Name "workshops" }}
                       <span>
-                        <!--You can put svg here-->
+                        <!-- Tools SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 max-sm:w-4 max-sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14.7 6.3a1 1 0 00-1.4 0l-8 8a1 1 0 000 1.4l3 3a1 1 0 001.4 0l8-8a1 1 0 000-1.4l-3-3z" />
+                        </svg>
                       </span>
                       {{ end }}
                       {{ if eq .Name "events" }}
                       <span>
-                        <!--You can put svg here-->
+                        <!-- Calendar SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 max-sm:w-4 max-sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10m-12 9h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z" />
+                        </svg>
                       </span>
                       {{ end }}
-                      <span>{{ .Name }}</span>
+                      <span class="capitalize max-sm:text-[0.75rem]">{{ .Name }}</span>
                     </div>
                 </a>
             </li>
@@ -45,14 +64,12 @@
     const links = document.querySelectorAll(".nav-link");
 
     links.forEach(link => {
-      // Normalize trailing slashes
       let linkPath = link.getAttribute("href");
       if (linkPath.endsWith("/")) linkPath = linkPath.slice(0, -1);
       let currentPath = currentUrl.endsWith("/") ? currentUrl.slice(0, -1) : currentUrl;
 
       if (linkPath === currentPath) {
-        link.classList.add("text-blue-600", "underline");
-        link.classList.remove("text-gray-700");
+        link.classList.add("bg-violet-500/40", "text-violet-900");
       }
     });
   });
