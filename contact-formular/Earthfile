@@ -13,10 +13,10 @@ build:
 
 run:
   FROM debian:bookworm
-  LABEL org.opencontainers.image.source = "https://github.com/hmaier-dev/website-else/formular"
+  LABEL org.opencontainers.image.source = 'https://github.com/hmaier-dev/website-else/contact-formular'
   ARG tag
   WORKDIR /root
   COPY +build/formular-receiver .
   EXPOSE 8080
   ENTRYPOINT ["./formular-receiver"]
-  SAVE IMAGE --push ghcr.io/hmaier-dev/website-else/formular:$tag
+  SAVE IMAGE --push ghcr.io/hmaier-dev/website-else/contact-formular:$tag
