@@ -16,8 +16,8 @@ Du wolltest schon immer mal deine Gedanken aufschreiben oder schreibst bereits k
 Dann bist du bei meinen Schreibworkshop genau richtig! - Ich biete die Schreibworkshops für Einzelpersonen oder Gruppen an.
 Gerne möchte ich gemeinsam mit dir Texte erarbeiten, Themen finden und Gedichte oder Poetry Slams schreiben.
 Egal, ob Anfänger:in oder begabtes Wunderkind – schreib mir gerne! 
-Falls du Wünsche hast, die beim Schreibworkshop bearbeitet werden sollen, schreib mir gerne an:
-elisa.adam@ymail.com
-
 
 {{< instagram url="https://www.instagram.com/einfach_else/">}}
+
+{{< contact-formular >}}
+

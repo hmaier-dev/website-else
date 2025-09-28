@@ -37,14 +37,18 @@ Hast du eine Anfrage? Dann melde dich gerne per E-Mail.
 Trotz allem, was sie noch tut, ist Einfach Else auch als Organisatorin von Events in und um Leipzig aktiv.
 Ob Hip-Hop-Konzerte, Soli-Veranstaltungen oder farbenfrohe Bühnenprogramme – sie weiß, wie man die richtigen Menschen zusammenbringt und unvergessliche Events kreiert.
 
-
 </br>
 </br>
-
 
 {{< zettel-in-hand >}}
 
 </br>
 </br>
 
+Erreichen kannst du mich entweder über [instagram](https://www.instagram.com/einfach_else/) oder das folgende Kontakt-Formular:
+
 {{< instagram url="https://www.instagram.com/einfach_else/">}}
+
+{{< contact-formular >}}
+
+
