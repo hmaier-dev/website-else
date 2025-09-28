@@ -4,9 +4,14 @@ displays a contact forumlar
 {{< contact-formular >}}
 
 */}}
+<!--This is very dirty and needs to be changed!-->
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"></script>
 
 <section id="contact" class="my-4">
-  <form action="/mailbox/contact" method="POST"
+  <form hx-post="/mailbox/contact"
+        hx-trigger="submit"
+        hx-swap="none"
+        hx-on-htmx-after-request="this.reset()"
         class="max-w-xl mx-auto bg-white/60 backdrop-blur-md 
                p-6 rounded-2xl shadow-md flex flex-col gap-4">
 
