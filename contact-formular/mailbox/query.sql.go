@@ -12,14 +12,13 @@ import (
 
 const addMessage = `-- name: AddMessage :exec
 INSERT INTO mailbox (
-  id, name, email, message, date, approval, IsRead
+  name, email, message, date, approval, IsRead
 ) VALUES (
-  ?, ?, ?, ?, ?, ?, ?
+  ?, ?, ?, ?, ?, ?
 )
 `
 
 type AddMessageParams struct {
-	ID       int64
 	Name     string
 	Email    string
 	Message  string
@@ -30,7 +29,6 @@ type AddMessageParams struct {
 
 func (q *Queries) AddMessage(ctx context.Context, arg AddMessageParams) error {
 	_, err := q.db.ExecContext(ctx, addMessage,
-		arg.ID,
 		arg.Name,
 		arg.Email,
 		arg.Message,

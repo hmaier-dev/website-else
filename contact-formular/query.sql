@@ -1,8 +1,8 @@
 -- name: AddMessage :exec
 INSERT INTO mailbox (
-  id, name, email, message, date, approval, IsRead
+  name, email, message, date, approval, IsRead
 ) VALUES (
-  ?, ?, ?, ?, ?, ?, ?
+  ?, ?, ?, ?, ?, ?
 );
 
 -- name: GetAllMessages :many
