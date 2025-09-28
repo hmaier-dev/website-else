@@ -1,22 +1,25 @@
+VERSION 0.8
 deps:
-  FROM golang:1.24
+  FROM golang:1.25.1
   WORKDIR /src
   COPY go.mod go.sum ./
   RUN go mod download
 
 build:
   FROM +deps
-  COPY *.go ./
+  ## schema.sql is gonna be embedded
+  COPY *.go schema.sql ./
+  COPY --dir mailbox ./
   RUN --mount=type=cache,id=go-build-cache,target=/root/.cache/go-build \
-      GOOS=linux go build -o formular-receiver main.go
-  SAVE ARTIFACT ./formular-receiver
+      GOOS=linux go build -o contact-formular main.go
+  SAVE ARTIFACT ./contact-formular
 
 run:
   FROM debian:bookworm
   LABEL org.opencontainers.image.source = 'https://github.com/hmaier-dev/website-else/contact-formular'
   ARG tag
   WORKDIR /root
-  COPY +build/formular-receiver .
-  EXPOSE 8080
-  ENTRYPOINT ["./formular-receiver"]
+  COPY +build/contact-formular .
+  EXPOSE 3000
+  ENTRYPOINT ["./contact-formular"]
   SAVE IMAGE --push ghcr.io/hmaier-dev/website-else/contact-formular:$tag
