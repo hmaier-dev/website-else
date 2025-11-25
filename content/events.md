@@ -5,6 +5,11 @@ title: Veranstaltungen
 
 ## 2026
 {{< event datum="30.01.2026" event="Einfach Elses Late Night Show" ort="Atomino" stadt="Chemnitz" link="" >}}
+
+
+{{< event datum="15.01.2026" event="Westslam" ort="Neues Schauspielhaus" stadt="Leipzig" link="https://rausgegangen.de/en/events/westslam-17/" >}}
+{{< event datum="20.01.2026" event="7:77" ort="Neues Schauspielhaus" stadt="Leipzig" link="https://openstage777.com/termine/" >}}
+
 {{< event datum="04.02.2026" event="Poetry and HipHop" ort="Moritzbastei" stadt="Leipzig" link="" >}}
 {{< event datum="11.02.2026" event="Einfach Elses Late Night Show" ort="Moritzbastei" stadt="Leipzig" link="https://www.tixforgigs.com/de-de/Event/68817" >}}
 {{< event datum="08.04.2026" event="Queer Slam" ort="tba" stadt="Bochum" link="" >}}
