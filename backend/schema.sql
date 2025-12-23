@@ -7,3 +7,20 @@ CREATE TABLE IF NOT EXISTS mailbox (
   approval INT DEFAULT 0,
   IsRead INT
 );
+
+
+CREATE TABLE IF NOT EXISTS events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  date DATE NOT NULL,
+  doors DATETIME DEFAULT (
+    CAST(date AS DATETIME)
+  ),
+  begin DATETIME DEFAULT (
+    CAST(date AS DATETIME)
+  ),
+  place TEXT NOT NULL,
+  city TEXT NOT NULL,
+  link TEXT DEFAULT '',
+  pic BLOB
+);
