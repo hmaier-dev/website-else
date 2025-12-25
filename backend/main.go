@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/hmaier-dev/website-else/contact-formular/mailbox"
+	"codeberg.org/schnelles_geraet/website-else/backend/db"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	// For future me:
@@ -25,7 +25,7 @@ var ddl string
 
 type Server struct {
 	Router  *mux.Router
-	Mailbox *mailbox.Queries
+	Database *db.Queries
 	API 		*API
 }
 
@@ -48,11 +48,11 @@ func main() {
 
 func NewServer() *Server {
 	ctx := context.Background()
-	db, err := sql.Open("sqlite3", "./sqlite.db")
+	sqlite, err := sql.Open("sqlite3", "./sqlite.db")
 	if err != nil {
 		log.Fatal(err)
 	}
-	if _, err := db.ExecContext(ctx, ddl); err != nil {
+	if _, err := sqlite.ExecContext(ctx, ddl); err != nil {
 		log.Fatal(err)
 	}
 
@@ -60,7 +60,7 @@ func NewServer() *Server {
 	p := os.Getenv("API_PASSWORD")
 	s := &Server{
 		Router:  mux.NewRouter(),
-		Mailbox: mailbox.New(db),
+		Database: db.New(sqlite),
 		API: &API{Username: u, Password: p,},
 	}
 	mailbox := s.Router.PathPrefix("/mailbox").Subrouter()
@@ -95,7 +95,7 @@ func (s *Server) HandlerContactRequest(w http.ResponseWriter, r *http.Request) {
 	// TODO: Sanatizing and validating the input
 	ctx := context.Background()
 	if approval == "on" {
-		err := s.Mailbox.AddMessage(ctx, mailbox.AddMessageParams{
+		err := s.Database.AddMessageToMailbox(ctx, db.AddMessageToMailboxParams{
 			Name:     name,
 			Email:    email,
 			Message:  message,
@@ -129,7 +129,7 @@ func (s *Server) HandlerAllMessages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-	all, err := s.Mailbox.GetAllMessages(ctx)
+	all, err := s.Database.GetCompleteMailbox(ctx)
 	if err != nil {
 		http.Error(w, "Something wen't wrong querying all messages...", http.StatusInternalServerError)
 	}
@@ -147,7 +147,7 @@ func (s *Server) HandlerAllMessages(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) HandlerUnreadMessages(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	unread, err := s.Mailbox.GetUnreadMessage(ctx)
+	unread, err := s.Database.GetUnreadMailboxItems(ctx)
 
 	// Refactor this into one function
 	// Here is how to do it

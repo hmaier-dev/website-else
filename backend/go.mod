@@ -1,4 +1,4 @@
-module github.com/hmaier-dev/website-else/contact-formular
+module codeberg.org/schnelles_geraet/website-else/backend
 
 go 1.25.1
 

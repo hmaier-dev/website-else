@@ -3,14 +3,14 @@
 //   sqlc v1.30.0
 // source: query.sql
 
-package mailbox
+package db
 
 import (
 	"context"
 	"database/sql"
 )
 
-const addMessage = `-- name: AddMessage :exec
+const addMessageToMailbox = `-- name: AddMessageToMailbox :exec
 INSERT INTO mailbox (
   name, email, message, date, approval, IsRead
 ) VALUES (
@@ -18,7 +18,7 @@ INSERT INTO mailbox (
 )
 `
 
-type AddMessageParams struct {
+type AddMessageToMailboxParams struct {
 	Name     string
 	Email    string
 	Message  string
@@ -27,8 +27,8 @@ type AddMessageParams struct {
 	Isread   sql.NullInt64
 }
 
-func (q *Queries) AddMessage(ctx context.Context, arg AddMessageParams) error {
-	_, err := q.db.ExecContext(ctx, addMessage,
+func (q *Queries) AddMessageToMailbox(ctx context.Context, arg AddMessageToMailboxParams) error {
+	_, err := q.db.ExecContext(ctx, addMessageToMailbox,
 		arg.Name,
 		arg.Email,
 		arg.Message,
@@ -39,12 +39,12 @@ func (q *Queries) AddMessage(ctx context.Context, arg AddMessageParams) error {
 	return err
 }
 
-const getAllMessages = `-- name: GetAllMessages :many
+const getCompleteMailbox = `-- name: GetCompleteMailbox :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox ORDER BY date ASC
 `
 
-func (q *Queries) GetAllMessages(ctx context.Context) ([]Mailbox, error) {
-	rows, err := q.db.QueryContext(ctx, getAllMessages)
+func (q *Queries) GetCompleteMailbox(ctx context.Context) ([]Mailbox, error) {
+	rows, err := q.db.QueryContext(ctx, getCompleteMailbox)
 	if err != nil {
 		return nil, err
 	}
@@ -74,12 +74,12 @@ func (q *Queries) GetAllMessages(ctx context.Context) ([]Mailbox, error) {
 	return items, nil
 }
 
-const getUnreadMessage = `-- name: GetUnreadMessage :many
+const getUnreadMailboxItems = `-- name: GetUnreadMailboxItems :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox WHERE IsRead IS NULL ORDER BY date ASC
 `
 
-func (q *Queries) GetUnreadMessage(ctx context.Context) ([]Mailbox, error) {
-	rows, err := q.db.QueryContext(ctx, getUnreadMessage)
+func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]Mailbox, error) {
+	rows, err := q.db.QueryContext(ctx, getUnreadMailboxItems)
 	if err != nil {
 		return nil, err
 	}

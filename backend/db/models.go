@@ -2,11 +2,24 @@
 // versions:
 //   sqlc v1.30.0
 
-package mailbox
+package db
 
 import (
 	"database/sql"
+	"time"
 )
+
+type Event struct {
+	ID    int64
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+	Pic   []byte
+}
 
 type Mailbox struct {
 	ID       int64
