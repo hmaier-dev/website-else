@@ -16,10 +16,10 @@ build:
 
 run:
   FROM nginx:1.27.4
-  LABEL org.opencontainers.image.source='https://github.com/hmaier-dev/website-else'
+  LABEL org.opencontainers.image.source='https://codeberg.org/schnelles_geraet/website-else'
   COPY +build/public /usr/share/nginx/html
   EXPOSE 8080
-  SAVE IMAGE --push ghcr.io/hmaier-dev/website-else
+  SAVE IMAGE --push hmaierdev/website-else
 
 setup-ssh:
   FROM debian:bullseye
@@ -32,5 +32,5 @@ setup-ssh:
 deploy:
   BUILD +run
   FROM +setup-ssh
-  RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "docker pull ghcr.io/hmaier-dev/website-else:latest"
+  RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "docker pull hmaierdev/website-else:latest"
   RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "cd $dir; docker compose down website; docker compose up -d website"
