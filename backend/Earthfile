@@ -11,15 +11,15 @@ build:
   COPY *.go schema.sql ./
   COPY --dir mailbox ./
   RUN --mount=type=cache,id=go-build-cache,target=/root/.cache/go-build \
-      GOOS=linux go build -o contact-formular main.go
-  SAVE ARTIFACT ./contact-formular
+      GOOS=linux go build -o backend main.go
+  SAVE ARTIFACT ./backend
 
 run:
   FROM debian:bookworm
-  LABEL org.opencontainers.image.source = 'https://github.com/hmaier-dev/website-else/contact-formular'
+  LABEL org.opencontainers.image.source = 'https://codeberg.org/schnelles_geraet/website-else/src/branch/main/backend'
   ARG tag
   WORKDIR /root
-  COPY +build/contact-formular .
+  COPY +build/backend .
   EXPOSE 3000
-  ENTRYPOINT ["./contact-formular"]
-  SAVE IMAGE --push ghcr.io/hmaier-dev/website-else/contact-formular:$tag
+  ENTRYPOINT ["./backend"]
+  SAVE IMAGE --push hmaierdev/website-else-backend:$tag
