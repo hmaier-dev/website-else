@@ -8,12 +8,12 @@ services:
       - "--configFile=/etc/traefik/traefik.yml"
     ports:
       - "80:80"
-      - "443:443"
     labels:
       - "traefik.enable=true"
     volumes:
       - "./traefik.yml:/etc/traefik/traefik.yml:ro"
-      - "./conf:/etc/traefik/conf:ro"
+      ## There are no dynamic rules in this example
+      # - "./conf:/etc/traefik/conf:ro"
       ## Mount the docker-socker for label-based configuration
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       ## Certificates
@@ -21,26 +21,29 @@ services:
     networks:
       - traefik-net
   website:
-    image: "hmaierdev/website-else"
+    ## You need to build a version with 
+    ## baseURL = "http://localhost/"
+    ## earthly +run --tag="local"
+    image: "hmaierdev/website-else:local"
     container_name: "website"
     restart: unless-stopped
     depends_on:
       - traefik
       - backend
     environment:
-      - NGINX_HOST=www.elisa-adam.com
+      - NGINX_HOST=localhost
       - NGINX_PORT=80
     networks:
       - traefik-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.website.rule=Host(`elisa-adam.com`) && PathPrefix(`/`)"
+      - "traefik.http.routers.website.rule=Host(`localhost`) && PathPrefix(`/`)"
       - "traefik.http.routers.website.entrypoints=web"
       # - "traefik.http.routers.website.entrypoints=websecure"
       # - "traefik.http.routers.website.tls=true"
       - "traefik.http.routers.website.priority=15"
   backend:
-    image: "hmaierdev/website-else-backend"
+    image: "hmaierdev/website-else-backend:v2"
     container_name: "backend"
     restart: "unless-stopped"
     depends_on:
@@ -49,20 +52,20 @@ services:
       - API_USERNAME=highlyVerifiedUserToAdministrate
       - API_PASSWORD=supersecretkey
     volumes:
-      ## This needs be called sqlite.db, its hardcoded...
-      - "./sqlite.db:/root/sqlite.db"
+      ## This needs be called sqlite.db, its hardcoded
+      - ./sqlite.db:/root/sqlite.db
       - "/etc/localtime:/etc/localtime:ro"
     networks:
       - traefik-net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.contact.priority=30"
-      - "traefik.http.routers.contact.rule=Host(`elisa-adam.com`) && PathPrefix(`/mailbox`)"
+      - "traefik.http.routers.contact.rule=Host(`localhost`) && PathPrefix(`/mailbox`)"
       - "traefik.http.routers.contact.entrypoints=web"
       # - "traefik.http.routers.contact.entrypoints=websecure"
       # - "traefik.http.routers.contact.tls=true"
       - "traefik.http.routers.event-manage.priority=31"
-      - "traefik.http.routers.event-manage.rule=Host(`elisa-adam.com`) && PathPrefix(`/events/manage`)"
+      - "traefik.http.routers.event-manage.rule=Host(`localhost`) && PathPrefix(`/events/manage`)"
       - "traefik.http.routers.event-manage.entrypoints=web"
       # - "traefik.http.routers.event-manage.entrypoints=websecure"
       # - "traefik.http.routers.event-manage.tls=true"

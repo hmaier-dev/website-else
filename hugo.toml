@@ -1,5 +1,5 @@
-baseURL = "https://elisa-adam.com/"
-# baseURL = "http://localhost:1313/"
+# baseURL = "https://elisa-adam.com/"
+baseURL = "http://localhost/"
 languageCode = "de-de"
 title = "elisa-adam"
 disablePathToLower = true

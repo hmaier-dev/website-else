@@ -16,10 +16,11 @@ build:
 
 run:
   FROM nginx:1.27.4
+  ARG tag
   LABEL org.opencontainers.image.source='https://codeberg.org/schnelles_geraet/website-else'
   COPY +build/public /usr/share/nginx/html
   EXPOSE 8080
-  SAVE IMAGE --push hmaierdev/website-else
+  SAVE IMAGE --push hmaierdev/website-else:$tag
 
 setup-ssh:
   FROM debian:bullseye
