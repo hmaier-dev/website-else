@@ -64,11 +64,11 @@ services:
       - "traefik.http.routers.contact.entrypoints=web"
       # - "traefik.http.routers.contact.entrypoints=websecure"
       # - "traefik.http.routers.contact.tls=true"
-      - "traefik.http.routers.event-manage.priority=31"
-      - "traefik.http.routers.event-manage.rule=Host(`localhost`) && PathPrefix(`/events/manage`)"
-      - "traefik.http.routers.event-manage.entrypoints=web"
-      # - "traefik.http.routers.event-manage.entrypoints=websecure"
-      # - "traefik.http.routers.event-manage.tls=true"
+      - "traefik.http.routers.events-manage.priority=31"
+      - "traefik.http.routers.events-manage.rule=Host(`localhost`) && PathPrefix(`/events/manage`)"
+      - "traefik.http.routers.events-manage.entrypoints=web"
+      # - "traefik.http.routers.events-manage.entrypoints=websecure"
+      # - "traefik.http.routers.events-manage.tls=true"
 
 networks:
   traefik-net:
