@@ -93,15 +93,57 @@ switch sortBy{
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	return
+	q := db.New(h.DB)
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+		return
+	}
+
+	// Extract form values
+	datum := r.FormValue("datum")
+	event := r.FormValue("event")
+	ort := r.FormValue("ort")
+	stadt := r.FormValue("stadt")
+	link := r.FormValue("link")
+
+	// Parse the date
+	date, err := time.Parse("2006-01-02", datum)
+	if err != nil {
+		http.Error(w, "Invalid date format", http.StatusBadRequest)
+		return
+	}
+	doorsTime := sql.NullTime{Time: date, Valid: true}
+	beginTime := sql.NullTime{Time: date, Valid: true}
+	linkString := sql.NullString{String: link, Valid: link != ""}
+
+	err = q.AddSingleEvent(ctx, db.AddSingleEventParams{
+		Name:  event,
+		Date:  date,
+		Doors: doorsTime,
+		Begin: beginTime,
+		Place: ort,
+		City:  stadt,
+		Link:  linkString,
+		Pic:   nil, // Assuming no picture is uploaded
+	})
+	if err != nil {
+		log.Printf("Failed to add event: %v", err)
+		http.Error(w, "Failed to add event", http.StatusInternalServerError)
+		return
+	}
+	// Return a success response
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte("Event added successfully"))
 }
 
 func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	// ctx := r.Context()
 	return
 }
 
 func (h *Handler) RemoveEvent(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	// ctx := r.Context()
 	return
 }
