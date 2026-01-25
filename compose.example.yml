@@ -37,11 +37,11 @@ services:
       - traefik-net
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.website.priority=10"
       - "traefik.http.routers.website.rule=Host(`localhost`) && PathPrefix(`/`)"
       - "traefik.http.routers.website.entrypoints=web"
       # - "traefik.http.routers.website.entrypoints=websecure"
       # - "traefik.http.routers.website.tls=true"
-      - "traefik.http.routers.website.priority=10"
   backend:
     image: "hmaierdev/website-else-backend:v2"
     container_name: "backend"
@@ -59,13 +59,13 @@ services:
       - traefik-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.contact.priority=30"
+      - "traefik.http.routers.contact.priority=15"
       - "traefik.http.routers.contact.rule=Host(`localhost`) && PathPrefix(`/mailbox`)"
       - "traefik.http.routers.contact.entrypoints=web"
       # - "traefik.http.routers.contact.entrypoints=websecure"
       # - "traefik.http.routers.contact.tls=true"
-      - "traefik.http.routers.events-manage.priority=31"
-      - "traefik.http.routers.events-manage.rule=Host(`localhost`) && PathPrefix(`/events/manage/*`)"
+      - "traefik.http.routers.events-manage.priority=20"
+      - "traefik.http.routers.events-manage.rule=Host(`localhost`) && PathPrefix(`/events/manage/`)"
       - "traefik.http.routers.events-manage.entrypoints=web"
       # - "traefik.http.routers.events-manage.entrypoints=websecure"
       # - "traefik.http.routers.events-manage.tls=true"

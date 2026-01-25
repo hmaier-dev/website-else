@@ -49,10 +49,13 @@ func New(sqlite *sql.DB) *Server {
 	e := &events.Handler{
 		DB: sqlite,
 	}
-	er := s.Router.PathPrefix("/events/manage").Subrouter()
+	er := s.Router.PathPrefix("/events/").Subrouter()
 	er.HandleFunc("/load", e.Load).Methods("GET")
-	er.HandleFunc("/create", e.Create).Methods("POST")
-	er.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
+
+	emr := er.PathPrefix("/manage").Subrouter()
+	emr.HandleFunc("/create", e.Create).Methods("POST")
+	emr.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
+
 
 	// logs all routes when starting after they go defined
 	s.Router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {

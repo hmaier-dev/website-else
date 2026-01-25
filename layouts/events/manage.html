@@ -20,12 +20,12 @@
       <div class="flex flex-col md:flex-row gap-6">
 
         <div class="flex-1" id="events-container" 
-          hx-get="http://localhost:3000/events/manage/load" 
+          hx-get="http://localhost/events/load" 
           hx-trigger="load" 
           hx-swap="innerHTML">
         </div>
 
-        <form class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md" id="events-formular" hx-post="/events/create" hx-swap="none">
+        <form class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md" id="events-formular" hx-post="/events/manage/create" hx-swap="none">
           <!-- Datum -->
           <div class="mb-4">
             <label for="datum" class="block text-sm font-medium text-gray-700 mb-1">Datum</label>

@@ -3,7 +3,7 @@ global:
   sendAnonymousUsage: false
 
 log:
-  level: debug
+  level: warn
 
 api:
   insecure: false
@@ -14,9 +14,9 @@ entryPoints:
     address: ":80"
 
 providers:
-  file:
-    directory: "/etc/traefik/conf"
-    watch: true
+  # file:
+  #   directory: "/etc/traefik/conf"
+  #   watch: true
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
