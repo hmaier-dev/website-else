@@ -1,7 +1,7 @@
 VERSION 0.8
 
 build:
-  FROM hmaierdev/hugo-plus-tailwind
+  FROM hmaierdev/hugo-plus-tailwind:v2
 
   # Hugo cannot work in root (/)
   WORKDIR tmp
