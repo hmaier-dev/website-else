@@ -1,4 +1,11 @@
 {{ define "main" }}
+
+<!--This is very dirty and needs to be changed!-->
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"></script>
+  <script>
+  htmx.logAll();
+  </script>
+
   <main class="min-h-[calc(100vh-3rem)] 
     /*keep distance to the nav on small screens*/
     max-sm:mt-16 
@@ -10,7 +17,13 @@
       {{ .Content }}
 
       <div class="flex flex-col md:flex-row gap-6">
-        <div class="flex-1" id="events-container" hx-get="/events/load" hx-trigger="load" hx-swap="innerHTML"></div>
+
+        <div class="flex-1" id="events-container" 
+          hx-get="http://localhost:3000/events/manage/load" 
+          hx-trigger="load" 
+          hx-swap="innerHTML">
+        </div>
+
         <form class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md" id="events-formular" hx-post="/events/create" hx-swap="none">
           <!-- Datum -->
           <div class="mb-4">
