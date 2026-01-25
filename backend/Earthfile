@@ -9,7 +9,7 @@ build:
   FROM +deps
   ## schema.sql is gonna be embedded
   COPY *.go schema.sql ./
-  COPY --dir mailbox ./
+  COPY --dir internal ./
   RUN --mount=type=cache,id=go-build-cache,target=/root/.cache/go-build \
       GOOS=linux go build -o backend main.go
   SAVE ARTIFACT ./backend
