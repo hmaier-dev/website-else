@@ -8,9 +8,11 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 )
 
 const addMessageToMailbox = `-- name: AddMessageToMailbox :exec
+
 INSERT INTO mailbox (
   name, email, message, date, approval, IsRead
 ) VALUES (
@@ -27,6 +29,9 @@ type AddMessageToMailboxParams struct {
 	Isread   sql.NullInt64
 }
 
+// ################################################################
+// SECTION for mailbox
+// ################################################################
 func (q *Queries) AddMessageToMailbox(ctx context.Context, arg AddMessageToMailboxParams) error {
 	_, err := q.db.ExecContext(ctx, addMessageToMailbox,
 		arg.Name,
@@ -35,6 +40,43 @@ func (q *Queries) AddMessageToMailbox(ctx context.Context, arg AddMessageToMailb
 		arg.Date,
 		arg.Approval,
 		arg.Isread,
+	)
+	return err
+}
+
+const addSingleEvent = `-- name: AddSingleEvent :exec
+
+INSERT INTO events (
+  name, date, doors, begin, place, city, link, pic
+) VALUES (
+  ?, ?, ?, ?, ?, ?, ?, ?
+)
+`
+
+type AddSingleEventParams struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+	Pic   []byte
+}
+
+// ################################################################
+// SECTION for events
+// ################################################################
+func (q *Queries) AddSingleEvent(ctx context.Context, arg AddSingleEventParams) error {
+	_, err := q.db.ExecContext(ctx, addSingleEvent,
+		arg.Name,
+		arg.Date,
+		arg.Doors,
+		arg.Begin,
+		arg.Place,
+		arg.City,
+		arg.Link,
+		arg.Pic,
 	)
 	return err
 }
@@ -95,6 +137,117 @@ func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]Mailbox, error) 
 			&i.Date,
 			&i.Approval,
 			&i.Isread,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const loadEventsAsc = `-- name: LoadEventsAsc :many
+SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY ASC
+`
+
+func (q *Queries) LoadEventsAsc(ctx context.Context) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, loadEventsAsc)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Event
+	for rows.Next() {
+		var i Event
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Date,
+			&i.Doors,
+			&i.Begin,
+			&i.Place,
+			&i.City,
+			&i.Link,
+			&i.Pic,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const loadEventsDesc = `-- name: LoadEventsDesc :many
+SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY DESC
+`
+
+func (q *Queries) LoadEventsDesc(ctx context.Context) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, loadEventsDesc)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Event
+	for rows.Next() {
+		var i Event
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Date,
+			&i.Doors,
+			&i.Begin,
+			&i.Place,
+			&i.City,
+			&i.Link,
+			&i.Pic,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const loadEventsRandom = `-- name: LoadEventsRandom :many
+SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY RANDOM()
+`
+
+func (q *Queries) LoadEventsRandom(ctx context.Context) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, loadEventsRandom)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Event
+	for rows.Next() {
+		var i Event
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Date,
+			&i.Doors,
+			&i.Begin,
+			&i.Place,
+			&i.City,
+			&i.Link,
+			&i.Pic,
 		); err != nil {
 			return nil, err
 		}
