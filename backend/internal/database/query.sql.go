@@ -152,7 +152,7 @@ func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]Mailbox, error) 
 }
 
 const loadEventsAsc = `-- name: LoadEventsAsc :many
-SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY ASC
+SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY date ASC
 `
 
 func (q *Queries) LoadEventsAsc(ctx context.Context) ([]Event, error) {
@@ -189,7 +189,7 @@ func (q *Queries) LoadEventsAsc(ctx context.Context) ([]Event, error) {
 }
 
 const loadEventsDesc = `-- name: LoadEventsDesc :many
-SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY DESC
+SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY date DESC
 `
 
 func (q *Queries) LoadEventsDesc(ctx context.Context) ([]Event, error) {

@@ -28,8 +28,8 @@ INSERT INTO events (
 );
 
 -- name: LoadEventsDesc :many
-SELECT * FROM events ORDER BY DESC;
+SELECT * FROM events ORDER BY date DESC;
 -- name: LoadEventsAsc :many
-SELECT * FROM events ORDER BY ASC;
+SELECT * FROM events ORDER BY date ASC;
 -- name: LoadEventsRandom :many
 SELECT * FROM events ORDER BY RANDOM();
