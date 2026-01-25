@@ -8,9 +8,11 @@ build:
   COPY --dir content static assets layouts ./
   COPY hugo.toml hugo.toml
   COPY tailwind.config.js tailwind.config.js
-
+  RUN find ./content
+  RUN find ./layouts
   RUN hugo
   RUN ls -la public
+  RUN find ./public
   # SAVE ARTIFACT ./public AS LOCAL ./public
   SAVE ARTIFACT ./public 
 
