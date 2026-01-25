@@ -1,6 +1,8 @@
 ---
 description: Vergangene und zukünftige Veranstaltungen
 title: Veranstaltungen
+## This is very important!!!
+type: section
 ---
 
 ## 2026

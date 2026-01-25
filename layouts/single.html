@@ -1,3 +1,4 @@
+
 {{ define "main" }}
   <main class="min-h-[calc(100vh-3rem)] 
     /*keep distance to the nav on small screens*/
@@ -6,6 +7,13 @@
     sm:ml-48">
     <!---Keep all screen in mind and just do small steps---->
     <div class="max-sm:mx-5 sm:mx-10 md:mx-20 lg:mx-30 xl:mx-40 2xl:mx-50">
+            <pre>
+      Kind: {{ .Kind }}
+      Type: {{ .Type }}
+      Section: {{ .Section }}
+      Layout: {{ .Layout }}
+      </pre>
+
       {{ .Content }}
     </div>
     {{ partial "footer.html" }}
