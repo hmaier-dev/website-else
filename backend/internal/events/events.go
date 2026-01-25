@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"html/template"
+	"time"
 
 	db "codeberg.org/schnelles_geraet/website-else/backend/internal/database"
 )
@@ -21,11 +22,16 @@ type Handler struct{
 // TODO: set ?highlight={true|false} to highlight the nearest future event.
 // TODO: set ?raw={true|false} when set to true, events are returned as csv (maybe I could return this as vcard, so the people can import it directly into their calendar....)
 func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
+	log.Println("events were requested...")
 	ctx := r.Context()
 	query := r.URL.Query()
 	sortQ := query.Get("sort")
 	headQ := query.Get("head")
-	highlightQ := query.Get("highlight")
+	// highlightQ := query.Get("highlight")
+
+	// if highlightQ == "true" {
+	// 	highlight = true
+	// }
 
 	q := db.New(h.DB)
 	// Default values
@@ -35,8 +41,8 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 		log.Println("Could count events...")
 	}
 	sortBy := "desc" // default sort order
-	highlight := false
-	raw := false
+	// highlight := false
+	// raw := false
 
 	if sortQ == "asc" || sortQ == "random" {
 		sortBy = sortQ
@@ -54,12 +60,12 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 		head = defaultHead	
 	}
 
-	var events = make([]db.Event, head)
-	switch sortBy{
-		case "asc":
-			events, err = q.LoadEventsAsc(ctx, head)
-			if err != nil{
-				log.Println("help help help")
+var events = make([]db.Event, head)
+switch sortBy{
+	case "asc":
+		events, err = q.LoadEventsAsc(ctx, head)
+		if err != nil{
+			log.Println("help help help")
 			}
 		case "desc":
 			events, err = q.LoadEventsDesc(ctx, head)
@@ -73,11 +79,8 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 			}
 	}
 
-	if highlightQ == "true" {
-		highlight = true
-	}
 
-	tmpl, err := template.ParseFiles("./templates/events-list.html")
+	tmpl, err := template.ParseFiles("internal/events/templates/events-list.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
