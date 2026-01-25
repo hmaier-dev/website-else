@@ -81,6 +81,17 @@ func (q *Queries) AddSingleEvent(ctx context.Context, arg AddSingleEventParams) 
 	return err
 }
 
+const countEvents = `-- name: CountEvents :one
+SELECT count(*) FROM events
+`
+
+func (q *Queries) CountEvents(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countEvents)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getCompleteMailbox = `-- name: GetCompleteMailbox :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox ORDER BY date ASC
 `
@@ -152,11 +163,11 @@ func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]Mailbox, error) 
 }
 
 const loadEventsAsc = `-- name: LoadEventsAsc :many
-SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY date ASC
+SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY date ASC LIMIT ?
 `
 
-func (q *Queries) LoadEventsAsc(ctx context.Context) ([]Event, error) {
-	rows, err := q.db.QueryContext(ctx, loadEventsAsc)
+func (q *Queries) LoadEventsAsc(ctx context.Context, limit int64) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, loadEventsAsc, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -189,11 +200,11 @@ func (q *Queries) LoadEventsAsc(ctx context.Context) ([]Event, error) {
 }
 
 const loadEventsDesc = `-- name: LoadEventsDesc :many
-SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY date DESC
+SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY date DESC LIMIT ?
 `
 
-func (q *Queries) LoadEventsDesc(ctx context.Context) ([]Event, error) {
-	rows, err := q.db.QueryContext(ctx, loadEventsDesc)
+func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, loadEventsDesc, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -226,11 +237,11 @@ func (q *Queries) LoadEventsDesc(ctx context.Context) ([]Event, error) {
 }
 
 const loadEventsRandom = `-- name: LoadEventsRandom :many
-SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY RANDOM()
+SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?
 `
 
-func (q *Queries) LoadEventsRandom(ctx context.Context) ([]Event, error) {
-	rows, err := q.db.QueryContext(ctx, loadEventsRandom)
+func (q *Queries) LoadEventsRandom(ctx context.Context, limit int64) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, loadEventsRandom, limit)
 	if err != nil {
 		return nil, err
 	}

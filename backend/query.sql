@@ -26,10 +26,11 @@ INSERT INTO events (
 ) VALUES (
   ?, ?, ?, ?, ?, ?, ?, ?
 );
-
+-- name: CountEvents :one
+SELECT count(*) FROM events;
 -- name: LoadEventsDesc :many
-SELECT * FROM events ORDER BY date DESC;
+SELECT * FROM events ORDER BY date DESC LIMIT ?;
 -- name: LoadEventsAsc :many
-SELECT * FROM events ORDER BY date ASC;
+SELECT * FROM events ORDER BY date ASC LIMIT ?;
 -- name: LoadEventsRandom :many
-SELECT * FROM events ORDER BY RANDOM();
+SELECT * FROM events ORDER BY RANDOM() LIMIT ?;

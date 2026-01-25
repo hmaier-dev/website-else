@@ -1,0 +1,10 @@
+{{ define "entries-list.html" }}
+  {{ range .Events }}
+    <div class="event {{if .IsNearest}}nearest-event{{end}}">
+        <h3>{{.Title}}</h3>
+        <p>Date: {{.Date.Format "2006-01-02"}}</p>
+        <p>Location: {{.Location}}, {{.City}}</p>
+        <a href="{{.Link}}">More Info</a>
+    </div>
+  {{ end }}
+{{ end }}

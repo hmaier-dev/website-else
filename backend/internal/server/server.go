@@ -44,12 +44,15 @@ func New(db *database.Queries) *Server {
 		log.Println("Didn't start the api because username/password weren't set.")
 	}
 	//----------------------------------------------------------
-	// Mailbox endpoints 
+	// Events endpoints 
 
 	e := &events.Handler{
-		Queries: db,
+		DB: sqlite,
 	}
-	er := s.Router.PathPrefix("/events/change").Subrouter()
+	er := s.Router.PathPrefix("/events").Subrouter()
+	er.HandleFunc("/load", e.Load).Methods("GET")
+	er.HandleFunc("/create", e.Create).Methods("POST")
+	er.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
 
 	// logs all routes when starting after they go defined
 	s.Router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
