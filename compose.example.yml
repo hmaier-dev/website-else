@@ -69,6 +69,11 @@ services:
       - "traefik.http.routers.events-manage.entrypoints=web"
       # - "traefik.http.routers.events-manage.entrypoints=websecure"
       # - "traefik.http.routers.events-manage.tls=true"
+      - "traefik.http.routers.events-load.priority=25"
+      - "traefik.http.routers.events-load.rule=Host(`localhost`) && PathPrefix(`/events/load`)"
+      - "traefik.http.routers.events-load.entrypoints=web"
+      # - "traefik.http.routers.events-load.entrypoints=websecure"
+      # - "traefik.http.routers.events-load.tls=true"
 
 networks:
   traefik-net:
