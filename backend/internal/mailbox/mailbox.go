@@ -19,10 +19,9 @@ type API struct {
 }
 
 type Handler struct{
-	Queries *db.Queries
+	DB *sql.DB
 	API API
 }
-
 
 // Incoming POST request from the html formular
 // TODO: Implement rate limiting at traefik
@@ -37,7 +36,8 @@ func (h *Handler) HandlerContactRequest(w http.ResponseWriter, r *http.Request) 
 
 	// TODO: Sanatizing and validating the input
 	if approval == "on" {
-		err := h.Queries.AddMessageToMailbox(ctx, db.AddMessageToMailboxParams{
+		q := db.New(h.DB)
+		err := q.AddMessageToMailbox(ctx, db.AddMessageToMailboxParams{
 			Name:     name,
 			Email:    email,
 			Message:  message,
@@ -71,7 +71,8 @@ func (h *Handler) HandlerAllMessages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-	all, err := h.Database.GetCompleteMailbox(ctx)
+	q := db.New(h.DB)
+	all, err := q.GetCompleteMailbox(ctx)
 	if err != nil {
 		http.Error(w, "Something wen't wrong querying all messages...", http.StatusInternalServerError)
 	}
@@ -89,14 +90,16 @@ func (h *Handler) HandlerAllMessages(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandlerUnreadMessages(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	unread, err := h.Database.GetUnreadMailboxItems(ctx)
+
+	q := db.New(h.DB)
+	unread, err := q.GetUnreadMailboxItems(ctx)
 
 	// Refactor this into one function
 	// Here is how to do it
 	// https://stackoverflow.com/questions/21936332/idiomatic-way-of-requiring-http-basic-auth-in-go
 	u, p, ok := r.BasicAuth()
 	realm := "Einmal bitte Credentials eingeben: "
-	if !ok || subtle.ConstantTimeCompare([]byte(u), []byte(s.API.Username)) != 1 || subtle.ConstantTimeCompare([]byte(p), []byte(s.API.Password)) != 1 {
+	if !ok || subtle.ConstantTimeCompare([]byte(u), []byte(h.API.Username)) != 1 || subtle.ConstantTimeCompare([]byte(p), []byte(h.API.Password)) != 1 {
 		w.Header().Set("WWW-Authenticate", `Basic realm="`+realm+`"`)
 		w.WriteHeader(401)
 		w.Write([]byte("Unauthorised.\n"))

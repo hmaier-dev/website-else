@@ -32,7 +32,7 @@ func New(db *database.Queries) *Server {
 	//----------------------------------------------------------
 	// Mailbox endpoints 
 	m := &mailbox.Handler{
-		Queries: db,
+		DB: sqlite,
 		API: mailbox.API{Username: u,Password: p},
 	}
 	mbr := s.Router.PathPrefix("/mailbox").Subrouter()
