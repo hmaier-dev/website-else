@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"log"
 	"os"
+	"database/sql"
 
-	"codeberg.org/schnelles_geraet/website-else/backend/internal/database"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/mailbox"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/events"
 
@@ -21,7 +21,7 @@ type Server struct {
 }
 
 
-func New(db *database.Queries) *Server {
+func New(sqlite *sql.DB) *Server {
 	u := os.Getenv("API_USERNAME")
 	p := os.Getenv("API_PASSWORD")
 
@@ -49,7 +49,7 @@ func New(db *database.Queries) *Server {
 	e := &events.Handler{
 		DB: sqlite,
 	}
-	er := s.Router.PathPrefix("/events").Subrouter()
+	er := s.Router.PathPrefix("/events/manage").Subrouter()
 	er.HandleFunc("/load", e.Load).Methods("GET")
 	er.HandleFunc("/create", e.Create).Methods("POST")
 	er.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")

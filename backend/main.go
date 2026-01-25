@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"context"
 
-	"codeberg.org/schnelles_geraet/website-else/backend/internal/database"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/server"
 
 	_ "codeberg.org/schnelles_geraet/website-else/backend/internal/mailbox"
@@ -42,10 +41,7 @@ func main() {
 	if _, err := sqlite.ExecContext(ctx, ddl); err != nil {
 		log.Fatal(err)
 	}
-	// Is it better to pass the queries or pass the db DBTX?
-	q := database.New(sqlite)
-
-	srv := server.New(q)
+	srv := server.New(sqlite)
 
 	host := fmt.Sprintf("0.0.0.0:%s", port)
 	log.Printf("Starting tool on %s \n", host)
