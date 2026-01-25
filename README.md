@@ -32,6 +32,13 @@ If you do any changes to the hugo project, run the following command:
 ```bash
 earthly --push +run --tag="latest"
 ```
+Before running this check which `baseURL` is set!
+```toml
+# For prod usage
+baseURL = "https://elisa-adam.com/"
+# For testing usage
+# baseURL = "http://localhost/"
+```
 If you have a valid auth-token for the container registry, the `--push`-flag will do push the image upstream.
 Beware: no tag is set and the new image will overwrite the old on.
 
