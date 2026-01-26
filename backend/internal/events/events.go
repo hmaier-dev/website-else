@@ -9,7 +9,6 @@ import (
 	"html/template"
 	"io"
 	"log"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
@@ -24,29 +23,138 @@ type Handler struct {
 	InternalFS embed.FS
 }
 
-func safe(s sql.NullString) template.HTML {
-	return template.HTML(s.String)
-}
 func formatTime(s time.Time) template.HTML {
 	return template.HTML(s.Format("02.01.2006"))
 }
 
-func formatNullTime(s sql.NullTime) template.HTML {
-	return template.HTML(s.Time.Format("02.01.2006"))
+type Event struct {
+	Name  string
+	Date  time.Time
+	Doors time.Time
+	Begin time.Time
+	Place string
+	City  string
+	Link  *string
+}
+
+// This interface is needed for accessing the different Event*-structs
+type EventRow interface {
+    GetName() string
+    GetDate() time.Time
+    GetDoors() time.Time
+    GetBegin() time.Time
+    GetPlace() string
+    GetCity() string
+    GetLink() *string
+}
+
+type EventAscRow struct{
+	r db.LoadEventsAscRow
+}
+
+func (a EventAscRow ) GetName() string {return a.r.Name}
+func (a EventAscRow ) GetDate() time.Time {return a.r.Date}
+func (a EventAscRow ) GetDoors() time.Time {return a.r.Doors.Time}
+func (a EventAscRow ) GetBegin() time.Time {return a.r.Begin.Time}
+func (a EventAscRow ) GetPlace() string {return a.r.Place}
+func (a EventAscRow ) GetCity() string {return a.r.City}
+func (a EventAscRow ) GetLink() *string {
+    if !a.r.Link.Valid || a.r.Link.String == "" {
+        return nil
+    }
+    return &a.r.Link.String
+}
+// This maps the row to the struct which has methods to access it
+func adaptAscRow(rows []db.LoadEventsAscRow) []EventRow{
+	out := make([]EventRow, len(rows))
+	for i, r := range rows{
+		out[i] = EventAscRow{r: r}
+	}
+	return out
+}
+
+type EventDescRow struct{
+	r db.LoadEventsDescRow
+}
+func (d EventDescRow ) GetName() string {return d.r.Name}
+func (d EventDescRow ) GetDate() time.Time {return d.r.Date}
+func (d EventDescRow ) GetDoors() time.Time {return d.r.Doors.Time}
+func (d EventDescRow ) GetBegin() time.Time {return d.r.Begin.Time}
+func (d EventDescRow ) GetPlace() string {return d.r.Place}
+func (d EventDescRow ) GetCity() string {return d.r.City}
+func (d EventDescRow ) GetLink() *string {
+    if !d.r.Link.Valid || d.r.Link.String == "" {
+        return nil
+    }
+    return &d.r.Link.String
+}
+
+func adaptDescRow(rows []db.LoadEventsDescRow) []EventRow{
+	out := make([]EventRow, len(rows))
+	for i, r := range rows{
+		out[i] = EventDescRow{r: r}
+	}
+	return out
+}
+
+type EventRandRow struct{
+	r db.LoadEventsRandomRow
+}
+func (rand EventRandRow ) GetName() string {return rand.r.Name}
+func (rand EventRandRow ) GetDate() time.Time {return rand.r.Date}
+func (rand EventRandRow ) GetDoors() time.Time {return rand.r.Doors.Time}
+func (rand EventRandRow ) GetBegin() time.Time {return rand.r.Begin.Time}
+func (rand EventRandRow ) GetPlace() string {return rand.r.Place}
+func (rand EventRandRow ) GetCity() string {return rand.r.City}
+func (rand EventRandRow ) GetLink() *string {
+    if !rand.r.Link.Valid || rand.r.Link.String == "" {
+        return nil
+    }
+    return &rand.r.Link.String
+}
+
+func adaptRandRow(rows []db.LoadEventsRandomRow) []EventRow{
+	out := make([]EventRow, len(rows))
+	for i, r := range rows{
+		out[i] = EventRandRow{r: r}
+	}
+	return out
+}
+// ##########################################################################################################
+// A new query with a new db.Struct is generated, you need to add the same boilerplate from above here
+// ###########################################################################################################
+
+// In the future I may gonna need to add custom-values
+// This way
+func constructEvents(rows []EventRow) []Event {
+	var events = make([]Event, len(rows))	
+	for i, r := range rows {
+		events[i] = Event{
+			Name:  r.GetName(),
+			Date:  r.GetDate(),
+			Doors: r.GetDoors(),
+			Begin: r.GetBegin(),
+			Place: r.GetPlace(),
+			City:  r.GetCity(),
+			Link:  r.GetLink(),
+		}
+		log.Printf("%v \n", events[i])
+	}
+	return events
 }
 
 type urlArgs struct {
-	Head   string
-	Sort   string
-	Out   string
+	Head string
+	Sort string
+	Out  string
 }
 
 // Returns []db.Event
-// set ?sort={asc|desc|random} to sort the events by date or randomize.
+// set ?sort={asc|desc|random|next|prev} to sort the events by date or randomize.
 // set ?head={nth} just load the nth fetched elems. This combines with ?sort.
-func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []db.Event {
+func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 	q := db.New(h.DB)
-	
+
 	// By default all events get rendered
 	var defaultHead int64
 	defaultHead, err := q.CountEvents(ctx) // To get all events by default, we need the exact number of these
