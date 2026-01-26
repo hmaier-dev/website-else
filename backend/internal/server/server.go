@@ -1,13 +1,14 @@
 package server
 
 import (
+	"database/sql"
+	"embed"
 	_ "embed"
 	"log"
 	"os"
-	"database/sql"
 
-	"codeberg.org/schnelles_geraet/website-else/backend/internal/mailbox"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/events"
+	"codeberg.org/schnelles_geraet/website-else/backend/internal/mailbox"
 
 	"github.com/gorilla/mux"
 
@@ -21,7 +22,7 @@ type Server struct {
 }
 
 
-func New(sqlite *sql.DB) *Server {
+func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 	u := os.Getenv("API_USERNAME")
 	p := os.Getenv("API_PASSWORD")
 
@@ -48,6 +49,7 @@ func New(sqlite *sql.DB) *Server {
 
 	e := &events.Handler{
 		DB: sqlite,
+		InternalFS: internalFS,
 	}
 	er := s.Router.PathPrefix("/events/").Subrouter()
 	er.HandleFunc("/load", e.Load).Methods("GET")

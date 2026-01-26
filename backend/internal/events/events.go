@@ -2,15 +2,16 @@ package events
 
 import (
 	"database/sql"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
-	"math/rand"
 
 	"gopkg.in/yaml.v3"
 
@@ -19,6 +20,7 @@ import (
 
 type Handler struct{
 	DB *sql.DB
+	InternalFS embed.FS
 }
 
 
@@ -28,22 +30,13 @@ type Handler struct{
 // TODO: set ?highlight={true|false} to highlight the nearest future event.
 // TODO: set ?render={true|false} when set to true, html is returned
 func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	// Allow specific methods and headers
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	// Handle preflight requests
-	if r.Method == "OPTIONS" {
-			return
-	}
-	log.Println("events were requested...")
 	ctx := r.Context()
 	query := r.URL.Query()
 	sortQ := query.Get("sort")
 	headQ := query.Get("head")
 	renderQ := query.Get("render")
 	// highlightQ := query.Get("highlight")
-
+	log.Printf("events were requested... with args: %v\n", query)
 	// if highlightQ == "true" {
 	// 	highlight = true
 	// }
@@ -149,7 +142,7 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles("internal/events/templates/events-range.html")
+	tmpl, err := template.ParseFS(h.InternalFS, "internal/events/templates/events-range.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

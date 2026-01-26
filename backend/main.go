@@ -15,12 +15,15 @@ import (
 	// For future me:
 	// Use 'go get -u github.com/mattn/go-sqlite3' to download it
 	_ "github.com/mattn/go-sqlite3"
-	_ "embed"
+	"embed"
 )
 
 //go:embed schema.sql
 var ddl string
 const port = "3000"
+
+//go:embed internal
+var internalFS embed.FS
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Llongfile)
@@ -41,7 +44,7 @@ func main() {
 	if _, err := sqlite.ExecContext(ctx, ddl); err != nil {
 		log.Fatal(err)
 	}
-	srv := server.New(sqlite)
+	srv := server.New(sqlite, internalFS)
 
 	host := fmt.Sprintf("0.0.0.0:%s", port)
 	log.Printf("Starting tool on %s \n", host)
