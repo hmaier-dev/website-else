@@ -163,20 +163,30 @@ func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]Mailbox, error) 
 }
 
 const loadEventsAsc = `-- name: LoadEventsAsc :many
-SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY date ASC LIMIT ?
+SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date ASC LIMIT ?
 `
 
-func (q *Queries) LoadEventsAsc(ctx context.Context, limit int64) ([]Event, error) {
+type LoadEventsAscRow struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+	Pic   []byte
+}
+
+func (q *Queries) LoadEventsAsc(ctx context.Context, limit int64) ([]LoadEventsAscRow, error) {
 	rows, err := q.db.QueryContext(ctx, loadEventsAsc, limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Event
+	var items []LoadEventsAscRow
 	for rows.Next() {
-		var i Event
+		var i LoadEventsAscRow
 		if err := rows.Scan(
-			&i.ID,
 			&i.Name,
 			&i.Date,
 			&i.Doors,
@@ -200,20 +210,30 @@ func (q *Queries) LoadEventsAsc(ctx context.Context, limit int64) ([]Event, erro
 }
 
 const loadEventsDesc = `-- name: LoadEventsDesc :many
-SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY date DESC LIMIT ?
+SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date DESC LIMIT ?
 `
 
-func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]Event, error) {
+type LoadEventsDescRow struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+	Pic   []byte
+}
+
+func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]LoadEventsDescRow, error) {
 	rows, err := q.db.QueryContext(ctx, loadEventsDesc, limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Event
+	var items []LoadEventsDescRow
 	for rows.Next() {
-		var i Event
+		var i LoadEventsDescRow
 		if err := rows.Scan(
-			&i.ID,
 			&i.Name,
 			&i.Date,
 			&i.Doors,
@@ -237,20 +257,30 @@ func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]Event, err
 }
 
 const loadEventsRandom = `-- name: LoadEventsRandom :many
-SELECT id, name, date, doors, "begin", place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?
+SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?
 `
 
-func (q *Queries) LoadEventsRandom(ctx context.Context, limit int64) ([]Event, error) {
+type LoadEventsRandomRow struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+	Pic   []byte
+}
+
+func (q *Queries) LoadEventsRandom(ctx context.Context, limit int64) ([]LoadEventsRandomRow, error) {
 	rows, err := q.db.QueryContext(ctx, loadEventsRandom, limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Event
+	var items []LoadEventsRandomRow
 	for rows.Next() {
-		var i Event
+		var i LoadEventsRandomRow
 		if err := rows.Scan(
-			&i.ID,
 			&i.Name,
 			&i.Date,
 			&i.Doors,

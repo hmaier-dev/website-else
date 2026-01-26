@@ -29,8 +29,8 @@ INSERT INTO events (
 -- name: CountEvents :one
 SELECT count(*) FROM events;
 -- name: LoadEventsDesc :many
-SELECT * FROM events ORDER BY date DESC LIMIT ?;
+SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date DESC LIMIT ?;
 -- name: LoadEventsAsc :many
-SELECT * FROM events ORDER BY date ASC LIMIT ?;
+SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date ASC LIMIT ?;
 -- name: LoadEventsRandom :many
-SELECT * FROM events ORDER BY RANDOM() LIMIT ?;
+SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?;
