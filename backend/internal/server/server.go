@@ -51,10 +51,12 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 		DB: sqlite,
 		InternalFS: internalFS,
 	}
-	er := s.Router.PathPrefix("/events/").Subrouter()
+
+	api := s.Router.PathPrefix("/api/v1").Subrouter()
+	er := api.PathPrefix("/events/").Subrouter()
 	er.HandleFunc("/load", e.Load).Methods("GET")
 
-	emr := er.PathPrefix("/manage").Subrouter()
+	emr := api.PathPrefix("/manage/").Subrouter()
 	emr.HandleFunc("/create", e.Create).Methods("POST")
 	emr.HandleFunc("/create/bulk", e.Bulk).Methods("POST")
 	emr.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
