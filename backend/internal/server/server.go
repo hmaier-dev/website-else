@@ -54,6 +54,7 @@ func New(sqlite *sql.DB) *Server {
 
 	emr := er.PathPrefix("/manage").Subrouter()
 	emr.HandleFunc("/create", e.Create).Methods("POST")
+	emr.HandleFunc("/create/bulk", e.Bulk).Methods("POST")
 	emr.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
 
 

@@ -7,6 +7,7 @@ require github.com/gorilla/mux v1.8.1
 require (
 	github.com/jedib0t/go-pretty/v6 v6.6.8
 	github.com/mattn/go-sqlite3 v1.14.32
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

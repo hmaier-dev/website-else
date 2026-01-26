@@ -2,11 +2,16 @@ package events
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
+	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
-	"html/template"
 	"time"
+
+	"gopkg.in/yaml.v3"
 
 	db "codeberg.org/schnelles_geraet/website-else/backend/internal/database"
 )
@@ -136,6 +141,72 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// Return a success response
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("Event added successfully"))
+}
+
+func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	q := db.New(h.DB)
+
+	// Only allow POST requests
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse the YAML file from the request body
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Failed to read request body", http.StatusBadRequest)
+		return
+	}
+
+	type Event struct {
+		Datum string `yaml:"datum"`
+		Event string `yaml:"event"`
+		Doors string `yaml:"doors"`
+		Begin string `yaml:"begin"`
+		Ort   string `yaml:"ort"`
+		Stadt string `yaml:"stadt"`
+		Link  string `yaml:"link"`
+	}
+
+	var yamlEvents []Event
+	err = yaml.Unmarshal(body, &yamlEvents)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to parse YAML: \n%v", err.Error())
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	// Insert each event into the database
+	for _, e := range yamlEvents {
+		date, err := time.Parse("02.01.2006", e.Datum)
+		if err != nil {
+			log.Printf("Invalid date format for event %s: %v", e.Event, err)
+			continue
+		}
+		doorsTime := sql.NullTime{Time: date, Valid: true}
+		beginTime := sql.NullTime{Time: date, Valid: true}
+		linkString := sql.NullString{String: e.Link, Valid: e.Link != ""}
+
+		err = q.AddSingleEvent(ctx, db.AddSingleEventParams{
+			Name:  e.Event,
+			Date:  date,
+			Doors: doorsTime,
+			Begin: beginTime,
+			Place: e.Ort,
+			City:  e.Stadt,
+			Link:  linkString,
+			Pic:   nil,
+		})
+		if err != nil {
+			log.Printf("Failed to add event %s: %v", e.Event, err)
+			continue
+		}
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte("Events added successfully"))
 }
 
 func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
