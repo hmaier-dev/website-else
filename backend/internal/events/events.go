@@ -138,7 +138,6 @@ func constructEvents(rows []EventRow) []Event {
 			City:  r.GetCity(),
 			Link:  r.GetLink(),
 		}
-		log.Printf("%v \n", events[i])
 	}
 	return events
 }

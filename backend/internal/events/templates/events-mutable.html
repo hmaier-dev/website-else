@@ -27,14 +27,14 @@
     <input type="text" class="bg-transparent outline-none" value="{{ .Place }}" name="place" />
 
     <!-- Link as an input -->
-    {{ if .Link }}
-      <input type="text" class="bg-transparent outline-none" value="{{ .Link }}" palceholder="Link für weitere Infos." name="link" />
-    {{ end }}
+    <input type="text" class="bg-transparent outline-none" {{ if .Link}} value="{{ .Link }}" {{ end }} placeholder="Link für weitere Infos." name="link" />
 
-    <!-- Change button -->
-    <button type="submit" class="ml-auto bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-      Change
-    </button>
+    <!-- Change button on the next line -->
+    <div class="w-full flex justify-end mt-2">
+      <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+        Change
+      </button>
+    </div>
   </form>
-  {{ end }}
+{{ end }}
 {{ end }}
