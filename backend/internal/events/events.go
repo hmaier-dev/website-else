@@ -26,7 +26,7 @@ type Handler struct{
 // TODO: set ?sort={asc|desc|random} to sort the events by date or randomize.
 // TODO: set ?head={nth} just load the nth fetched elems. This combines with ?sort.
 // TODO: set ?highlight={true|false} to highlight the nearest future event.
-// TODO: set ?json={true|false} when set to true, events are returned as csv (maybe I could return this as vcard, so the people can import it directly into their calendar....)
+// TODO: set ?render={true|false} when set to true, html is returned
 func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	// Allow specific methods and headers
@@ -41,7 +41,7 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	sortQ := query.Get("sort")
 	headQ := query.Get("head")
-	jsonQ := query.Get("json")
+	renderQ := query.Get("render")
 	// highlightQ := query.Get("highlight")
 
 	// if highlightQ == "true" {
@@ -57,9 +57,9 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 	}
 	sortBy := "desc" // default sort order
 	// highlight := false
-	jsonOpt := false
-	if jsonQ == "true"{
-		jsonOpt = true
+	renderOpt := false
+	if renderQ == "true"{
+		renderOpt = true
 	}
 
 	if sortQ == "asc" || sortQ == "random" {
@@ -140,7 +140,7 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 			}
 	}
 
-	if jsonOpt == true{
+	if renderOpt == false{
 		bytes, err := json.Marshal(events)
 		if err != nil{
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -154,7 +154,9 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = tmpl.Execute(w, events)
+	err = tmpl.Execute(w, map[string]any{
+		"Events": events,
+	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

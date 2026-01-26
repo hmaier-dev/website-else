@@ -51,7 +51,6 @@ func New(sqlite *sql.DB) *Server {
 	}
 	er := s.Router.PathPrefix("/events/").Subrouter()
 	er.HandleFunc("/load", e.Load).Methods("GET")
-	er.HandleFunc("/load/all", e.LoadAll).Methods("GET")
 
 	emr := er.PathPrefix("/manage").Subrouter()
 	emr.HandleFunc("/create", e.Create).Methods("POST")
