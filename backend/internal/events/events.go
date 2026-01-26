@@ -175,72 +175,39 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 	}
 
 	sortBy := "desc" // default sort order
-	if args.Sort == "asc" || args.Sort == "random" {
+	if args.Sort == "asc" || args.Sort == "random" || args.Sort == "next" || args.Sort == "prev"{
 		sortBy = args.Sort
 	}
 
-	// Because 'sqlc generate' does a struct per query, we need to reformat from e.g. db.LoadEventsAscRow into db.Events
-	// event though they hold the same data
-	var events = make([]db.Event, head)
-	// Generate this very important number to make API-Calls very senseful...
-	var funID int64
+	// Because 'sqlc generate' does a struct per query.
+	var events = make([]Event, head)
 	switch sortBy {
-	case "asc":
-		rows, err := q.LoadEventsAsc(ctx, head)
-		if err != nil {
-			log.Println("help help help")
-		}
-		for i, r := range rows {
-			funID = rand.Int63()
-			events[i] = db.Event{
-				ID:    funID,
-				Name:  r.Name,
-				Date:  r.Date,
-				Doors: r.Doors,
-				Begin: r.Begin,
-				Place: r.Place,
-				City:  r.City,
-				Link:  r.Link,
+		case "asc":
+			rows, err := q.LoadEventsAsc(ctx, head)
+			if err != nil{
+				log.Println("Problem loading events from database...")
 			}
-		}
-	case "desc":
-		rows, err := q.LoadEventsDesc(ctx, head)
-		if err != nil {
-			log.Println("help help help")
-		}
-		for i, r := range rows {
-			funID = rand.Int63()
-			events[i] = db.Event{
-				ID:    funID,
-				Name:  r.Name,
-				Date:  r.Date,
-				Doors: r.Doors,
-				Begin: r.Begin,
-				Place: r.Place,
-				City:  r.City,
-				Link:  r.Link,
+			wrap := adaptAscRow(rows)
+			events = constructEvents(wrap)
+		case "desc":
+			rows, err := q.LoadEventsDesc(ctx, head)
+			if err != nil{
+				log.Println("Problem loading events from database...")
 			}
-		}
-	case "random":
-		rows, err := q.LoadEventsRandom(ctx, head)
-		if err != nil {
-			log.Println("help help help")
-		}
-		for i, r := range rows {
-			funID = rand.Int63()
-			events[i] = db.Event{
-				ID:    funID,
-				Name:  r.Name,
-				Date:  r.Date,
-				Doors: r.Doors,
-				Begin: r.Begin,
-				Place: r.Place,
-				City:  r.City,
-				Link:  r.Link,
+			wrap := adaptDescRow(rows)
+			events = constructEvents(wrap)
+		case "random":
+			rows, err := q.LoadEventsRandom(ctx, head)
+			if err != nil{
+				log.Println("Problem loading events from database...")
 			}
-		}
+			wrap := adaptRandRow(rows)
+			events = constructEvents(wrap)
+		case "next":
+		case "prev":
 	}
-	return events	
+	return events
+
 }
 
 // TODO: set ?highlight={true|false} to highlight the nearest future event.
@@ -255,40 +222,38 @@ func (h *Handler) Load(w http.ResponseWriter, r *http.Request) {
 		Out:  query.Get("out"),
 	}
 	events := h.eventsByArgs(ctx, args)
-	
-	outOpt := "json"	
-	if args.Out != ""{
+
+	outOpt := "json"
+	if args.Out != "" {
 		outOpt = args.Out
 	}
 	var err error
-	switch outOpt{
-		case "json":
-			bytes, err := json.Marshal(events)
-			if err != nil{
+	switch outOpt {
+	case "json":
+		bytes, err := json.Marshal(events)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			w.Write(bytes)
+		}
+		w.Write(bytes)
+		return
+	case "html":
+		// this can be done prettier => see checklist-tool
+		tmpl := template.Must(template.New("events-range.html").Funcs(template.FuncMap{
+			"formatTime":     formatTime,
+		}).ParseFS(h.InternalFS, "internal/events/templates/events-range.html"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
-		case "html":
-			// this can be done prettier => see checklist-tool
-			tmpl  := template.Must(template.New("events-range.html").Funcs(template.FuncMap{
-				"safe":           safe,
-				"formatTime":     formatTime,
-				"formatNulltime": formatNullTime,
-			}).ParseFS(h.InternalFS, "internal/events/templates/events-range.html"))
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			err = tmpl.Execute(w, map[string]any{
-				"Events": events,
-			})
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			return
-		default:
-			w.Write([]byte("no valid out="))
+		}
+		err = tmpl.Execute(w, map[string]any{
+			"Events": events,
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	default:
+		w.Write([]byte("no valid out="))
 	}
 }
 
@@ -416,10 +381,8 @@ func (h *Handler) LoadMutable(w http.ResponseWriter, r *http.Request) {
 	}
 	events := h.eventsByArgs(ctx, args)
 	// this can be done prettier => see checklist-tool
-	tmpl  := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
-		"safe":           safe,
+	tmpl := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
 		"formatTime":     formatTime,
-		"formatNulltime": formatNullTime,
 	}).ParseFS(h.InternalFS, "internal/events/templates/events-mutable.html"))
 	err := tmpl.Execute(w, map[string]any{
 		"Events": events,
