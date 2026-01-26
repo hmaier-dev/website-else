@@ -127,7 +127,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	link := r.FormValue("link")
 
 	// Parse the date
-	date, err := time.Parse("2006-01-02", datum)
+	date, err := time.Parse("02.01.2006", datum)
 	if err != nil {
 		http.Error(w, "Invalid date format", http.StatusBadRequest)
 		return
