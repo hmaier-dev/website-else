@@ -23,6 +23,16 @@ type Handler struct{
 	InternalFS embed.FS
 }
 
+func safe(s sql.NullString) template.HTML {
+    return template.HTML(s.String)
+}
+func formatTime(s time.Time) template.HTML {
+    return template.HTML(s.Format("02.01.2006"))
+}
+
+func formatNullTime(s sql.NullTime) template.HTML {
+    return template.HTML(s.Time.Format("02.01.2006"))
+}
 
 // Renders all events in html.
 // TODO: set ?sort={asc|desc|random} to sort the events by date or randomize.
@@ -141,8 +151,14 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 		w.Write(bytes)
 		return
 	}
+	
 
-	tmpl, err := template.ParseFS(h.InternalFS, "internal/events/templates/events-range.html")
+	// this can be done prettier => see checklist-tool
+	tmpl := template.Must(template.New("events-range.html").Funcs(template.FuncMap{
+        "safe": safe,
+				"formatTime": formatTime,
+				"formatNulltime": formatNullTime,
+    }).ParseFS(h.InternalFS, "internal/events/templates/events-range.html"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
