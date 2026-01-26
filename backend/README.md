@@ -24,5 +24,8 @@ curl localhost:3000/mailbox/all
 curl -d 'datum=2026-01-23&event=LateNightShow&ort=Moritzbastei&stadt=Leipzig&link=http%3A%2F%2Fwww.ort.de' localhost:3000/events/manage/create
 ## GET to /events/manage/load
 ## gets all messages from database
-curl localhost/events/load
+curl localhost:3000/events/load?sort=desc&head=3&json=true
+## POST to /events/manage/create/bulk
+## uploads a yaml-file with multiple events
+curl -X POST -H "Content-Type: application/yaml" --data-binary @events.yml http://localhost:3000/events/manage/create/bulk
 ```
