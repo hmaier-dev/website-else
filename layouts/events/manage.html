@@ -19,9 +19,9 @@
         <div class="flex-1" id="events-container">
         </div>
 
-        <div id="container-events-all" hx-get="/api/v1/events/load?sort=desc&render=true" hx-trigger="load" hx-swap="innerHTML"></div>
+        <div id="container-events-all" hx-get="/events/manage/api/load/mutable?sort=desc" hx-trigger="load" hx-swap="innerHTML"></div>
 
-        <form class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md" id="events-formular" hx-post="/api/v1/events/manage/create" hx-swap="none">
+        <form class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md" id="events-formular" hx-post="/events/manage/api/create" hx-swap="none">
           <!-- Datum -->
           <div class="mb-4">
             <label for="datum" class="block text-sm font-medium text-gray-700 mb-1">Datum</label>

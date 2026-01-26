@@ -40,6 +40,10 @@ services:
       - "traefik.http.routers.website.priority=10"
       - "traefik.http.routers.website.rule=Host(`localhost`) && PathPrefix(`/`)"
       - "traefik.http.routers.website.entrypoints=web"
+      - "traefik.http.routers.events-manage.priority=25"
+      ## Put the site behind auth
+      - "traefik.http.routers.events-manage.rule=Host(`localhost`) && PathPrefix(`/events/manage`)"
+      - "traefik.http.routers.events-manage.entrypoints=web"
       # - "traefik.http.routers.website.entrypoints=websecure"
       # - "traefik.http.routers.website.tls=true"
   backend:
@@ -64,13 +68,11 @@ services:
       - "traefik.http.routers.contact.entrypoints=web"
       # - "traefik.http.routers.contact.entrypoints=websecure"
       # - "traefik.http.routers.contact.tls=true"
-      - "traefik.http.routers.events-public.priority=25"
-      - "traefik.http.routers.events-public.rule=Host(`localhost`) && PathPrefix(`/api/v1/events/public`)"
-      - "traefik.http.routers.events-public.entrypoints=web"
+      ## Put the endpoints behind auth
+      - "traefik.http.routers.events-manage.priority=25"
+      - "traefik.http.routers.events-manage.rule=Host(`localhost`) && PathPrefix(`/events/manage/api`)"
+      - "traefik.http.routers.events-manage.entrypoints=web"
 
-      - "traefik.http.routers.events-private.priority=25"
-      - "traefik.http.routers.events-private.rule=Host(`localhost`) && PathPrefix(`/api/v1/events/private`)"
-      - "traefik.http.routers.events-private.entrypoints=web"
 
 networks:
   traefik-net:

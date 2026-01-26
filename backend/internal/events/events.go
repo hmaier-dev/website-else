@@ -1,6 +1,7 @@
 package events
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"encoding/json"
@@ -18,67 +19,56 @@ import (
 	db "codeberg.org/schnelles_geraet/website-else/backend/internal/database"
 )
 
-type Handler struct{
-	DB *sql.DB
+type Handler struct {
+	DB         *sql.DB
 	InternalFS embed.FS
 }
 
 func safe(s sql.NullString) template.HTML {
-    return template.HTML(s.String)
+	return template.HTML(s.String)
 }
 func formatTime(s time.Time) template.HTML {
-    return template.HTML(s.Format("02.01.2006"))
+	return template.HTML(s.Format("02.01.2006"))
 }
 
 func formatNullTime(s sql.NullTime) template.HTML {
-    return template.HTML(s.Time.Format("02.01.2006"))
+	return template.HTML(s.Time.Format("02.01.2006"))
 }
 
-// Renders all events in html.
-// TODO: set ?sort={asc|desc|random} to sort the events by date or randomize.
-// TODO: set ?head={nth} just load the nth fetched elems. This combines with ?sort.
-// TODO: set ?highlight={true|false} to highlight the nearest future event.
-// TODO: set ?render={true|false} when set to true, html is returned
-func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	query := r.URL.Query()
-	sortQ := query.Get("sort")
-	headQ := query.Get("head")
-	renderQ := query.Get("render")
-	// highlightQ := query.Get("highlight")
-	log.Printf("events were requested... with args: %v\n", query)
-	// if highlightQ == "true" {
-	// 	highlight = true
-	// }
+type urlArgs struct {
+	Head   string
+	Sort   string
+	Out   string
+}
 
+// Returns []db.Event
+// set ?sort={asc|desc|random} to sort the events by date or randomize.
+// set ?head={nth} just load the nth fetched elems. This combines with ?sort.
+func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []db.Event {
 	q := db.New(h.DB)
-	// Default values
+	
+	// By default all events get rendered
 	var defaultHead int64
 	defaultHead, err := q.CountEvents(ctx) // To get all events by default, we need the exact number of these
-	if err != nil{
+	if err != nil {
 		log.Println("Could not count events...")
 	}
-	sortBy := "desc" // default sort order
-	// highlight := false
-	renderOpt := false
-	if renderQ == "true"{
-		renderOpt = true
-	}
 
-	if sortQ == "asc" || sortQ == "random" {
-		sortBy = sortQ
-	}
-	
 	// With head we decided how many entry we are gonna load
 	// if head is not set in the query, all events are loaded.
 	var head int64
-	if headQ != "" {
-		headInt, err := strconv.Atoi(headQ)
+	if args.Head != "" {
+		headInt, err := strconv.Atoi(args.Head)
 		if err == nil && headInt > 0 {
 			head = int64(headInt)
 		}
-	}else{
-		head = defaultHead	
+	} else {
+		head = defaultHead
+	}
+
+	sortBy := "desc" // default sort order
+	if args.Sort == "asc" || args.Sort == "random" {
+		sortBy = args.Sort
 	}
 
 	// Because 'sqlc generate' does a struct per query, we need to reformat from e.g. db.LoadEventsAscRow into db.Events
@@ -86,91 +76,113 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 	var events = make([]db.Event, head)
 	// Generate this very important number to make API-Calls very senseful...
 	var funID int64
-	switch sortBy{
-		case "asc":
-			rows, err := q.LoadEventsAsc(ctx, head)
-			if err != nil{
-				log.Println("help help help")
-				}
-			for i, r := range rows{
-				funID = rand.Int63()
-				events[i] = db.Event{
-					ID: funID,
-					Name: r.Name,
-					Date: r.Date,
-					Doors: r.Doors,
-					Begin: r.Begin,
-					Place: r.Place,
-					City: r.City,
-					Link: r.Link,
-				}
-			}
-		case "desc":
-			rows, err := q.LoadEventsDesc(ctx, head)
-			if err != nil{
-				log.Println("help help help")
-			}
-			for i, r := range rows{
-				funID = rand.Int63()
-				events[i] = db.Event{
-					ID: funID,
-					Name: r.Name,
-					Date: r.Date,
-					Doors: r.Doors,
-					Begin: r.Begin,
-					Place: r.Place,
-					City: r.City,
-					Link: r.Link,
-				}
-			}
-		case "random":
-			rows, err := q.LoadEventsRandom(ctx, head)
-			if err != nil{
-				log.Println("help help help")
-			}
-			for i, r := range rows{
-				funID = rand.Int63()
-				events[i] = db.Event{
-					ID: funID,
-					Name: r.Name,
-					Date: r.Date,
-					Doors: r.Doors,
-					Begin: r.Begin,
-					Place: r.Place,
-					City: r.City,
-					Link: r.Link,
-				}
-			}
-	}
-
-	if renderOpt == false{
-		bytes, err := json.Marshal(events)
-		if err != nil{
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+	switch sortBy {
+	case "asc":
+		rows, err := q.LoadEventsAsc(ctx, head)
+		if err != nil {
+			log.Println("help help help")
 		}
-		w.Write(bytes)
-		return
+		for i, r := range rows {
+			funID = rand.Int63()
+			events[i] = db.Event{
+				ID:    funID,
+				Name:  r.Name,
+				Date:  r.Date,
+				Doors: r.Doors,
+				Begin: r.Begin,
+				Place: r.Place,
+				City:  r.City,
+				Link:  r.Link,
+			}
+		}
+	case "desc":
+		rows, err := q.LoadEventsDesc(ctx, head)
+		if err != nil {
+			log.Println("help help help")
+		}
+		for i, r := range rows {
+			funID = rand.Int63()
+			events[i] = db.Event{
+				ID:    funID,
+				Name:  r.Name,
+				Date:  r.Date,
+				Doors: r.Doors,
+				Begin: r.Begin,
+				Place: r.Place,
+				City:  r.City,
+				Link:  r.Link,
+			}
+		}
+	case "random":
+		rows, err := q.LoadEventsRandom(ctx, head)
+		if err != nil {
+			log.Println("help help help")
+		}
+		for i, r := range rows {
+			funID = rand.Int63()
+			events[i] = db.Event{
+				ID:    funID,
+				Name:  r.Name,
+				Date:  r.Date,
+				Doors: r.Doors,
+				Begin: r.Begin,
+				Place: r.Place,
+				City:  r.City,
+				Link:  r.Link,
+			}
+		}
 	}
-	
-
-	// this can be done prettier => see checklist-tool
-	tmpl := template.Must(template.New("events-range.html").Funcs(template.FuncMap{
-        "safe": safe,
-				"formatTime": formatTime,
-				"formatNulltime": formatNullTime,
-    }).ParseFS(h.InternalFS, "internal/events/templates/events-range.html"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = tmpl.Execute(w, map[string]any{
-		"Events": events,
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	return events	
 }
 
+// TODO: set ?highlight={true|false} to highlight the nearest future event.
+// TODO: set ?render={html|json}
+func (h *Handler) Load(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	query := r.URL.Query()
+	args := urlArgs{
+		Sort: query.Get("sort"),
+		Head: query.Get("head"),
+		Out:  query.Get("out"),
+	}
+	events := h.eventsByArgs(ctx, args)
+	
+	outOpt := "json"	
+	if args.Out != ""{
+		outOpt = args.Out
+	}
+	var err error
+	switch outOpt{
+		case "json":
+			bytes, err := json.Marshal(events)
+			if err != nil{
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			w.Write(bytes)
+			return
+		case "html":
+			// this can be done prettier => see checklist-tool
+			tmpl  := template.Must(template.New("events-range.html").Funcs(template.FuncMap{
+				"safe":           safe,
+				"formatTime":     formatTime,
+				"formatNulltime": formatNullTime,
+			}).ParseFS(h.InternalFS, "internal/events/templates/events-range.html"))
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			err = tmpl.Execute(w, map[string]any{
+				"Events": events,
+			})
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		default:
+			w.Write([]byte("no valid out="))
+	}
+}
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -285,12 +297,36 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Events added successfully"))
 }
 
+// Load /events/manage/api/load/mutable
+func (h *Handler) LoadMutable(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	query := r.URL.Query()
+	args := urlArgs{
+		Sort: query.Get("sort"),
+		Head: query.Get("head"),
+		Out:  "html",
+	}
+	events := h.eventsByArgs(ctx, args)
+	// this can be done prettier => see checklist-tool
+	tmpl  := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
+		"safe":           safe,
+		"formatTime":     formatTime,
+		"formatNulltime": formatNullTime,
+	}).ParseFS(h.InternalFS, "internal/events/templates/events-mutable.html"))
+	err := tmpl.Execute(w, map[string]any{
+		"Events": events,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
 	// ctx := r.Context()
 	return
 }
 
-func (h *Handler) RemoveEvent(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	// ctx := r.Context()
 	return
 }

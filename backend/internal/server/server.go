@@ -51,15 +51,18 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 		DB: sqlite,
 		InternalFS: internalFS,
 	}
-
-	api := s.Router.PathPrefix("/api/v1/events").Subrouter()
-	public := api.PathPrefix("/public").Subrouter()
-	privat := api.PathPrefix("/private").Subrouter()
-
-	public.HandleFunc("/load", e.Load).Methods("GET")
-	privat.HandleFunc("/create", e.Create).Methods("POST")
-	privat.HandleFunc("/create/bulk", e.Bulk).Methods("POST")
-	privat.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
+	
+	// This stuff is public
+	events := s.Router.PathPrefix("/events/").Subrouter()
+	events.HandleFunc("/load", e.Load).Methods("GET")
+	
+	// and this stuff is like /events/manage behind an auth
+	manage := events.PathPrefix("/manage/api").Subrouter()
+	manage.HandleFunc("/load/mutable", e.LoadMutable).Methods("GET")
+	manage.HandleFunc("/create", e.Create).Methods("POST")
+	manage.HandleFunc(`/delete/{id:\d*}`, e.Delete).Methods("POST")
+	manage.HandleFunc("/create/bulk", e.Bulk).Methods("POST")
+	manage.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
 
 
 	// logs all routes when starting after they go defined
