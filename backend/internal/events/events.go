@@ -25,13 +25,14 @@ type Handler struct{
 // TODO: set ?sort={asc|desc|random} to sort the events by date or randomize.
 // TODO: set ?head={nth} just load the nth fetched elems. This combines with ?sort.
 // TODO: set ?highlight={true|false} to highlight the nearest future event.
-// TODO: set ?raw={true|false} when set to true, events are returned as csv (maybe I could return this as vcard, so the people can import it directly into their calendar....)
+// TODO: set ?json={true|false} when set to true, events are returned as csv (maybe I could return this as vcard, so the people can import it directly into their calendar....)
 func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 	log.Println("events were requested...")
 	ctx := r.Context()
 	query := r.URL.Query()
 	sortQ := query.Get("sort")
 	headQ := query.Get("head")
+	jsonQ := query.Get("json")
 	// highlightQ := query.Get("highlight")
 
 	// if highlightQ == "true" {
@@ -47,7 +48,10 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 	}
 	sortBy := "desc" // default sort order
 	// highlight := false
-	// raw := false
+	jsonOpt := true
+	if jsonQ == "false"{
+		jsonOpt = false
+	}
 
 	if sortQ == "asc" || sortQ == "random" {
 		sortBy = sortQ
@@ -82,6 +86,15 @@ switch sortBy{
 			if err != nil{
 				log.Println("help help help")
 			}
+	}
+
+	if jsonOpt == true{
+		bytes, err := json.Marshal(events)
+		if err != nil{
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		w.Write(bytes)
+		return
 	}
 
 
