@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"math/rand"
 
 	"gopkg.in/yaml.v3"
 
@@ -69,22 +70,65 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 		head = defaultHead	
 	}
 
-var events = make([]db.Event, head)
-switch sortBy{
-	case "asc":
-		events, err = q.LoadEventsAsc(ctx, head)
-		if err != nil{
-			log.Println("help help help")
+	// Because 'sqlc generate' does a struct per query, we need to reformat from e.g. db.LoadEventsAscRow into db.Events
+	// event though they hold the same data
+	var events = make([]db.Event, head)
+	// Generate this very important number to make API-Calls very senseful...
+	var funID int64
+	switch sortBy{
+		case "asc":
+			rows, err := q.LoadEventsAsc(ctx, head)
+			if err != nil{
+				log.Println("help help help")
+				}
+			for i, r := range rows{
+				funID = rand.Int63()
+				events[i] = db.Event{
+					ID: funID,
+					Name: r.Name,
+					Date: r.Date,
+					Doors: r.Doors,
+					Begin: r.Begin,
+					Place: r.Place,
+					City: r.City,
+					Link: r.Link,
+				}
 			}
 		case "desc":
-			events, err = q.LoadEventsDesc(ctx, head)
+			rows, err := q.LoadEventsDesc(ctx, head)
 			if err != nil{
 				log.Println("help help help")
 			}
+			for i, r := range rows{
+				funID = rand.Int63()
+				events[i] = db.Event{
+					ID: funID,
+					Name: r.Name,
+					Date: r.Date,
+					Doors: r.Doors,
+					Begin: r.Begin,
+					Place: r.Place,
+					City: r.City,
+					Link: r.Link,
+				}
+			}
 		case "random":
-			events, err = q.LoadEventsRandom(ctx, head)
+			rows, err := q.LoadEventsRandom(ctx, head)
 			if err != nil{
 				log.Println("help help help")
+			}
+			for i, r := range rows{
+				funID = rand.Int63()
+				events[i] = db.Event{
+					ID: funID,
+					Name: r.Name,
+					Date: r.Date,
+					Doors: r.Doors,
+					Begin: r.Begin,
+					Place: r.Place,
+					City: r.City,
+					Link: r.Link,
+				}
 			}
 	}
 
