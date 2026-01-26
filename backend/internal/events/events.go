@@ -28,6 +28,14 @@ type Handler struct{
 // TODO: set ?highlight={true|false} to highlight the nearest future event.
 // TODO: set ?json={true|false} when set to true, events are returned as csv (maybe I could return this as vcard, so the people can import it directly into their calendar....)
 func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// Allow specific methods and headers
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	// Handle preflight requests
+	if r.Method == "OPTIONS" {
+			return
+	}
 	log.Println("events were requested...")
 	ctx := r.Context()
 	query := r.URL.Query()
@@ -45,13 +53,13 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 	var defaultHead int64
 	defaultHead, err := q.CountEvents(ctx) // To get all events by default, we need the exact number of these
 	if err != nil{
-		log.Println("Could count events...")
+		log.Println("Could not count events...")
 	}
 	sortBy := "desc" // default sort order
 	// highlight := false
-	jsonOpt := true
-	if jsonQ == "false"{
-		jsonOpt = false
+	jsonOpt := false
+	if jsonQ == "true"{
+		jsonOpt = true
 	}
 
 	if sortQ == "asc" || sortQ == "random" {
@@ -141,8 +149,7 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
-	tmpl, err := template.ParseFiles("internal/events/templates/events-list.html")
+	tmpl, err := template.ParseFiles("internal/events/templates/events-range.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -152,6 +159,7 @@ func (h *Handler) Load (w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
+
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
