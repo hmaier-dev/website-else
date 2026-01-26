@@ -52,14 +52,14 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 		InternalFS: internalFS,
 	}
 
-	api := s.Router.PathPrefix("/api/v1").Subrouter()
-	er := api.PathPrefix("/events/").Subrouter()
-	er.HandleFunc("/load", e.Load).Methods("GET")
+	api := s.Router.PathPrefix("/api/v1/events").Subrouter()
+	public := api.PathPrefix("/public").Subrouter()
+	privat := api.PathPrefix("/private").Subrouter()
 
-	emr := api.PathPrefix("/manage/").Subrouter()
-	emr.HandleFunc("/create", e.Create).Methods("POST")
-	emr.HandleFunc("/create/bulk", e.Bulk).Methods("POST")
-	emr.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
+	public.HandleFunc("/load", e.Load).Methods("GET")
+	privat.HandleFunc("/create", e.Create).Methods("POST")
+	privat.HandleFunc("/create/bulk", e.Bulk).Methods("POST")
+	privat.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
 
 
 	// logs all routes when starting after they go defined
