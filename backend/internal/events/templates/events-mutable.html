@@ -1,0 +1,40 @@
+{{ define "events-mutable.html" }}
+  {{ range .Events }}
+  <form class="event bg-white rounded-lg shadow-md p-4 mb-4 hover:shadow-lg transition-shadow duration-200 flex flex-wrap items-center gap-2"
+        hx-post="/events/manage/api/change"
+        hx-swap="none">
+    <!-- Name as an input -->
+    <input type="text" class="text-xl font-semibold text-gray-800 flex-1 outline-none" value="{{ .Name }}" name="name" />
+
+    <!-- Date with icon and input -->
+    <span class="flex items-center text-gray-600 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <input type="text" class="bg-transparent outline-none" value="{{ .Date | formatTime }}" name="date" />
+    </span>
+
+    <!-- City with icon and input -->
+    <span class="flex items-center text-gray-600 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <input type="text" class="bg-transparent outline-none" value="{{ .City }}" name="city" />
+    </span>
+
+    <!-- Place as an input -->
+    <input type="text" class="bg-transparent outline-none" value="{{ .Place }}" name="place" />
+
+    <!-- Link as an input -->
+    {{ if .Link }}
+      <input type="text" class="bg-transparent outline-none" value="{{ .Link | safe }}" palceholder="Link für weitere Infos." name="link" />
+    {{ end }}
+
+    <!-- Change button -->
+    <button type="submit" class="ml-auto bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+      Change
+    </button>
+  </form>
+  {{ end }}
+{{ end }}
