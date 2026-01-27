@@ -21,7 +21,9 @@ curl localhost:3000/mailbox/all
 ```bash
 ## POST to /events/manage/create
 ## This inserts a new entry into the database
-curl -d 'datum=2026-01-23&event=LateNightShow&ort=Moritzbastei&stadt=Leipzig&link=http%3A%2F%2Fwww.ort.de' localhost:3000/events/manage/create
+curl -d 'datum=2026-02-22&event=LateNightShow&ort=Moritzbastei&stadt=Leipzig' localhost:3000/events/manage/api/create
+## POST to /events/manage/api/delete
+curl -d 'datum=22.02.2026&event=LateNightShow&ort=Moritzbastei&stadt=Leipzig' localhost:3000/events/manage/api/delete
 ## GET to /events/manage/load
 ## gets all messages from database
 curl localhost:3000/events/load?sort=desc&head=3&json=true

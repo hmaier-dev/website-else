@@ -536,7 +536,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("No ids found."))
 		return
 	}
-	// This is ugly and needs to be redone...
+	// This logging is ugly and needs to be redone...
 	row, err := q.GetEventByID(ctx, ids[0])
 	msg := `
 	Event:	%s \n 
@@ -547,13 +547,18 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	`
 	log.Println("The following event will be deleted:")
 	log.Printf(msg, event, datum, ort, stadt, row.Link.String)
-
+	
+	// If there was an unique id for an entry, we could delete more precise.
+	// This way we ONLY match form-data which also could come from a different event, which holds the same data.
+	// Indeed this is dirty, but user shouldn't detect it.... (maybe)
 	err = q.DeleteEventByID(ctx, ids[0])
 	if err != nil{
 		http.Error(w, "Couldn't delete.", http.StatusNotModified)
 		return
 	}
 	w.Write([]byte("Sucesssful delete."))
+	// This is also ugly.
+	// Better add options parsing like in Load() to decided if html or json is return, and not just reload this site....
 	w.Header().Set("HX-Redirect", "/events/manage")
 	w.WriteHeader(http.StatusNoContent)
 }
