@@ -1,6 +1,7 @@
 package events
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"embed"
@@ -11,12 +12,17 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"crypto/sha256"
-	"github.com/btcsuite/btcutil/base58"
 	"sort"
 
+	"github.com/btcsuite/btcutil/base58"
+
+	ics "github.com/arran4/golang-ical"
+
+	"github.com/gorilla/mux"
 	"gopkg.in/yaml.v3"
 
 	db "codeberg.org/schnelles_geraet/website-else/backend/internal/database"
@@ -619,3 +625,37 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
+
+func (h *Handler) ProvideICSFile (w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+  hash := mux.Vars(r)["id"]
+
+	q := db.New(h.DB)
+
+	event, err := q.GetEventByHash(ctx, hash)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	cal := ics.NewCalendar()
+	cal.SetMethod(ics.MethodRequest)
+	e := cal.AddEvent(hash)
+	e.SetSummary("")
+	e.SetLocation("Address")
+	if event.Link.Valid{
+		e.SetURL(event.Link.String)
+	}
+	card := cal.Serialize()
+	
+	fileName := fmt.Sprintf("Elisa_Adam_am_%s_in_%.ics", event.Date.Format("02.01.2006"), event.City)
+
+	w.Header().Set("Content-Type", "text/calendar")
+	disposition := fmt.Sprintf("attachment; filename=%s", fileName)
+	w.Header().Set("Content-Disposition", disposition)
+	
+	_, err = io.Copy(w, strings.NewReader(card))
+	if err != nil {
+		w.Write([]byte("unfortunatly no ics for you :( server problem..."))
+	}
+}
+
