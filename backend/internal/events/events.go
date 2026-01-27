@@ -380,7 +380,7 @@ func (h *Handler) Load(w http.ResponseWriter, r *http.Request) {
 
 func makeHash(datum string, event string, ort string, stadt string) string{
 	// We take these values to generate a unique hash
-	data := make([]string, 0, 5)
+	data := make([]string, 5)
 	data[0] = datum
 	data[1] = event
 	data[2] = ort
