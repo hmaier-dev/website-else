@@ -137,8 +137,37 @@ func (q *Queries) GetCompleteMailbox(ctx context.Context) ([]Mailbox, error) {
 	return items, nil
 }
 
+const getEventByID = `-- name: GetEventByID :one
+SELECT name, date, doors, begin, place, city, link FROM events WHERE id = ?
+`
+
+type GetEventByIDRow struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+}
+
+func (q *Queries) GetEventByID(ctx context.Context, id int64) (GetEventByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getEventByID, id)
+	var i GetEventByIDRow
+	err := row.Scan(
+		&i.Name,
+		&i.Date,
+		&i.Doors,
+		&i.Begin,
+		&i.Place,
+		&i.City,
+		&i.Link,
+	)
+	return i, err
+}
+
 const getIDsFromEvent = `-- name: GetIDsFromEvent :many
-SELECT id FROM events WHERE name = ? AND date = ? AND city = ? AND place = ? AND link = ? ORDER by id DESC
+SELECT id FROM events WHERE name = ? AND date = ? AND city = ? AND place = ? ORDER by id DESC
 `
 
 type GetIDsFromEventParams struct {
@@ -146,7 +175,6 @@ type GetIDsFromEventParams struct {
 	Date  time.Time
 	City  string
 	Place string
-	Link  sql.NullString
 }
 
 // If there are duplicates get the id-list starting with the oldest entry, so we can delete it.
@@ -156,7 +184,6 @@ func (q *Queries) GetIDsFromEvent(ctx context.Context, arg GetIDsFromEventParams
 		arg.Date,
 		arg.City,
 		arg.Place,
-		arg.Link,
 	)
 	if err != nil {
 		return nil, err

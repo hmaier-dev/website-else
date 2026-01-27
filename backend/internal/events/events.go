@@ -175,6 +175,30 @@ func adaptPrevRow(rows []db.LoadEventsPrevRow) []EventRow{
 	}
 	return out
 }
+
+// ##########################################################################################################
+// Single event
+
+type EventByIDRow struct{
+	r db.GetEventByIDRow
+}
+func (id EventByIDRow ) GetName() string {return id.r.Name}
+func (id EventByIDRow ) GetDate() time.Time {return id.r.Date}
+func (id EventByIDRow ) GetDoors() time.Time {return id.r.Doors.Time}
+func (id EventByIDRow ) GetBegin() time.Time {return id.r.Begin.Time}
+func (id EventByIDRow ) GetPlace() string {return id.r.Place}
+func (id EventByIDRow ) GetCity() string {return id.r.City}
+func (id EventByIDRow ) GetLink() *string {
+    if !id.r.Link.Valid || id.r.Link.String == "" {
+        return nil
+    }
+    return &id.r.Link.String
+}
+
+func adaptByIDRow(row db.GetEventByIDRow) EventByIDRow{
+	return EventByIDRow{r: row}
+}
+
 // ##########################################################################################################
 // A new query with a new db.Struct is generated, you need to add the same boilerplate from above here
 // ###########################################################################################################
@@ -365,7 +389,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to add event", http.StatusInternalServerError)
 		return
 	}
-	// Return a success response
+
 	w.WriteHeader(http.StatusCreated)
 	args := urlArgs{
 		Sort: "desc",
@@ -486,7 +510,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
 		return
 	}
-	datum, err := time.Parse("02.01.2006",r.FormValue("datum"))
+	datum, err := time.Parse("02.01.2006", r.FormValue("datum"))
 	if err != nil{
 		http.Error(w, "Wrong time date format.", http.StatusBadRequest)
 		return
@@ -494,15 +518,12 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	event := r.FormValue("event")
 	ort := r.FormValue("ort")
 	stadt := r.FormValue("stadt")
-	link := r.FormValue("link")
 
 	args := db.GetIDsFromEventParams{
 		Name: event, 
 		Date: datum,
 		Place: ort,
 		City: stadt,
-		Link: sql.NullString{String: link, Valid: link != ""},
-
 	}
 	// There could be event duplicates, so fetch all ids
 	ids, err := q.GetIDsFromEvent(ctx, args)
@@ -510,9 +531,31 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Database error.", http.StatusBadRequest)
 		return
 	}
-	log.Printf("%v \n", ids)
-	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte("Events added successfully"))
+	if len(ids) <= 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("No ids found."))
+		return
+	}
+	// This is ugly and needs to be redone...
+	row, err := q.GetEventByID(ctx, ids[0])
+	msg := `
+	Event:	%s \n 
+	Datum:	%s \n
+	Ort:  %s \n
+	Stadt:	%s \n
+	Link:		%s \n
+	`
+	log.Println("The following event will be deleted:")
+	log.Printf(msg, event, datum, ort, stadt, row.Link.String)
 
-	return
+	err = q.DeleteEventByID(ctx, ids[0])
+	if err != nil{
+		http.Error(w, "Couldn't delete.", http.StatusNotModified)
+		return
+	}
+	w.Write([]byte("Sucesssful delete."))
+	w.Header().Set("HX-Redirect", "/events/manage")
+	w.WriteHeader(http.StatusNoContent)
 }
+
+

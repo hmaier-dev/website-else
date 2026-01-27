@@ -60,9 +60,9 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 	manage := events.PathPrefix("/manage/api").Subrouter()
 	manage.HandleFunc("/load/mutable", e.LoadMutable).Methods("GET")
 	manage.HandleFunc("/create", e.Create).Methods("POST")
-	manage.HandleFunc(`/delete/{id:\d*}`, e.Delete).Methods("POST")
 	manage.HandleFunc("/create/bulk", e.Bulk).Methods("POST")
-	manage.HandleFunc(`/change/{id:\d*}`, e.Change).Methods("POST")
+	manage.HandleFunc("/delete", e.Delete).Methods("POST")
+	manage.HandleFunc("/change", e.Change).Methods("POST")
 
 
 	// logs all routes when starting after they go defined

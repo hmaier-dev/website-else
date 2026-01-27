@@ -41,7 +41,10 @@ SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(d
 
 -- If there are duplicates get the id-list starting with the oldest entry, so we can delete it.
 -- name: GetIDsFromEvent :many
-SELECT id FROM events WHERE name = ? AND date = ? AND city = ? AND place = ? AND link = ? ORDER by id DESC;
+SELECT id FROM events WHERE name = ? AND date = ? AND city = ? AND place = ? ORDER by id DESC;
+
+-- name: GetEventByID :one
+SELECT name, date, doors, begin, place, city, link FROM events WHERE id = ?;
 
 -- name: DeleteEventByID :exec
 DELETE FROM events
