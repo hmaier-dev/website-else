@@ -3,8 +3,6 @@ description: Elisa Adam, Kunstschaffende lädt zu diversen Möglichkeiten ein.
 title: Home
 ---
 
-<br>
-
 {{< jesus1 >}}
 
 
