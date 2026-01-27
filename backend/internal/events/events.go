@@ -407,6 +407,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Takes requests from /events/manage/api/create/bulk
 func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
@@ -416,13 +417,17 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	r.ParseMultipartForm(1 << 20)
+	// header is not needed
+  file, _, err := r.FormFile("yaml")
 
 	// Parse the YAML file from the request body
-	body, err := io.ReadAll(r.Body)
+	body, err := io.ReadAll(file)
 	if err != nil {
 		http.Error(w, "Failed to read request body", http.StatusBadRequest)
 		return
 	}
+
 
 	type Event struct {
 		Datum string `yaml:"datum"`
@@ -468,9 +473,7 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 	}
-
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("Events added successfully"))
+	http.Redirect(w, r, "/events/manage", http.StatusSeeOther)
 }
 
 // Load /events/manage/api/load/mutable

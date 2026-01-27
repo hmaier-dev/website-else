@@ -29,5 +29,5 @@ curl -d 'datum=22.02.2026&event=LateNightShow&ort=Moritzbastei&stadt=Leipzig' lo
 curl localhost:3000/events/load?sort=desc&head=3&json=true
 ## POST to /events/manage/create/bulk
 ## uploads a yaml-file with multiple events
-curl -X POST -H "Content-Type: application/yaml" --data-binary @events.yml http://localhost:3000/events/manage/create/bulk
+curl -X POST -H "Content-Type: application/yaml" --data-binary @events.yml http://localhost/events/manage/api/create/bulk
 ```

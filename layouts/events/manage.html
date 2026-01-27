@@ -91,6 +91,54 @@
           </button>
         </form>
 
+
+        <form action="/events/manage/api/create/bulk" method="POST" enctype="multipart/form-data" class="w-full md:w-[24rem] lg:w-[28rem]
+                                                                                                   mx-auto md:mx-0
+                                                                                                   p-6 bg-white/70 backdrop-blur-md
+                                                                                                   border border-violet-200
+                                                                                                   rounded-2xl shadow-md">
+          <div class="flex flex-col items-center justify-center w-full space-y-4 mb-4">
+            <div class="flex items-center justify-center w-full">
+              <label for="dropzone-file" class="flex flex-col
+                items-center justify-center w-full h-24 border-2 border-gray-300
+                border-dashed rounded-lg cursor-pointer">
+                  <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                      <!-- Upload icon -->
+                      <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" />
+                      </svg>
+                      <!-- Text that changes -->
+                      <p id="upload-text" class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                        <span class="font-semibold"></span>
+                      </p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">max. 1MB</p>
+                  </div>
+                  <input id="dropzone-file" name="yaml" type="file" class="hidden" multiple required />
+              </label>
+            </div>
+          </div>
+
+          <script>
+          const fileInput = document.getElementById('dropzone-file');
+          const uploadText = document.getElementById('upload-text');
+
+          fileInput.addEventListener('change', function () {
+            if (fileInput.files.length > 0) {
+              const fileNames = Array.from(fileInput.files).map(file => file.name).join(', ');
+              uploadText.innerHTML = `<span class="font-semibold">${fileNames}</span>`;
+            } else {
+              uploadText.innerHTML = `<span class="font-semibold">Bereit zum Hochladen</span> oder per Drag & Drop`;
+            }
+          });
+          </script>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Liste mit Events veröffentlichen
+          </button>
+        </form>
+
         <div
           id="container-events-all"
           class=""
