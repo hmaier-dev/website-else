@@ -35,9 +35,9 @@ SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY dat
 -- name: LoadEventsRandom :many
 SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?;
 -- name: LoadEventsNext :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now') LIMIT ?;
+SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now') ORDER BY date ASC LIMIT ?;
 -- name: LoadEventsPrev :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) < DATE('now') LIMIT ?;
+SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) < DATE('now') ORDER by date DESC LIMIT ?;
 
 -- If there are duplicates get the id-list starting with the oldest entry, so we can delete it.
 -- name: GetIDsFromEvent :many

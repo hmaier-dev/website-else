@@ -478,6 +478,41 @@ func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	// ctx := r.Context()
+	ctx := r.Context()
+	q := db.New(h.DB)
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+		return
+	}
+	datum, err := time.Parse("02.01.2006",r.FormValue("datum"))
+	if err != nil{
+		http.Error(w, "Wrong time date format.", http.StatusBadRequest)
+		return
+	}
+	event := r.FormValue("event")
+	ort := r.FormValue("ort")
+	stadt := r.FormValue("stadt")
+	link := r.FormValue("link")
+
+	args := db.GetIDsFromEventParams{
+		Name: event, 
+		Date: datum,
+		Place: ort,
+		City: stadt,
+		Link: sql.NullString{String: link, Valid: link != ""},
+
+	}
+	// There could be event duplicates, so fetch all ids
+	ids, err := q.GetIDsFromEvent(ctx, args)
+	if err != nil {
+		http.Error(w, "Database error.", http.StatusBadRequest)
+		return
+	}
+	log.Printf("%v \n", ids)
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte("Events added successfully"))
+
 	return
 }
