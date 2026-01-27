@@ -97,6 +97,9 @@ func adaptDescRow(rows []db.LoadEventsDescRow) []EventRow{
 	return out
 }
 
+//#######################################################################################################
+// RANDOM
+
 type EventRandRow struct{
 	r db.LoadEventsRandomRow
 }
@@ -117,6 +120,58 @@ func adaptRandRow(rows []db.LoadEventsRandomRow) []EventRow{
 	out := make([]EventRow, len(rows))
 	for i, r := range rows{
 		out[i] = EventRandRow{r: r}
+	}
+	return out
+}
+//#######################################################################################################
+// NEXT
+
+type EventNextRow struct{
+	r db.LoadEventsNextRow
+}
+func (rand EventNextRow ) GetName() string {return rand.r.Name}
+func (rand EventNextRow ) GetDate() time.Time {return rand.r.Date}
+func (rand EventNextRow ) GetDoors() time.Time {return rand.r.Doors.Time}
+func (rand EventNextRow ) GetBegin() time.Time {return rand.r.Begin.Time}
+func (rand EventNextRow ) GetPlace() string {return rand.r.Place}
+func (rand EventNextRow ) GetCity() string {return rand.r.City}
+func (rand EventNextRow ) GetLink() *string {
+    if !rand.r.Link.Valid || rand.r.Link.String == "" {
+        return nil
+    }
+    return &rand.r.Link.String
+}
+
+func adaptNextRow(rows []db.LoadEventsNextRow) []EventRow{
+	out := make([]EventRow, len(rows))
+	for i, r := range rows{
+		out[i] = EventNextRow{r: r}
+	}
+	return out
+}
+//#######################################################################################################
+// PREVIOUS
+
+type EventPrevRow struct{
+	r db.LoadEventsPrevRow
+}
+func (rand EventPrevRow ) GetName() string {return rand.r.Name}
+func (rand EventPrevRow ) GetDate() time.Time {return rand.r.Date}
+func (rand EventPrevRow ) GetDoors() time.Time {return rand.r.Doors.Time}
+func (rand EventPrevRow ) GetBegin() time.Time {return rand.r.Begin.Time}
+func (rand EventPrevRow ) GetPlace() string {return rand.r.Place}
+func (rand EventPrevRow ) GetCity() string {return rand.r.City}
+func (rand EventPrevRow ) GetLink() *string {
+    if !rand.r.Link.Valid || rand.r.Link.String == "" {
+        return nil
+    }
+    return &rand.r.Link.String
+}
+
+func adaptPrevRow(rows []db.LoadEventsPrevRow) []EventRow{
+	out := make([]EventRow, len(rows))
+	for i, r := range rows{
+		out[i] = EventPrevRow{r: r}
 	}
 	return out
 }
@@ -203,7 +258,19 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 			wrap := adaptRandRow(rows)
 			events = constructEvents(wrap)
 		case "next":
+			rows, err := q.LoadEventsNext(ctx, head)
+			if err != nil{
+				log.Println("Problem loading events from database...")
+			}
+			wrap := adaptNextRow(rows)
+			events = constructEvents(wrap)
 		case "prev":
+			rows, err := q.LoadEventsPrev(ctx, head)
+			if err != nil{
+				log.Println("Problem loading events from database...")
+			}
+			wrap := adaptPrevRow(rows)
+			events = constructEvents(wrap)
 	}
 	return events
 

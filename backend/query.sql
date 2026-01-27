@@ -34,3 +34,7 @@ SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY dat
 SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date ASC LIMIT ?;
 -- name: LoadEventsRandom :many
 SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?;
+-- name: LoadEventsNext :many
+SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now') LIMIT ?;
+-- name: LoadEventsPrev :many
+SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) < DATE('now') LIMIT ?;

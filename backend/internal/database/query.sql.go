@@ -256,6 +256,100 @@ func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]LoadEvents
 	return items, nil
 }
 
+const loadEventsNext = `-- name: LoadEventsNext :many
+SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now') LIMIT ?
+`
+
+type LoadEventsNextRow struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+	Pic   []byte
+}
+
+func (q *Queries) LoadEventsNext(ctx context.Context, limit int64) ([]LoadEventsNextRow, error) {
+	rows, err := q.db.QueryContext(ctx, loadEventsNext, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []LoadEventsNextRow
+	for rows.Next() {
+		var i LoadEventsNextRow
+		if err := rows.Scan(
+			&i.Name,
+			&i.Date,
+			&i.Doors,
+			&i.Begin,
+			&i.Place,
+			&i.City,
+			&i.Link,
+			&i.Pic,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const loadEventsPrev = `-- name: LoadEventsPrev :many
+SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) < DATE('now') LIMIT ?
+`
+
+type LoadEventsPrevRow struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+	Pic   []byte
+}
+
+func (q *Queries) LoadEventsPrev(ctx context.Context, limit int64) ([]LoadEventsPrevRow, error) {
+	rows, err := q.db.QueryContext(ctx, loadEventsPrev, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []LoadEventsPrevRow
+	for rows.Next() {
+		var i LoadEventsPrevRow
+		if err := rows.Scan(
+			&i.Name,
+			&i.Date,
+			&i.Doors,
+			&i.Begin,
+			&i.Place,
+			&i.City,
+			&i.Link,
+			&i.Pic,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const loadEventsRandom = `-- name: LoadEventsRandom :many
 SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?
 `
