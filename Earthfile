@@ -5,7 +5,7 @@ build:
 
   # Hugo cannot work in root (/)
   WORKDIR tmp
-  COPY --dir content static assets layouts ./
+  COPY --dir content static assets layouts backend ./
   COPY hugo.toml hugo.toml
   COPY tailwind.config.js tailwind.config.js
   RUN find ./content
