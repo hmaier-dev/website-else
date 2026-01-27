@@ -10,15 +10,17 @@ import (
 )
 
 type Event struct {
-	ID    int64
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
-	Pic   []byte
+	ID          int64
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
+	Pic         []byte
+	Hash        string
 }
 
 type Mailbox struct {

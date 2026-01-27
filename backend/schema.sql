@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS events (
   begin DATETIME,
   place TEXT NOT NULL,
   city TEXT NOT NULL,
+  coordinates TEXT,
   link TEXT DEFAULT '',
-  pic BLOB
+  pic BLOB,
+  hash TEXT NOT NULL
 );

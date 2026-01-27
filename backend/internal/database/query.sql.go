@@ -137,6 +137,35 @@ func (q *Queries) GetCompleteMailbox(ctx context.Context) ([]Mailbox, error) {
 	return items, nil
 }
 
+const getEventByHash = `-- name: GetEventByHash :one
+SELECT name, date, doors, begin, place, city, link FROM events WHERE hash = ?
+`
+
+type GetEventByHashRow struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+}
+
+func (q *Queries) GetEventByHash(ctx context.Context, hash string) (GetEventByHashRow, error) {
+	row := q.db.QueryRowContext(ctx, getEventByHash, hash)
+	var i GetEventByHashRow
+	err := row.Scan(
+		&i.Name,
+		&i.Date,
+		&i.Doors,
+		&i.Begin,
+		&i.Place,
+		&i.City,
+		&i.Link,
+	)
+	return i, err
+}
+
 const getEventByID = `-- name: GetEventByID :one
 SELECT name, date, doors, begin, place, city, link FROM events WHERE id = ?
 `
