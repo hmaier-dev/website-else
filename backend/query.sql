@@ -38,3 +38,11 @@ SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY RAN
 SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now') LIMIT ?;
 -- name: LoadEventsPrev :many
 SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) < DATE('now') LIMIT ?;
+
+-- If there are duplicates get the id-list starting with the oldest entry, so we can delete it.
+-- name: GetIDsFromEvent :many
+SELECT id FROM events WHERE name = ? AND date = ? AND city = ? AND place = ? AND link = ? ORDER by id DESC;
+
+-- name: DeleteEventByID :exec
+DELETE FROM events
+WHERE id = ?;

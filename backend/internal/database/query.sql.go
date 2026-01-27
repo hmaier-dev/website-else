@@ -92,6 +92,16 @@ func (q *Queries) CountEvents(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const deleteEventByID = `-- name: DeleteEventByID :exec
+DELETE FROM events
+WHERE id = ?
+`
+
+func (q *Queries) DeleteEventByID(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteEventByID, id)
+	return err
+}
+
 const getCompleteMailbox = `-- name: GetCompleteMailbox :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox ORDER BY date ASC
 `
@@ -117,6 +127,48 @@ func (q *Queries) GetCompleteMailbox(ctx context.Context) ([]Mailbox, error) {
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getIDsFromEvent = `-- name: GetIDsFromEvent :many
+SELECT id FROM events WHERE name = ? AND date = ? AND city = ? AND place = ? AND link = ? ORDER by id DESC
+`
+
+type GetIDsFromEventParams struct {
+	Name  string
+	Date  time.Time
+	City  string
+	Place string
+	Link  sql.NullString
+}
+
+// If there are duplicates get the id-list starting with the oldest entry, so we can delete it.
+func (q *Queries) GetIDsFromEvent(ctx context.Context, arg GetIDsFromEventParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, getIDsFromEvent,
+		arg.Name,
+		arg.Date,
+		arg.City,
+		arg.Place,
+		arg.Link,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
