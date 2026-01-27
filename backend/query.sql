@@ -22,28 +22,28 @@ SELECT id, name, email, message, date, approval, IsRead FROM mailbox WHERE IsRea
 
 -- name: AddSingleEvent :exec
 INSERT INTO events (
-  name, date, doors, begin, place, city, link, pic
+  name, date, doors, begin, place, city, coordinates, link, pic, hash
 ) VALUES (
-  ?, ?, ?, ?, ?, ?, ?, ?
+  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 );
 
 -- name: GetEventByID :one
-SELECT name, date, doors, begin, place, city, link FROM events WHERE id = ?;
+SELECT name, date, doors, begin, place, city, coordinates, link, hash FROM events WHERE id = ?;
 -- name: GetEventByHash :one
-SELECT name, date, doors, begin, place, city, link FROM events WHERE hash = ?;
+SELECT id, name, date, doors, begin, place, city, coordinates, link FROM events WHERE hash = ?;
 
 -- name: CountEvents :one
 SELECT count(*) FROM events;
 -- name: LoadEventsDesc :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date DESC LIMIT ?;
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events ORDER BY date DESC LIMIT ?;
 -- name: LoadEventsAsc :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date ASC LIMIT ?;
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events ORDER BY date ASC LIMIT ?;
 -- name: LoadEventsRandom :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?;
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events ORDER BY RANDOM() LIMIT ?;
 -- name: LoadEventsNext :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now', '-1 day') ORDER BY date ASC LIMIT ?;
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events WHERE DATE(date) > DATE('now', '-1 day') ORDER BY date ASC LIMIT ?;
 -- name: LoadEventsPrev :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) < DATE('now') ORDER by date DESC LIMIT ?;
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events WHERE DATE(date) < DATE('now') ORDER by date DESC LIMIT ?;
 
 -- If there are duplicates get the id-list starting with the oldest entry, so we can delete it.
 -- name: GetIDsFromEvent :many

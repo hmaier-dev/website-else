@@ -47,21 +47,23 @@ func (q *Queries) AddMessageToMailbox(ctx context.Context, arg AddMessageToMailb
 const addSingleEvent = `-- name: AddSingleEvent :exec
 
 INSERT INTO events (
-  name, date, doors, begin, place, city, link, pic
+  name, date, doors, begin, place, city, coordinates, link, pic, hash
 ) VALUES (
-  ?, ?, ?, ?, ?, ?, ?, ?
+  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 `
 
 type AddSingleEventParams struct {
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
-	Pic   []byte
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
+	Pic         []byte
+	Hash        string
 }
 
 // ################################################################
@@ -75,8 +77,10 @@ func (q *Queries) AddSingleEvent(ctx context.Context, arg AddSingleEventParams) 
 		arg.Begin,
 		arg.Place,
 		arg.City,
+		arg.Coordinates,
 		arg.Link,
 		arg.Pic,
+		arg.Hash,
 	)
 	return err
 }
@@ -138,46 +142,52 @@ func (q *Queries) GetCompleteMailbox(ctx context.Context) ([]Mailbox, error) {
 }
 
 const getEventByHash = `-- name: GetEventByHash :one
-SELECT name, date, doors, begin, place, city, link FROM events WHERE hash = ?
+SELECT id, name, date, doors, begin, place, city, coordinates, link FROM events WHERE hash = ?
 `
 
 type GetEventByHashRow struct {
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
+	ID          int64
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
 }
 
 func (q *Queries) GetEventByHash(ctx context.Context, hash string) (GetEventByHashRow, error) {
 	row := q.db.QueryRowContext(ctx, getEventByHash, hash)
 	var i GetEventByHashRow
 	err := row.Scan(
+		&i.ID,
 		&i.Name,
 		&i.Date,
 		&i.Doors,
 		&i.Begin,
 		&i.Place,
 		&i.City,
+		&i.Coordinates,
 		&i.Link,
 	)
 	return i, err
 }
 
 const getEventByID = `-- name: GetEventByID :one
-SELECT name, date, doors, begin, place, city, link FROM events WHERE id = ?
+SELECT name, date, doors, begin, place, city, coordinates, link, hash FROM events WHERE id = ?
 `
 
 type GetEventByIDRow struct {
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
+	Hash        string
 }
 
 func (q *Queries) GetEventByID(ctx context.Context, id int64) (GetEventByIDRow, error) {
@@ -190,7 +200,9 @@ func (q *Queries) GetEventByID(ctx context.Context, id int64) (GetEventByIDRow, 
 		&i.Begin,
 		&i.Place,
 		&i.City,
+		&i.Coordinates,
 		&i.Link,
+		&i.Hash,
 	)
 	return i, err
 }
@@ -271,18 +283,20 @@ func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]Mailbox, error) 
 }
 
 const loadEventsAsc = `-- name: LoadEventsAsc :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date ASC LIMIT ?
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events ORDER BY date ASC LIMIT ?
 `
 
 type LoadEventsAscRow struct {
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
-	Pic   []byte
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
+	Pic         []byte
+	Hash        string
 }
 
 func (q *Queries) LoadEventsAsc(ctx context.Context, limit int64) ([]LoadEventsAscRow, error) {
@@ -301,8 +315,10 @@ func (q *Queries) LoadEventsAsc(ctx context.Context, limit int64) ([]LoadEventsA
 			&i.Begin,
 			&i.Place,
 			&i.City,
+			&i.Coordinates,
 			&i.Link,
 			&i.Pic,
+			&i.Hash,
 		); err != nil {
 			return nil, err
 		}
@@ -318,18 +334,20 @@ func (q *Queries) LoadEventsAsc(ctx context.Context, limit int64) ([]LoadEventsA
 }
 
 const loadEventsDesc = `-- name: LoadEventsDesc :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY date DESC LIMIT ?
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events ORDER BY date DESC LIMIT ?
 `
 
 type LoadEventsDescRow struct {
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
-	Pic   []byte
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
+	Pic         []byte
+	Hash        string
 }
 
 func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]LoadEventsDescRow, error) {
@@ -348,8 +366,10 @@ func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]LoadEvents
 			&i.Begin,
 			&i.Place,
 			&i.City,
+			&i.Coordinates,
 			&i.Link,
 			&i.Pic,
+			&i.Hash,
 		); err != nil {
 			return nil, err
 		}
@@ -365,18 +385,20 @@ func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]LoadEvents
 }
 
 const loadEventsNext = `-- name: LoadEventsNext :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now', '-1 day') ORDER BY date ASC LIMIT ?
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events WHERE DATE(date) > DATE('now', '-1 day') ORDER BY date ASC LIMIT ?
 `
 
 type LoadEventsNextRow struct {
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
-	Pic   []byte
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
+	Pic         []byte
+	Hash        string
 }
 
 func (q *Queries) LoadEventsNext(ctx context.Context, limit int64) ([]LoadEventsNextRow, error) {
@@ -395,8 +417,10 @@ func (q *Queries) LoadEventsNext(ctx context.Context, limit int64) ([]LoadEvents
 			&i.Begin,
 			&i.Place,
 			&i.City,
+			&i.Coordinates,
 			&i.Link,
 			&i.Pic,
+			&i.Hash,
 		); err != nil {
 			return nil, err
 		}
@@ -412,18 +436,20 @@ func (q *Queries) LoadEventsNext(ctx context.Context, limit int64) ([]LoadEvents
 }
 
 const loadEventsPrev = `-- name: LoadEventsPrev :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) < DATE('now') ORDER by date DESC LIMIT ?
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events WHERE DATE(date) < DATE('now') ORDER by date DESC LIMIT ?
 `
 
 type LoadEventsPrevRow struct {
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
-	Pic   []byte
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
+	Pic         []byte
+	Hash        string
 }
 
 func (q *Queries) LoadEventsPrev(ctx context.Context, limit int64) ([]LoadEventsPrevRow, error) {
@@ -442,8 +468,10 @@ func (q *Queries) LoadEventsPrev(ctx context.Context, limit int64) ([]LoadEvents
 			&i.Begin,
 			&i.Place,
 			&i.City,
+			&i.Coordinates,
 			&i.Link,
 			&i.Pic,
+			&i.Hash,
 		); err != nil {
 			return nil, err
 		}
@@ -459,18 +487,20 @@ func (q *Queries) LoadEventsPrev(ctx context.Context, limit int64) ([]LoadEvents
 }
 
 const loadEventsRandom = `-- name: LoadEventsRandom :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events ORDER BY RANDOM() LIMIT ?
+SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events ORDER BY RANDOM() LIMIT ?
 `
 
 type LoadEventsRandomRow struct {
-	Name  string
-	Date  time.Time
-	Doors sql.NullTime
-	Begin sql.NullTime
-	Place string
-	City  string
-	Link  sql.NullString
-	Pic   []byte
+	Name        string
+	Date        time.Time
+	Doors       sql.NullTime
+	Begin       sql.NullTime
+	Place       string
+	City        string
+	Coordinates sql.NullString
+	Link        sql.NullString
+	Pic         []byte
+	Hash        string
 }
 
 func (q *Queries) LoadEventsRandom(ctx context.Context, limit int64) ([]LoadEventsRandomRow, error) {
@@ -489,8 +519,10 @@ func (q *Queries) LoadEventsRandom(ctx context.Context, limit int64) ([]LoadEven
 			&i.Begin,
 			&i.Place,
 			&i.City,
+			&i.Coordinates,
 			&i.Link,
 			&i.Pic,
+			&i.Hash,
 		); err != nil {
 			return nil, err
 		}
