@@ -16,7 +16,7 @@
             return response.json();
         })
         .then(events => {
-          if len(events) <= 0 {
+          if (len(events) <= 0) {
             tickerContainer.style.display = 'none';
             return
           }
