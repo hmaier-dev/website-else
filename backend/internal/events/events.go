@@ -341,7 +341,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	link := r.FormValue("link")
 
 	// Parse the date
-	date, err := time.Parse("02.01.2006", datum)
+	date, err := time.Parse("2006-01-02", datum)
 	if err != nil {
 		http.Error(w, "Invalid date format", http.StatusBadRequest)
 		return
@@ -409,7 +409,7 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 	for _, e := range yamlEvents {
 		date, err := time.Parse("02.01.2006", e.Datum)
 		if err != nil {
-			log.Printf("Invalid date format for event %s: %v", e.Event, err)
+			log.Printf("Invalid date format for event %s: %v\n Right format is dd.mm.yyy", e.Event, err)
 			continue
 		}
 		doorsTime := sql.NullTime{Time: date, Valid: true}
