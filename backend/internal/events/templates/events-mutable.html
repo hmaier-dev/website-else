@@ -1,40 +1,104 @@
 {{ define "events-mutable.html" }}
   {{ range .Events }}
-  <form class="event bg-white rounded-lg shadow-md p-4 mb-4 hover:shadow-lg transition-shadow duration-200 flex flex-wrap items-center gap-2"
-        hx-post="/events/manage/api/change"
-        hx-swap="none">
-    <!-- Name as an input -->
-    <input type="text" class="text-xl font-semibold text-gray-800 flex-1 outline-none" value="{{ .Name }}" name="name" />
+  <form
+    class="event
+           bg-white/70 backdrop-blur-md
+           border border-violet-200
+           rounded-2xl shadow-md
+           p-4 mb-4
+           hover:shadow-lg transition-shadow duration-200
+           flex flex-col gap-4"
+    hx-post="/events/manage/api/change"
+    hx-swap="none">
 
-    <!-- Date with icon and input -->
-    <span class="flex items-center text-gray-600 text-sm">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    <!-- Name -->
+    <input
+      type="text"
+      name="name"
+      value="{{ .Name }}"
+      class="flex-1 text-lg font-semibold text-gray-800
+             bg-transparent
+             px-2 py-1 rounded-lg
+             outline-none
+             focus:ring-2 focus:ring-violet-400">
+
+    <!-- Date -->
+    <span class="flex items-center text-gray-600 text-sm gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
-      <input type="text" class="bg-transparent outline-none" value="{{ .Date | formatTime }}" name="date" />
+      <input
+        type="text"
+        name="date"
+        value="{{ .Date | formatTime }}"
+        class="bg-transparent px-1 rounded-md
+               outline-none
+               focus:ring-2 focus:ring-violet-400">
     </span>
 
-    <!-- City with icon and input -->
-    <span class="flex items-center text-gray-600 text-sm">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+    <!-- City -->
+    <span class="flex items-center text-gray-600 text-sm gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
-      <input type="text" class="bg-transparent outline-none" value="{{ .City }}" name="city" />
+      <input
+        type="text"
+        name="city"
+        value="{{ .City }}"
+        class="bg-transparent px-1 rounded-md
+               outline-none
+               focus:ring-2 focus:ring-violet-400">
     </span>
 
-    <!-- Place as an input -->
-    <input type="text" class="bg-transparent outline-none" value="{{ .Place }}" name="place" />
+    <!-- Place -->
+    <input
+      type="text"
+      name="place"
+      value="{{ .Place }}"
+      placeholder="Ort"
+      class="bg-transparent px-2 py-1 rounded-lg
+             text-sm text-gray-700
+             outline-none
+             focus:ring-2 focus:ring-violet-400">
 
-    <!-- Link as an input -->
-    <input type="text" class="bg-transparent outline-none" {{ if .Link}} value="{{ .Link }}" {{ end }} placeholder="Link für weitere Infos." name="link" />
+    <!-- Link -->
+    <input
+      type="text"
+      name="link"
+      {{ if .Link }}value="{{ .Link }}"{{ end }}
+      placeholder="Link für weitere Infos"
+      class="flex-1 min-w-[12rem]
+             bg-transparent px-2 py-1 rounded-lg
+             text-sm text-gray-700
+             outline-none
+             focus:ring-2 focus:ring-violet-400
+             placeholder:text-gray-400">
 
-    <!-- Change button on the next line -->
-    <div class="w-full flex justify-end mt-2">
-      <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-        Change
+    <!-- Actions -->
+    <div class="w-full flex justify-end mt-2 flex-row">
+      <button
+        type="submit"
+        class="bg-violet-400/80 text-gray-800 font-medium
+               px-4 py-1.5 rounded-xl shadow
+               transition-all duration-200
+               hover:bg-violet-500 hover:text-white
+               focus:outline-none focus:ring-2 focus:ring-violet-400">
+        Speichern
+      </button>
+      <button
+        class="bg-red-400/80 text-gray-800 font-medium
+               px-4 py-1.5 rounded-xl shadow
+               transition-all duration-200
+               hover:bg-violet-500 hover:text-white
+               focus:outline-none focus:ring-2 focus:ring-violet-400">
+        Löschen
       </button>
     </div>
+
   </form>
-{{ end }}
+  {{ end }}
 {{ end }}
