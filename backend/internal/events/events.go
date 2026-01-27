@@ -1,7 +1,6 @@
 package events
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	"embed"
@@ -379,6 +378,27 @@ func (h *Handler) Load(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func makeHash(datum string, event string, ort string, stadt string) string{
+	// We take these values to generate a unique hash
+	data := make([]string, 0, 5)
+	data[0] = datum
+	data[1] = event
+	data[2] = ort
+	data[3] = stadt
+	data[4] = strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+	sort.Strings(data)
+	var chars []byte
+	for _, c := range data {
+		chars = append(chars, []byte(c)...)
+	}
+	algo := sha256.New()
+	algo.Write(chars)
+	// base58 is used, because it misses certain chars which makes it more human-readable.
+	// It's also used for bitcoin-address and stuff like that
+	hash := base58.Encode(algo.Sum(nil))
+	return hash
+}
+
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
@@ -406,23 +426,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	beginTime := sql.NullTime{Time: date, Valid: true}
 	linkString := sql.NullString{String: link, Valid: link != ""}
 
-	// We take these values to generate a unique hash
-	data := make([]string, 0, 5)
-	data[0] = datum
-	data[1] = event
-	data[2] = ort
-	data[3] = stadt
-	data[4] = strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
-	sort.Strings(data)
-	var chars []byte
-	for _, c := range data {
-		chars = append(chars, []byte(c)...)
-	}
-	algo := sha256.New()
-	algo.Write(chars)
-	// base58 is used, because it misses certain chars which makes it more human-readable.
-	// It's also used for bitcoin-address and stuff like that
-	hash := base58.Encode(algo.Sum(nil))
+	hash := makeHash(datum, event, ort, stadt)
 
 	err = q.AddSingleEvent(ctx, db.AddSingleEventParams{
 		Name:  event,
@@ -508,6 +512,7 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 		doorsTime := sql.NullTime{Time: date, Valid: true}
 		beginTime := sql.NullTime{Time: date, Valid: true}
 		linkString := sql.NullString{String: e.Link, Valid: e.Link != ""}
+		hash := makeHash(e.Datum, e.Event, e.Ort, e.Stadt)
 
 		err = q.AddSingleEvent(ctx, db.AddSingleEventParams{
 			Name:  e.Event,
@@ -518,6 +523,7 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 			City:  e.Stadt,
 			Link:  linkString,
 			Pic:   nil,
+			Hash: hash,
 		})
 		if err != nil {
 			log.Printf("Failed to add event %s: %v", e.Event, err)
