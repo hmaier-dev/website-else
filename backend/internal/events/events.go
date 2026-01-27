@@ -367,7 +367,21 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	// Return a success response
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("Event added successfully"))
+	args := urlArgs{
+		Sort: "desc",
+		Out:  "html",
+	}
+	events := h.eventsByArgs(ctx, args)
+	// this can be done prettier => see checklist-tool
+	tmpl := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
+		"formatTime":     formatTime,
+	}).ParseFS(h.InternalFS, "internal/events/templates/events-mutable.html"))
+	err = tmpl.Execute(w, map[string]any{
+		"Events": events,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
