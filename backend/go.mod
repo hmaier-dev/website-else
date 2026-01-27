@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/arran4/golang-ical v0.3.2 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/sys v0.30.0 // indirect

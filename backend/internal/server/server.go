@@ -55,6 +55,7 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 	// This stuff is public
 	events := s.Router.PathPrefix("/events/").Subrouter()
 	events.HandleFunc("/load", e.Load).Methods("GET")
+	events.HandleFunc(`/cal/ics/{id:\d+:}`, e.Load).Methods("GET")
 	
 	// and this stuff is like /events/manage behind an auth
 	manage := events.PathPrefix("/manage/api").Subrouter()
