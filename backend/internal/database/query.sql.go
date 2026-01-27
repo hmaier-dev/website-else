@@ -336,7 +336,7 @@ func (q *Queries) LoadEventsDesc(ctx context.Context, limit int64) ([]LoadEvents
 }
 
 const loadEventsNext = `-- name: LoadEventsNext :many
-SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now') ORDER BY date ASC LIMIT ?
+SELECT name, date, doors, begin, place, city, link, pic FROM events WHERE DATE(date) > DATE('now', '-1 day') ORDER BY date ASC LIMIT ?
 `
 
 type LoadEventsNextRow struct {

@@ -1,5 +1,4 @@
 package events
-
 import (
 	"context"
 	"database/sql"
@@ -510,23 +509,26 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
 		return
 	}
-	datum, err := time.Parse("02.01.2006", r.FormValue("datum"))
+	datum, err := time.Parse("02.01.2006", r.FormValue("date"))
 	if err != nil{
-		http.Error(w, "Wrong time date format.", http.StatusBadRequest)
+		msg := "Wrong time date format."
+		intern := msg + fmt.Sprintf(" Error happend: %v \n", err.Error())
+		log.Println(intern)
+		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	event := r.FormValue("event")
-	ort := r.FormValue("ort")
-	stadt := r.FormValue("stadt")
+	event := r.FormValue("name")
+	ort := r.FormValue("place")
+	stadt := r.FormValue("city")
 
-	args := db.GetIDsFromEventParams{
+	argsID := db.GetIDsFromEventParams{
 		Name: event, 
 		Date: datum,
 		Place: ort,
 		City: stadt,
 	}
 	// There could be event duplicates, so fetch all ids
-	ids, err := q.GetIDsFromEvent(ctx, args)
+	ids, err := q.GetIDsFromEvent(ctx, argsID)
 	if err != nil {
 		http.Error(w, "Database error.", http.StatusBadRequest)
 		return
@@ -538,14 +540,13 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 	// This logging is ugly and needs to be redone...
 	row, err := q.GetEventByID(ctx, ids[0])
-	msg := `
-	Event:	%s \n 
-	Datum:	%s \n
-	Ort:  %s \n
-	Stadt:	%s \n
-	Link:		%s \n
+	msg := `The event will get deleted:
+	Event:	%s 
+	Datum:	%s
+	Ort:  %s
+	Stadt:	%s
+	Link:		%s
 	`
-	log.Println("The following event will be deleted:")
 	log.Printf(msg, event, datum, ort, stadt, row.Link.String)
 	
 	// If there was an unique id for an entry, we could delete more precise.
@@ -556,11 +557,19 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Couldn't delete.", http.StatusNotModified)
 		return
 	}
-	w.Write([]byte("Sucesssful delete."))
-	// This is also ugly.
-	// Better add options parsing like in Load() to decided if html or json is return, and not just reload this site....
-	w.Header().Set("HX-Redirect", "/events/manage")
-	w.WriteHeader(http.StatusNoContent)
+	args := urlArgs{
+		Sort: "desc",
+	}
+	events := h.eventsByArgs(ctx, args)
+	tmpl := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
+		"formatTime":     formatTime,
+	}).ParseFS(h.InternalFS, "internal/events/templates/events-mutable.html"))
+	err = tmpl.Execute(w, map[string]any{
+		"Events": events,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 
