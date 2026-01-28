@@ -1,0 +1,28 @@
+{{- /*
+Load a single image
+@examples
+
+  {{< gallery src="/path/to/pic/dir/" >}}
+
+*/}}
+{{ $src := .Get "dir" }}
+{{ $images := resources.Match (printf "%s/**" $src) }}
+
+<div class="gallery">
+  {{ range $images }}
+    {{ if eq .ResourceType "image" }}
+      <a href="{{ .RelPermalink }}" data-fancybox="gallery" data-caption="{{ .Title }}">
+        <img src="{{ .Fill "200x200" }}" alt="{{ .Title }}" />
+      </a>
+    {{ end }}
+  {{ end }}
+</div>
+
+<!-- Include Fancybox CSS/JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css" />
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+<script>
+  Fancybox.bind("[data-fancybox]", {
+    // Your options here
+  });
+</script>
