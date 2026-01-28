@@ -5,14 +5,24 @@ Load a single image
   {{< gallery src="/path/to/pic/dir/" >}}
 
 */}}
-{{ $src := .Get "dir" }}
+{{ $src := .Get "src" }}
 {{ $images := resources.Match (printf "%s/**" $src) }}
 
-<div class="gallery">
+<div class="gallery max-w-4xl grid grid-flow-col grid-rows-4 gap-3 p-2">
   {{ range $images }}
     {{ if eq .ResourceType "image" }}
-      <a href="{{ .RelPermalink }}" data-fancybox="gallery" data-caption="{{ .Title }}">
-        <img src="{{ .Fill "200x200" }}" alt="{{ .Title }}" />
+      <a
+        href="{{ .RelPermalink }}"
+        data-fancybox="gallery"
+        data-caption=""
+        class="block overflow-hidden rounded-md"
+      >
+        <img
+          src="{{ .Resize "400x" }}"
+          alt=""
+          class="w-full h-40 object-cover transition-transform duration-300 hover:scale-105"
+          loading="lazy"
+        />
       </a>
     {{ end }}
   {{ end }}
