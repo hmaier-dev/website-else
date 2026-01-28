@@ -47,6 +47,7 @@ type Event struct {
 	Link        *string
 	Hash        string
 	Separator   *string
+	Upcomming   *bool
 }
 
 // This interface is needed for accessing the different Event*-structs
@@ -261,12 +262,13 @@ func constructEvents(rows []EventRow) []Event {
 // set ?head={nth} just load the nth fetched elems. This combines with ?sort.
 // set ?out={json|html} output format, by default json.
 // set ?sep={year|month} add separators to hold events apart. e.g. set a marker in html
+// set ?highlight={true} put emphasis on the next comming event
 type urlArgs struct {
-	Head string
-	Sort string
-	Out  string
-	Sep  string
-	Highlight string
+	Head      string
+	Sort      string
+	Out       string
+	Sep       string
+	Upcomming string
 }
 
 // Returns []db.Event
@@ -336,23 +338,54 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 		wrap := adaptPrevRow(rows)
 		events = constructEvents(wrap)
 	}
-	
+
 	if args.Sep == "year" && sortBy != "random" {
-		for i := range events{
+		for i := range events {
 			currYear := events[i].Date.Format("2006")
 			// Add a separator at the top of the slice
 			if i == 0 {
 				events[i].Separator = &currYear
 				continue
 			}
-			if i != 0 && (sortBy == "desc" || sortBy == "prev" ) && events[i-1].Date.Format("2006") > currYear{
+			// Aren't these both statements are the same?
+			// Merge them in one?
+			if i != 0 && (sortBy == "desc" || sortBy == "prev") && events[i-1].Date.Format("2006") > currYear {
 				events[i].Separator = &currYear
 				continue
 			}
-			if i != 0 && (sortBy == "asc" || sortBy == "next" ) && events[i+1].Date.Format("2006") > currYear{
+			if i != 0 && (sortBy == "asc" || sortBy == "next") && events[i-1].Date.Format("2006") < currYear{
 				events[i].Separator = &currYear
 				continue
 			}
+		}
+	}
+
+	if args.Upcomming == "true" {
+		for i := range events {
+			curr := events[i].Date
+			// If the event is today, still highlight it!
+			yesterday := time.Now().AddDate(0, 0, -1)
+			val := true
+			if i == len(events){
+				events[i].Upcomming = &val
+				break
+			}
+			// This can produce a runtime error.... if the if-condition above didnt existed...
+			next := events[i+1].Date
+			// Just set the next one as highlighted.
+			if sortBy == "next" && i == 0{
+				events[i].Upcomming = &val
+				break
+			}
+			if sortBy == "desc" && curr.Unix() > yesterday.Unix() && next.Unix() < yesterday.Unix() && i != len(events)-1{
+				events[i].Upcomming = &val
+				break
+			}
+			if sortBy == "asc" && curr.Unix() > yesterday.Unix() && next.Unix() > yesterday.Unix() && i != len(events)-1 {
+				events[i].Upcomming = &val
+				break
+			}
+			
 		}
 	}
 
@@ -360,17 +393,16 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 
 }
 
-// TODO: set ?highlight={true|false} to highlight the nearest future event.
-// TODO: set ?render={html|json}
 func (h *Handler) Load(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	query := r.URL.Query()
 	args := urlArgs{
-		Sort: query.Get("sort"),
-		Head: query.Get("head"),
-		Out:  query.Get("out"),
-		Sep:  query.Get("sep"),
+		Sort:      query.Get("sort"),
+		Head:      query.Get("head"),
+		Out:       query.Get("out"),
+		Sep:       query.Get("sep"),
+		Upcomming: query.Get("upcomming"),
 	}
 	events := h.eventsByArgs(ctx, args)
 
@@ -501,9 +533,9 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 	}
 	r.ParseMultipartForm(1 << 20)
 	file, header, err := r.FormFile("yaml")
-	if err != nil{
+	if err != nil {
 		msg := fmt.Sprintf("Failed reading the request: %v \n %s \n", header, file)
-		log.Println(msg)	
+		log.Println(msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}

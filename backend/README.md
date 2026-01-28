@@ -27,6 +27,11 @@ curl -d 'datum=22.02.2026&event=LateNightShow&ort=Moritzbastei&stadt=Leipzig' lo
 ## GET to /events/manage/load
 ## gets all messages from database
 curl localhost:3000/events/load?sort=desc&head=3&json=true
+## Highlight the next comming event desc/asc
+curl "localhost:3000/events/load?sort=asc&upcomming=true" | jq '.'
+curl "localhost:3000/events/load?sort=desc&upcomming=true" | jq '.'
+## Set a seperator for the year. Used in the html template
+curl "localhost:3000/events/load?sort=desc&sep=true&out=html"
 ## POST to /events/manage/create/bulk
 ## uploads a yaml-file with multiple events
 curl -X POST -F "yaml=@events.yml" http://localhost:3000/events/manage/api/create/bulk
