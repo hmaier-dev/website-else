@@ -94,20 +94,20 @@ type EventDescRow struct {
 	r db.LoadEventsDescRow
 }
 
-func (d EventDescRow) GetName() string     { return d.r.Name }
-func (d EventDescRow) GetDate() time.Time  { return d.r.Date }
-func (d EventDescRow) GetDoors() time.Time { return d.r.Doors.Time }
-func (d EventDescRow) GetBegin() time.Time { return d.r.Begin.Time }
-func (d EventDescRow) GetPlace() string    { return d.r.Place }
-func (d EventDescRow) GetCoordinates() string    { return d.r.Coordinates.String }
-func (d EventDescRow) GetCity() string     { return d.r.City }
+func (d EventDescRow) GetName() string        { return d.r.Name }
+func (d EventDescRow) GetDate() time.Time     { return d.r.Date }
+func (d EventDescRow) GetDoors() time.Time    { return d.r.Doors.Time }
+func (d EventDescRow) GetBegin() time.Time    { return d.r.Begin.Time }
+func (d EventDescRow) GetPlace() string       { return d.r.Place }
+func (d EventDescRow) GetCoordinates() string { return d.r.Coordinates.String }
+func (d EventDescRow) GetCity() string        { return d.r.City }
 func (d EventDescRow) GetLink() *string {
 	if !d.r.Link.Valid || d.r.Link.String == "" {
 		return nil
 	}
 	return &d.r.Link.String
 }
-func (d EventDescRow) GetHash() string     { return d.r.Hash }
+func (d EventDescRow) GetHash() string { return d.r.Hash }
 
 func adaptDescRow(rows []db.LoadEventsDescRow) []EventRow {
 	out := make([]EventRow, len(rows))
@@ -124,20 +124,20 @@ type EventRandRow struct {
 	r db.LoadEventsRandomRow
 }
 
-func (rand EventRandRow) GetName() string     { return rand.r.Name }
-func (rand EventRandRow) GetDate() time.Time  { return rand.r.Date }
-func (rand EventRandRow) GetDoors() time.Time { return rand.r.Doors.Time }
-func (rand EventRandRow) GetBegin() time.Time { return rand.r.Begin.Time }
-func (rand EventRandRow) GetPlace() string    { return rand.r.Place }
-func (rand EventRandRow) GetCity() string     { return rand.r.City }
-func (rand EventRandRow) GetCoordinates() string     { return rand.r.Coordinates.String }
+func (rand EventRandRow) GetName() string        { return rand.r.Name }
+func (rand EventRandRow) GetDate() time.Time     { return rand.r.Date }
+func (rand EventRandRow) GetDoors() time.Time    { return rand.r.Doors.Time }
+func (rand EventRandRow) GetBegin() time.Time    { return rand.r.Begin.Time }
+func (rand EventRandRow) GetPlace() string       { return rand.r.Place }
+func (rand EventRandRow) GetCity() string        { return rand.r.City }
+func (rand EventRandRow) GetCoordinates() string { return rand.r.Coordinates.String }
 func (rand EventRandRow) GetLink() *string {
 	if !rand.r.Link.Valid || rand.r.Link.String == "" {
 		return nil
 	}
 	return &rand.r.Link.String
 }
-func (rand EventRandRow) GetHash() string     { return rand.r.Hash }
+func (rand EventRandRow) GetHash() string { return rand.r.Hash }
 
 func adaptRandRow(rows []db.LoadEventsRandomRow) []EventRow {
 	out := make([]EventRow, len(rows))
@@ -154,20 +154,20 @@ type EventNextRow struct {
 	r db.LoadEventsNextRow
 }
 
-func (rand EventNextRow) GetName() string     { return rand.r.Name }
-func (rand EventNextRow) GetDate() time.Time  { return rand.r.Date }
-func (rand EventNextRow) GetDoors() time.Time { return rand.r.Doors.Time }
-func (rand EventNextRow) GetBegin() time.Time { return rand.r.Begin.Time }
-func (rand EventNextRow) GetPlace() string    { return rand.r.Place }
-func (rand EventNextRow) GetCity() string     { return rand.r.City }
-func (rand EventNextRow) GetCoordinates() string     { return rand.r.Coordinates.String }
+func (rand EventNextRow) GetName() string        { return rand.r.Name }
+func (rand EventNextRow) GetDate() time.Time     { return rand.r.Date }
+func (rand EventNextRow) GetDoors() time.Time    { return rand.r.Doors.Time }
+func (rand EventNextRow) GetBegin() time.Time    { return rand.r.Begin.Time }
+func (rand EventNextRow) GetPlace() string       { return rand.r.Place }
+func (rand EventNextRow) GetCity() string        { return rand.r.City }
+func (rand EventNextRow) GetCoordinates() string { return rand.r.Coordinates.String }
 func (rand EventNextRow) GetLink() *string {
 	if !rand.r.Link.Valid || rand.r.Link.String == "" {
 		return nil
 	}
 	return &rand.r.Link.String
 }
-func (rand EventNextRow) GetHash() string     { return rand.r.Hash }
+func (rand EventNextRow) GetHash() string { return rand.r.Hash }
 
 func adaptNextRow(rows []db.LoadEventsNextRow) []EventRow {
 	out := make([]EventRow, len(rows))
@@ -184,20 +184,20 @@ type EventPrevRow struct {
 	r db.LoadEventsPrevRow
 }
 
-func (rand EventPrevRow) GetName() string     { return rand.r.Name }
-func (rand EventPrevRow) GetDate() time.Time  { return rand.r.Date }
-func (rand EventPrevRow) GetDoors() time.Time { return rand.r.Doors.Time }
-func (rand EventPrevRow) GetBegin() time.Time { return rand.r.Begin.Time }
-func (rand EventPrevRow) GetPlace() string    { return rand.r.Place }
-func (rand EventPrevRow) GetCity() string     { return rand.r.City }
-func (rand EventPrevRow) GetCoordinates() string     { return rand.r.Coordinates.String }
+func (rand EventPrevRow) GetName() string        { return rand.r.Name }
+func (rand EventPrevRow) GetDate() time.Time     { return rand.r.Date }
+func (rand EventPrevRow) GetDoors() time.Time    { return rand.r.Doors.Time }
+func (rand EventPrevRow) GetBegin() time.Time    { return rand.r.Begin.Time }
+func (rand EventPrevRow) GetPlace() string       { return rand.r.Place }
+func (rand EventPrevRow) GetCity() string        { return rand.r.City }
+func (rand EventPrevRow) GetCoordinates() string { return rand.r.Coordinates.String }
 func (rand EventPrevRow) GetLink() *string {
 	if !rand.r.Link.Valid || rand.r.Link.String == "" {
 		return nil
 	}
 	return &rand.r.Link.String
 }
-func (rand EventPrevRow) GetHash() string     { return rand.r.Hash }
+func (rand EventPrevRow) GetHash() string { return rand.r.Hash }
 
 func adaptPrevRow(rows []db.LoadEventsPrevRow) []EventRow {
 	out := make([]EventRow, len(rows))
@@ -214,20 +214,20 @@ type EventByIDRow struct {
 	r db.GetEventByIDRow
 }
 
-func (id EventByIDRow) GetName() string     { return id.r.Name }
-func (id EventByIDRow) GetDate() time.Time  { return id.r.Date }
-func (id EventByIDRow) GetDoors() time.Time { return id.r.Doors.Time }
-func (id EventByIDRow) GetBegin() time.Time { return id.r.Begin.Time }
-func (id EventByIDRow) GetPlace() string    { return id.r.Place }
-func (id EventByIDRow) GetCity() string     { return id.r.City }
-func (id EventByIDRow) GetCoordinates() string     { return id.r.Coordinates.String }
+func (id EventByIDRow) GetName() string        { return id.r.Name }
+func (id EventByIDRow) GetDate() time.Time     { return id.r.Date }
+func (id EventByIDRow) GetDoors() time.Time    { return id.r.Doors.Time }
+func (id EventByIDRow) GetBegin() time.Time    { return id.r.Begin.Time }
+func (id EventByIDRow) GetPlace() string       { return id.r.Place }
+func (id EventByIDRow) GetCity() string        { return id.r.City }
+func (id EventByIDRow) GetCoordinates() string { return id.r.Coordinates.String }
 func (id EventByIDRow) GetLink() *string {
 	if !id.r.Link.Valid || id.r.Link.String == "" {
 		return nil
 	}
 	return &id.r.Link.String
 }
-func (id EventByIDRow) GetHash() string     { return id.r.Hash }
+func (id EventByIDRow) GetHash() string { return id.r.Hash }
 
 func adaptByIDRow(row db.GetEventByIDRow) EventByIDRow {
 	return EventByIDRow{r: row}
@@ -243,15 +243,15 @@ func constructEvents(rows []EventRow) []Event {
 	var events = make([]Event, len(rows))
 	for i, r := range rows {
 		events[i] = Event{
-			Name:  r.GetName(),
-			Date:  r.GetDate(),
-			Doors: r.GetDoors(),
-			Begin: r.GetBegin(),
-			Place: r.GetPlace(),
-			City:  r.GetCity(),
-			Coordinates:  r.GetCoordinates(),
-			Link:  r.GetLink(),
-			Hash:  r.GetHash(),
+			Name:        r.GetName(),
+			Date:        r.GetDate(),
+			Doors:       r.GetDoors(),
+			Begin:       r.GetBegin(),
+			Place:       r.GetPlace(),
+			City:        r.GetCity(),
+			Coordinates: r.GetCoordinates(),
+			Link:        r.GetLink(),
+			Hash:        r.GetHash(),
 		}
 	}
 	return events
@@ -266,6 +266,7 @@ type urlArgs struct {
 	Sort string
 	Out  string
 	Sep  string
+	Highlight string
 }
 
 // Returns []db.Event
@@ -403,7 +404,7 @@ func (h *Handler) Load(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func makeHash(datum string, event string, ort string, stadt string) string{
+func makeHash(datum string, event string, ort string, stadt string) string {
 	// We take these values to generate a unique hash
 	data := make([]string, 5)
 	data[0] = datum
@@ -499,8 +500,13 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	r.ParseMultipartForm(1 << 20)
-	// header is not needed
-	file, _, err := r.FormFile("yaml")
+	file, header, err := r.FormFile("yaml")
+	if err != nil{
+		msg := fmt.Sprintf("Failed reading the request: %v \n %s \n", header, file)
+		log.Println(msg)	
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
 
 	// Parse the YAML file from the request body
 	body, err := io.ReadAll(file)
@@ -548,7 +554,7 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 			City:  e.Stadt,
 			Link:  linkString,
 			Pic:   nil,
-			Hash: hash,
+			Hash:  hash,
 		})
 		if err != nil {
 			log.Printf("Failed to add event %s: %v", e.Event, err)
@@ -657,14 +663,14 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) ProvideICSFile (w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ProvideICSFile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-  hash := mux.Vars(r)["id"]
+	hash := mux.Vars(r)["id"]
 
 	q := db.New(h.DB)
 
 	event, err := q.GetEventByHash(ctx, hash)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
@@ -673,20 +679,19 @@ func (h *Handler) ProvideICSFile (w http.ResponseWriter, r *http.Request) {
 	e := cal.AddEvent(hash)
 	e.SetSummary("")
 	e.SetLocation("Address")
-	if event.Link.Valid{
+	if event.Link.Valid {
 		e.SetURL(event.Link.String)
 	}
 	card := cal.Serialize()
-	
+
 	fileName := fmt.Sprintf("Elisa_Adam_am_%s_in_%.ics", event.Date.Format("02.01.2006"), event.City)
 
 	w.Header().Set("Content-Type", "text/calendar")
 	disposition := fmt.Sprintf("attachment; filename=%s", fileName)
 	w.Header().Set("Content-Disposition", disposition)
-	
+
 	_, err = io.Copy(w, strings.NewReader(card))
 	if err != nil {
 		w.Write([]byte("unfortunatly no ics for you :( server problem..."))
 	}
 }
-
