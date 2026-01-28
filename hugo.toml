@@ -23,16 +23,20 @@ disablePathToLower = true
     pageRef = '/'
     weight = 10
   [[menus.main]]
+    name = 'events'
+    pageRef = '/events/all'
+    weight = 20
+  [[menus.main]]
     name = 'about-me'
     pageRef = '/about-me'
-    weight = 20
+    weight = 30
   [[menus.main]]
     name = 'workshops'
     pageRef = '/workshops'
-    weight = 30
+    weight = 40
   [[menus.main]]
-    name = 'events'
-    pageRef = '/events/all'
+    name = 'model'
+    pageRef = '/model'
     weight = 40
   [[menus.main]]
     name = 'impressum'
