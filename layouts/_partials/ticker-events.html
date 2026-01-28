@@ -16,10 +16,10 @@
             return response.json();
         })
         .then(events => {
-          if (len(events) <= 0) {
-            tickerContainer.style.display = 'none';
-            return
-          }
+            if (events.length <= 0) {
+                tickerContainer.style.display = 'none';
+                return;
+            }
             // Format the event data for display
             events.forEach(event => {
                 const eventElement = document.createElement('div');
