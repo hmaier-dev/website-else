@@ -46,6 +46,7 @@ type Event struct {
 	Coordinates string
 	Link        *string
 	Hash        string
+	Separator   *string
 }
 
 // This interface is needed for accessing the different Event*-structs
@@ -258,11 +259,13 @@ func constructEvents(rows []EventRow) []Event {
 
 // set ?sort={asc|desc|random|next|prev} to sort the events by date or randomize.
 // set ?head={nth} just load the nth fetched elems. This combines with ?sort.
-// set ?out={json|html} by default json.
+// set ?out={json|html} output format, by default json.
+// set ?sep={year|month} add separators to hold events apart. e.g. set a marker in html
 type urlArgs struct {
 	Head string
 	Sort string
 	Out  string
+	Sep  string
 }
 
 // Returns []db.Event
@@ -293,6 +296,7 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 		sortBy = args.Sort
 	}
 
+	// Loading the events in a certain order
 	var events = make([]Event, head)
 	switch sortBy {
 	case "asc":
@@ -331,6 +335,26 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 		wrap := adaptPrevRow(rows)
 		events = constructEvents(wrap)
 	}
+	
+	if args.Sep == "year" && sortBy != "random" {
+		for i := range events{
+			currYear := events[i].Date.Format("2006")
+			// Add a separator at the top of the slice
+			if i == 0 {
+				events[i].Separator = &currYear
+				continue
+			}
+			if i != 0 && (sortBy == "desc" || sortBy == "prev" ) && events[i-1].Date.Format("2006") > currYear{
+				events[i].Separator = &currYear
+				continue
+			}
+			if i != 0 && (sortBy == "asc" || sortBy == "next" ) && events[i+1].Date.Format("2006") > currYear{
+				events[i].Separator = &currYear
+				continue
+			}
+		}
+	}
+
 	return events
 
 }
@@ -345,6 +369,7 @@ func (h *Handler) Load(w http.ResponseWriter, r *http.Request) {
 		Sort: query.Get("sort"),
 		Head: query.Get("head"),
 		Out:  query.Get("out"),
+		Sep:  query.Get("sep"),
 	}
 	events := h.eventsByArgs(ctx, args)
 
