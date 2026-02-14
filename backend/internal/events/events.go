@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -50,7 +51,9 @@ type Event struct {
 	Upcomming   *bool
 }
 
-// This interface is needed for accessing the different Event*-structs
+// This interface is needed for accessing the different Event*-structs.
+// sqlc generates per query a different struct, which got the same field as the other ones.
+// The following interface is made to serialize the data
 type EventRow interface {
 	GetName() string
 	GetDate() time.Time
@@ -235,7 +238,7 @@ func adaptByIDRow(row db.GetEventByIDRow) EventByIDRow {
 }
 
 // ##########################################################################################################
-// A new query with a new db.Struct is generated, you need to add the same boilerplate from above here
+// When a new query with a new db.Struct is generated, you need to add the same boilerplate from above here
 // ###########################################################################################################
 
 // In the future I may gonna need to add custom-values
