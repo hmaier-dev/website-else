@@ -730,3 +730,44 @@ func (h *Handler) ProvideICSFile(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("unfortunatly no ics for you :( server problem..."))
 	}
 }
+
+type Coordinates struct {
+	Lat string `json:"lat"`
+	Lon string `json:"lon"`
+}
+// Uses the Openstreetmap API
+func fetchCoordinates(ort string, stadt string) (*Coordinates, error){
+	
+	base := "https://nominatim.openstreetmap.org/search"
+	params := url.Values{}
+	params.Add("q",fmt.Sprintf("%s,+%s", ort, stadt))
+	params.Add("format", "json")
+	req, err := http.NewRequest("GET", base+"?"+params.Encode(), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("User-Agent", "elses-website-backend/1.0 (hendrik_maier@protonmail.com)")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	decoder := json.NewDecoder(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var coords []Coordinates
+	decoder.Decode(&coords)
+	if err != nil {
+		return nil, err
+	}
+	if len(coords) > 0 {
+		return &coords[0], nil
+	}
+	return nil, fmt.Errorf("no results found")
+
+}
