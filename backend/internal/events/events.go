@@ -736,7 +736,7 @@ type Coordinates struct {
 	Lon string `json:"lon"`
 }
 // Uses the Openstreetmap API
-func fetchCoordinates(ort string, stadt string) (*Coordinates, error){
+func FetchCoordinates(ort string, stadt string) (*Coordinates, error){
 	
 	base := "https://nominatim.openstreetmap.org/search"
 	params := url.Values{}
@@ -756,10 +756,6 @@ func fetchCoordinates(ort string, stadt string) (*Coordinates, error){
 	defer resp.Body.Close()
 
 	decoder := json.NewDecoder(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var coords []Coordinates
 	decoder.Decode(&coords)
 	if err != nil {
