@@ -719,7 +719,7 @@ func (h *Handler) ProvideICSFile(w http.ResponseWriter, r *http.Request) {
 	}
 	card := cal.Serialize()
 
-	fileName := fmt.Sprintf("Elisa_Adam_am_%s_in_%.ics", event.Date.Format("02.01.2006"), event.City)
+	fileName := fmt.Sprintf("Elisa_Adam_am_%s_in_%s.ics", event.Date.Format("02.01.2006"), event.City)
 
 	w.Header().Set("Content-Type", "text/calendar")
 	disposition := fmt.Sprintf("attachment; filename=%s", fileName)
