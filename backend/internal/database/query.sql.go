@@ -106,6 +106,45 @@ func (q *Queries) DeleteEventByID(ctx context.Context, id int64) error {
 	return err
 }
 
+const getAllEventsDesc = `-- name: GetAllEventsDesc :many
+SELECT id, name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events ORDER BY id DESC
+`
+
+func (q *Queries) GetAllEventsDesc(ctx context.Context) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, getAllEventsDesc)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Event
+	for rows.Next() {
+		var i Event
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Date,
+			&i.Doors,
+			&i.Begin,
+			&i.Place,
+			&i.City,
+			&i.Coordinates,
+			&i.Link,
+			&i.Pic,
+			&i.Hash,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCompleteMailbox = `-- name: GetCompleteMailbox :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox ORDER BY date ASC
 `

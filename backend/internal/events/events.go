@@ -599,21 +599,22 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/events/manage", http.StatusSeeOther)
 }
 
-// Load /events/manage/api/load/mutable
+// Loads a html generated list by which represents the database state.
+// Newest entrys will be at the top
 func (h *Handler) LoadMutable(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	query := r.URL.Query()
-	args := urlArgs{
-		Sort: query.Get("sort"),
-		Head: query.Get("head"),
-		Out:  "html",
+	q := db.New(h.DB)
+	events, err := q.GetAllEventsDesc(ctx)
+	if err != nil {
+		logErr(w, "Could load all event by descending order.", err, http.StatusInternalServerError)
+		return
 	}
-	events := h.eventsByArgs(ctx, args)
+
 	// this can be done prettier => see checklist-tool
 	tmpl := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
 		"formatTime": formatTime,
 	}).ParseFS(h.InternalFS, "internal/events/templates/events-mutable.html"))
-	err := tmpl.Execute(w, map[string]any{
+	err = tmpl.Execute(w, map[string]any{
 		"Events": events,
 	})
 	if err != nil {
@@ -735,12 +736,13 @@ type Coordinates struct {
 	Lat string `json:"lat"`
 	Lon string `json:"lon"`
 }
+
 // Uses the Openstreetmap API
-func FetchCoordinates(ort string, stadt string) (*Coordinates, error){
-	
+func FetchCoordinates(ort string, stadt string) (*Coordinates, error) {
+
 	base := "https://nominatim.openstreetmap.org/search"
 	params := url.Values{}
-	params.Add("q",fmt.Sprintf("%s,+%s", ort, stadt))
+	params.Add("q", fmt.Sprintf("%s,+%s", ort, stadt))
 	params.Add("format", "json")
 	req, err := http.NewRequest("GET", base+"?"+params.Encode(), nil)
 	if err != nil {
@@ -765,5 +767,9 @@ func FetchCoordinates(ort string, stadt string) (*Coordinates, error){
 		return &coords[0], nil
 	}
 	return nil, fmt.Errorf("no results found")
+}
 
+func logErr(w http.ResponseWriter, msg string, err error, code int) {
+	log.Printf("%s\nError: %q \n", msg, err)
+	http.Error(w, msg, code)
 }

@@ -32,6 +32,9 @@ SELECT name, date, doors, begin, place, city, coordinates, link, hash FROM event
 -- name: GetEventByHash :one
 SELECT id, name, date, doors, begin, place, city, coordinates, link FROM events WHERE hash = ?;
 
+-- name: GetAllEventsDesc :many
+SELECT id, name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events ORDER BY id DESC;
+
 -- name: CountEvents :one
 SELECT count(*) FROM events;
 -- name: LoadEventsDesc :many
@@ -44,6 +47,7 @@ SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM 
 SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events WHERE DATE(date) > DATE('now', '-1 day') ORDER BY date ASC LIMIT ?;
 -- name: LoadEventsPrev :many
 SELECT name, date, doors, begin, place, city, coordinates, link, pic, hash FROM events WHERE DATE(date) < DATE('now') ORDER by date DESC LIMIT ?;
+
 
 -- If there are duplicates get the id-list starting with the oldest entry, so we can delete it.
 -- name: GetIDsFromEvent :many
