@@ -1,10 +1,8 @@
 {{ define "main" }}
-  <main class="min-h-[calc(100vh-3rem)] pt-4 sm:pt-6 max-sm:mt-16 sm:ml-48">
     <!---Keep all screen in mind and just do small steps---->
     <div class="max-sm:mx-5 sm:mx-10 md:mx-20 lg:mx-30 xl:mx-40 2xl:mx-50">
       {{ partial "ticker-events.html" }}
       {{ .Content }}
     </div>
     {{ partial "footer.html" }}
-  </main>
 {{ end }}
