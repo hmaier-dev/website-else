@@ -2,7 +2,46 @@
 
 {{ .Content }}
 
-<div id="events-grid" class="ag-theme-alpine h-screen w-auto"></div>
+<form class="ag-theme-alpine p-4 max-w-[650px]">
+  <div class="space-y-2 mx-auto flex">
+    <div class="flex-1 mr-4">
+      <label for="event" class="block text-sm font-medium text-gray-700">Event</label>
+      <input id="event" name="event" type="text" class="mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-1 w-full border">
+    </div>
+
+    <div class="flex-1">
+      <label for="datum" class="block text-sm font-medium text-gray-700">Datum</label>
+      <input id="datum" name="datum" type="date" class="mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-1 w-full border">
+    </div>
+  </div>
+
+  <div class="space-y-2 mx-auto flex">
+    <div class="flex-1 mr-4">
+      <label for="ort" class="block text-sm font-medium text-gray-700">Ort</label>
+      <input id="ort" name="ort" type="text" class="mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-1 w-full border">
+    </div>
+
+    <div class="flex-1">
+      <label for="stadt" class="block text-sm font-medium text-gray-700">Stadt</label>
+      <input id="stadt" name="stadt" type="text" class="mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-1 w-full border">
+    </div>
+  </div>
+
+  <div class="space-y-2 mx-auto flex">
+    <div class="flex-1">
+      <label for="link" class="block text-sm font-medium text-gray-700">Link</label>
+      <input id="link" name="link" type="text" class="mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-1 w-full border">
+    </div>
+  </div>
+
+  <div class="block">
+    <button class="mt-4 rounded-md border-gray-300 bg-blue-400 font-medium shadow-sm cursor-pointer p-1 w-full border">Veröffentlichen</button>
+  </div>
+
+</form>
+
+
+<div id="events-grid" class="ag-theme-alpine p-4 h-[700px]  w-auto"></div>
 
 {{ with resources.Get "js/manage.js" }}
   {{$opts := dict
