@@ -14,6 +14,29 @@ document.addEventListener('DOMContentLoaded', () => {
     rowData: mock,
     rowSelection: {
       mode: 'multiRow'
+    },
+    onCellValueChanged: async (params) => {
+      console.log(params);
+      if (params.oldValue === params.newValue) return;
+      try{
+        const init = {
+          method: 'POST',
+          headers:{
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: params.data.ID,
+            field: params.colDef.field,
+            value: params.newValue,
+          })
+        }
+        const res = await fetch('/events/manage/api/change',init)
+        if (!res.ok){
+          throw new Error("Changing the value failed :(")
+        }
+      }catch (err){
+        console.log(err);
+      }
     }
   };
 
@@ -28,5 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
   //   });
   const gridDiv = document.getElementById('events-grid');
   gridApi = agGrid.createGrid(gridDiv, options);
+});
 
+
+document.getElementById('publish-event').addEventListener('click', async () => {
+  document.getElementById('event-create-form').reset();
+  try {
+    const res = await fetch('/events/manage/api/load');
+    const data = await res.json();
+    gridApi.setGridOption("rowData", data);
+  } catch (err) {
+    console.error('Reload failed:', err);
+  }
 });
