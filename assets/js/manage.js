@@ -1,19 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  let rowData = [
-    {"Name":"Poetry Slam \u0026 Moderation","Date":"2026-07-31T00:00:00Z","Doors":"2026-07-31T00:00:00Z","Begin":"2026-07-31T00:00:00Z","Place":"Crossover Festival","City":"Grimma","Coordinates":"","Link":null,"Hash":"9XkewXXag94E9CTQfRndWNWiEZQjLv3BznxHyyjdKupb","Separator":null,"Upcomming":null},
-    {"Name":"Queer Slam","Date":"2026-07-17T00:00:00Z","Doors":"2026-07-17T00:00:00Z","Begin":"2026-07-17T00:00:00Z","Place":"tba","City":"Dortmund","Coordinates":"","Link":null,"Hash":"9ej32pQDyDX6r7qJizkGeGJw9Yy1KAxQwkFTeHyqdzTV","Separator":null,"Upcomming":null},
-    {"Name":"Moderation Jugend Journalismus Preis","Date":"2026-06-20T00:00:00Z","Doors":"2026-06-20T00:00:00Z","Begin":"2026-06-20T00:00:00Z","Place":"tba","City":"Dresden","Coordinates":"","Link":null,"Hash":"2QEjKocEu63i4JA1Ez5SoA29kV3CEyvyfRs3q5s7tEfj","Separator":null,"Upcomming":null},
-    {"Name":"Queer Slam Open Air","Date":"2026-06-11T00:00:00Z","Doors":"2026-06-11T00:00:00Z","Begin":"2026-06-11T00:00:00Z","Place":"Moritzbastei","City":"Leipzig","Coordinates":"","Link":null,"Hash":"CyqdJQ1zzJzbhNxVp5XdUHJfriMN5BZyWRbKH9PVHrgb","Separator":null,"Upcomming":null},
-    {"Name":"Auftritt Poetry \u0026 Co.","Date":"2026-06-05T00:00:00Z","Doors":"2026-06-05T00:00:00Z","Begin":"2026-06-05T00:00:00Z","Place":"tba","City":"Falkenlandkreis","Coordinates":"","Link":null,"Hash":"7gh2xLYLC4g6xanMec6vURdVgb85PoV7FMHw9CJ3Vqf4","Separator":null,"Upcomming":null},
-    {"Name":"Einfach Elses Late Night Show","Date":"2026-05-06T00:00:00Z","Doors":"2026-05-06T00:00:00Z","Begin":"2026-05-06T00:00:00Z","Place":"Moritzbastei","City":"Leipzig","Coordinates":"","Link":null,"Hash":"6V9Xf19gKA8nnWmyMPyGVvqiWTpqXjGAz4hB3ZFNDGSx","Separator":null,"Upcomming":null},
-    {"Name":"Einfach Elses Late Night Show","Date":"2026-04-24T00:00:00Z","Doors":"2026-04-24T00:00:00Z","Begin":"2026-04-24T00:00:00Z","Place":"Atomino","City":"Chemnitz","Coordinates":"","Link":null,"Hash":"6hkdR9BFYXx2ARuqsJhCWLUrJ3UTqYxs53pXa6yaerLS","Separator":null,"Upcomming":null},
-    {"Name":"Queer Slam","Date":"2026-04-22T00:00:00Z","Doors":"2026-04-22T00:00:00Z","Begin":"2026-04-22T00:00:00Z","Place":"tba","City":"Leipzig","Coordinates":"","Link":null,"Hash":"AMRby4rT5zBCwjktakszKQ2AHArv247LoRis2HWb6y2e","Separator":null,"Upcomming":null},
-    {"Name":"Queer Slam","Date":"2026-04-22T00:00:00Z","Doors":"2026-04-22T00:00:00Z","Begin":"2026-04-22T00:00:00Z","Place":"Werk 2 (Halle D)","City":"Leipzig","Coordinates":"","Link":"https://www.tixforgigs.com/de-DE/Event/72065/queer-slam-leipzig-april-werk-2-kulturfabrik-leipzig-e-v-halle-d","Hash":"E2oSS65vjkX1BfHfsDof6ciaqQEUrSUapjVi8Fjww7aa","Separator":null,"Upcomming":null},
-    {"Name":"Queer Slam","Date":"2026-07-17T00:00:00Z","Doors":"2026-07-17T00:00:00Z","Begin":"2026-07-17T00:00:00Z","Place":"tba","City":"Dortmund","Coordinates":"","Link":null,"Hash":"J2cGXEvkgodWyC4Xq5M8DkGvmLDiFZXtG1NSSkpdm9mu","Separator":null,"Upcomming":null}
-  ];
-   
-  const columnDefs = [
-    { headerName: 'Name', field: 'Name', editable: true, flex: 1.5 },
+  const columnDefinitions = [
+    { headerName: 'ID', field: 'ID', editable: true, flex: 0.5 },
+    { headerName: 'Name', field: 'Name', filter: true, editable: true, flex: 1.5 },
     {
       headerName: 'Datum',
       field: 'Date',
@@ -21,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flex: 1,
       cellDataType: 'dateString',
       valueFormatter: (params) => {
+        // Without this, the Date would appear in ISO-Format which is really ugly!
         if (!params.value) return '';
         const date = new Date(params.value);
         const day = String(date.getDate()).padStart(2, '0');
@@ -34,23 +23,29 @@ document.addEventListener('DOMContentLoaded', () => {
       //   return `${year}-${month}-${day}`;
       // }
     },
-    { headerName: 'Ort', field: 'Place', editable: true, flex: 1 },
-    { headerName: 'Stadt', field: 'City', editable: true, flex: 1 },
+    { headerName: 'Ort', field: 'Place', filter: true, editable: true, flex: 1 },
+    { headerName: 'Stadt', field: 'City', filter: true, editable: true, flex: 1 },
     { headerName: 'Link', field: 'Link', editable: true, flex: 1 }
   ];
-
-
-  const gridOptions = {
-    columnDefs: columnDefs,
-    rowData: rowData,
+  mock = [{"ID":22,"Name":"Kunstkomplex","Date":"2025-08-30T00:00:00Z","Doors":{"Time":"2025-08-30T00:00:00Z","Valid":true},"Begin":{"Time":"2025-08-30T00:00:00Z","Valid":true},"Place":"Theater K","City":"Oldenburg","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"2HTvBgtvEXk13QwMeEapYmGVCyMB2vDf2fyyTGqW4nxP"},{"ID":21,"Name":"Poetry Slam","Date":"2025-09-27T00:00:00Z","Doors":{"Time":"2025-09-27T00:00:00Z","Valid":true},"Begin":{"Time":"2025-09-27T00:00:00Z","Valid":true},"Place":"Schloss Fechenbach","City":"Dieburg","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"Ht6nmXi39H6AMe11z585krgqGY5WjAG6vDscMzktaFS9"},{"ID":20,"Name":"7:77","Date":"2025-09-16T00:00:00Z","Doors":{"Time":"2025-09-16T00:00:00Z","Valid":true},"Begin":{"Time":"2025-09-16T00:00:00Z","Valid":true},"Place":"Neues Schauspiel","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://neuesschauspielleipzig.de/spielplan/7-77-die-open-stage/date:1758045600","Valid":true},"Pic":null,"Hash":"CjYeGdGGZPhy6kcHjk9gNkWcKfJfuiAGNcrzEMmFUSLZ"},{"ID":19,"Name":"Pinzette und Kneifzange (Lesebühne)","Date":"2025-09-11T00:00:00Z","Doors":{"Time":"2025-09-11T00:00:00Z","Valid":true},"Begin":{"Time":"2025-09-11T00:00:00Z","Valid":true},"Place":"Bayerhaus","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"2EWBPLrb9BGhH3XkU6yU2Xk6GjL4zBuPq7MH84Nzf16M"},{"ID":18,"Name":"Lila Comedy","Date":"2025-09-10T00:00:00Z","Doors":{"Time":"2025-09-10T00:00:00Z","Valid":true},"Begin":{"Time":"2025-09-10T00:00:00Z","Valid":true},"Place":"Radtanke","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"8NGBioiN92W3GXdQfhZigkHRQGuuVRvhtbE48K6Wao2w"},{"ID":17,"Name":"Poetry\u0026Hip-Hop","Date":"2025-10-25T00:00:00Z","Doors":{"Time":"2025-10-25T00:00:00Z","Valid":true},"Begin":{"Time":"2025-10-25T00:00:00Z","Valid":true},"Place":"Moritzbastei","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://www.moritzbastei.de/event/konzert/2025-10-25/poetry-hip-hop-2025","Valid":true},"Pic":null,"Hash":"AKUxuzDRh4CCyiA6AoccuEBZsGRxcKfjfuzqGfdHFui1"},{"ID":16,"Name":"Einfach Elses Late Night Show","Date":"2025-10-15T00:00:00Z","Doors":{"Time":"2025-10-15T00:00:00Z","Valid":true},"Begin":{"Time":"2025-10-15T00:00:00Z","Valid":true},"Place":"Moritzbastei","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://www.moritzbastei.de/event/show/2025-10-15/einfach-elses-late-night-show#:~:text=Mi.,.2025%2C%2020%3A00%20Uhr\u0026text=Die%20erste%20und%20letzte%20Late,Es%20wird%20deep","Valid":true},"Pic":null,"Hash":"4Uu7zCBZCwkCB3youzMKUVT9XSR7Xj42JW5EsxMTCa8F"},{"ID":15,"Name":"Queer Slam","Date":"2025-10-14T00:00:00Z","Doors":{"Time":"2025-10-14T00:00:00Z","Valid":true},"Begin":{"Time":"2025-10-14T00:00:00Z","Valid":true},"Place":"Werk 2","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://www.tixforgigs.com/de-DE/Event/66821/queer-slam-leipzig-14-10-2025-werk-2-kulturfabrik-leipzig-e-v-halle-a","Valid":true},"Pic":null,"Hash":"QLnMx6gd3P416adTPGXNDXUbWpHQomd1QEQZtmxPBf1"},{"ID":14,"Name":"Safer Space Slam","Date":"2025-11-19T00:00:00Z","Doors":{"Time":"2025-11-19T00:00:00Z","Valid":true},"Begin":{"Time":"2025-11-19T00:00:00Z","Valid":true},"Place":"AStA Uni","City":"Hamburg","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://saferspace-slam.de/","Valid":true},"Pic":null,"Hash":"6uRNrGV2RGoEGSiGoP9vArC9Y6t3j3jF9CXRdoEfzv9A"},{"ID":13,"Name":"Moderation Podiumsdiskussion: Poetry Slam - Jugendlyrik oder Weltliteratur?","Date":"2025-11-08T00:00:00Z","Doors":{"Time":"2025-11-08T00:00:00Z","Valid":true},"Begin":{"Time":"2025-11-08T00:00:00Z","Valid":true},"Place":"Universitäts Bibliothek Chemnitz","City":"Chemnitz","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"2qckRBJag3vuNW6RhnofoBDxZRezDLikdEFT4oxkH2sT"},{"ID":12,"Name":"Weihnachtsfeier","Date":"2025-12-18T00:00:00Z","Doors":{"Time":"2025-12-18T00:00:00Z","Valid":true},"Begin":{"Time":"2025-12-18T00:00:00Z","Valid":true},"Place":"HArfE e.V.","City":"Hameln","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"777sZ8rSxd8QZ2piyR1eQSeSG5VraZ1DLgVteuzmpNur"},{"ID":11,"Name":"Bamberg ist Slamberg","Date":"2025-12-15T00:00:00Z","Doors":{"Time":"2025-12-15T00:00:00Z","Valid":true},"Begin":{"Time":"2025-12-15T00:00:00Z","Valid":true},"Place":"Haas Säle","City":"Bamberg","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://vivenu.com/event/poetry-slam-bamberg-ist-slamberg-d9ie4l","Valid":true},"Pic":null,"Hash":"xWwNjK7bqBjBynJtU22uS4EzNJJaNQQEhDZFL3uhn4R"},{"ID":10,"Name":"Poetry Slam Würzburg - Frühe Bescherung","Date":"2025-12-14T00:00:00Z","Doors":{"Time":"2025-12-14T00:00:00Z","Valid":true},"Begin":{"Time":"2025-12-14T00:00:00Z","Valid":true},"Place":"Posthalle","City":"Würzburg","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://www.eventbrite.de/e/poetry-slam-wurzburg-fruhe-bescherung-tickets-1480593046659","Valid":true},"Pic":null,"Hash":"6YJhmTNakUUo1mdrNXHwg4WRGMLCsdmcq9eLT5nfoqQk"},{"ID":9,"Name":"Poetry Slam","Date":"2025-12-13T00:00:00Z","Doors":{"Time":"2025-12-13T00:00:00Z","Valid":true},"Begin":{"Time":"2025-12-13T00:00:00Z","Valid":true},"Place":"Moritzhof","City":"Magdeburg","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://moritzhof-magdeburg.de/live/","Valid":true},"Pic":null,"Hash":"5R18bZUL58jpEo1CCTVSxHrm8QcMTbQ7KA2dEexRb6VW"},{"ID":8,"Name":"Queer Slam","Date":"2026-07-17T00:00:00Z","Doors":{"Time":"2026-07-17T00:00:00Z","Valid":true},"Begin":{"Time":"2026-07-17T00:00:00Z","Valid":true},"Place":"tba","City":"Dortmund","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"4TcddmmuF8aFhxJyBJTMV4wGZ54hPQrwMGMxd57Z9o1A"},{"ID":7,"Name":"Queer Slam","Date":"2026-06-11T00:00:00Z","Doors":{"Time":"2026-06-11T00:00:00Z","Valid":true},"Begin":{"Time":"2026-06-11T00:00:00Z","Valid":true},"Place":"Moritzbastei","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"84T8vL1xWPzTv1wBqMthWNvmRj3rNHM9KenePPnmsf4J"},{"ID":6,"Name":"Queer Slam","Date":"2026-04-08T00:00:00Z","Doors":{"Time":"2026-04-08T00:00:00Z","Valid":true},"Begin":{"Time":"2026-04-08T00:00:00Z","Valid":true},"Place":"tba","City":"Bochum","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"2vU5CCVCD61i199mgX8pdzh9vyUUpeUrjKJkm88qVQdo"},{"ID":5,"Name":"Einfach Elses Late Night Show","Date":"2026-02-11T00:00:00Z","Doors":{"Time":"2026-02-11T00:00:00Z","Valid":true},"Begin":{"Time":"2026-02-11T00:00:00Z","Valid":true},"Place":"Moritzbastei","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://www.tixforgigs.com/de-de/Event/68817","Valid":true},"Pic":null,"Hash":"DKz9igVicQr9NVz147jwaiZV7dCCqVfFRsDgGhosgPok"},{"ID":4,"Name":"Poetry and HipHop","Date":"2026-02-04T00:00:00Z","Doors":{"Time":"2026-02-04T00:00:00Z","Valid":true},"Begin":{"Time":"2026-02-04T00:00:00Z","Valid":true},"Place":"Moritzbastei","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"","Valid":false},"Pic":null,"Hash":"Fs3cMNmpba9XQJLSeY4RiP4Up6uzesLFuPkveE92MbfS"},{"ID":3,"Name":"Einfach Elses Late Night Show","Date":"2026-01-30T00:00:00Z","Doors":{"Time":"2026-01-30T00:00:00Z","Valid":true},"Begin":{"Time":"2026-01-30T00:00:00Z","Valid":true},"Place":"Atomino","City":"Chemnitz","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://www.tixforgigs.com/de-DE/Event/69963/einfach-elses-late-night-show-atomino-chemnitz","Valid":true},"Pic":null,"Hash":"7SQmEKBHXvY4ZP3QtBWoFuZe5nMJLb5CKUTQLvHP757n"},{"ID":2,"Name":"7:77","Date":"2026-01-20T00:00:00Z","Doors":{"Time":"2026-01-20T00:00:00Z","Valid":true},"Begin":{"Time":"2026-01-20T00:00:00Z","Valid":true},"Place":"Neues Schauspielhaus","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://openstage777.com/termine/","Valid":true},"Pic":null,"Hash":"GhUHuxCiSnBv6Tc46ujsJ64TcjAXgzcV1vDNq1dhZKiR"},{"ID":1,"Name":"Westslam","Date":"2026-01-15T00:00:00Z","Doors":{"Time":"2026-01-15T00:00:00Z","Valid":true},"Begin":{"Time":"2026-01-15T00:00:00Z","Valid":true},"Place":"Neues Schauspielhaus","City":"Leipzig","Coordinates":{"String":"","Valid":false},"Link":{"String":"https://rausgegangen.de/en/events/westslam-17/","Valid":true},"Pic":null,"Hash":"41PpGxT7W9q85X5YKzXNNXQESd4oCF1BK59eBUkSrPKE"}]
+  const options = {
+    columnDefs: columnDefinitions,
+    rowData: mock,
     rowSelection: {
-    mode: 'multiRow'
+      mode: 'multiRow'
     }
-    };
+  };
 
-  // Initialize the grid
+  // fetch('/events/manage/api/load')
+  //   .then(response => response.json())
+  //   .then(data => {
+  //     gridApi.setGridOption("rowData", data);
+  //   })
+  //   .catch(error => {
+  //     console.error('Error:', error);
+  //     gridDiv.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+  //   });
   const gridDiv = document.getElementById('events-grid');
-  gridApi = agGrid.createGrid(gridDiv, gridOptions);
-  
+  gridApi = agGrid.createGrid(gridDiv, options);
 
 });

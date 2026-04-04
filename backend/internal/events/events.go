@@ -612,7 +612,6 @@ func (h *Handler) PrivateLoad(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.Write(bytes)
-	return
 }
 
 // Change a single cell of an event.
