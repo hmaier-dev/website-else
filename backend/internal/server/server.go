@@ -53,16 +53,18 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 
 	// This stuff is public
 	events := s.Router.PathPrefix("/events/").Subrouter()
-	events.HandleFunc("/load", e.Load).Methods("GET")
+	events.HandleFunc("/load", e.PublicLoad).Methods("GET")
 	events.HandleFunc(`/cal/ics/{id:\d+:}`, e.ProvideICSFile).Methods("GET")
 
 	// and this stuff is like /events/manage behind an auth
 	manage := events.PathPrefix("/manage/api").Subrouter()
-	manage.HandleFunc("/load-mutable", e.LoadMutable).Methods("GET")
+	manage.HandleFunc("/load", e.PrivateLoad).Methods("GET")
 	manage.HandleFunc("/create", e.Create).Methods("POST")
-	manage.HandleFunc("/create/bulk", e.Bulk).Methods("POST")
-	manage.HandleFunc("/delete", e.Delete).Methods("POST")
 	manage.HandleFunc("/change", e.Change).Methods("POST")
+
+	bulk := manage.PathPrefix("/bulk").Subrouter()
+	bulk.HandleFunc("/create", e.BulkCreate).Methods("POST")
+	bulk.HandleFunc("/delete", e.BulkDelete).Methods("POST")
 
 	// logs all routes when starting after they go defined
 	s.Router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {

@@ -356,7 +356,7 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 				events[i].Separator = &currYear
 				continue
 			}
-			if i != 0 && (sortBy == "asc" || sortBy == "next") && events[i-1].Date.Format("2006") < currYear{
+			if i != 0 && (sortBy == "asc" || sortBy == "next") && events[i-1].Date.Format("2006") < currYear {
 				events[i].Separator = &currYear
 				continue
 			}
@@ -369,18 +369,18 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 			// If the event is today, still highlight it!
 			yesterday := time.Now().AddDate(0, 0, -1)
 			val := true
-			if i == len(events){
+			if i == len(events) {
 				events[i].Upcomming = &val
 				break
 			}
 			// This can produce a runtime error.... if the if-condition above didnt existed...
 			next := events[i+1].Date
 			// Just set the next one as highlighted.
-			if sortBy == "next" && i == 0{
+			if sortBy == "next" && i == 0 {
 				events[i].Upcomming = &val
 				break
 			}
-			if sortBy == "desc" && curr.Unix() > yesterday.Unix() && next.Unix() < yesterday.Unix() && i != len(events)-1{
+			if sortBy == "desc" && curr.Unix() > yesterday.Unix() && next.Unix() < yesterday.Unix() && i != len(events)-1 {
 				events[i].Upcomming = &val
 				break
 			}
@@ -388,7 +388,7 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 				events[i].Upcomming = &val
 				break
 			}
-			
+
 		}
 	}
 
@@ -396,7 +396,7 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 
 }
 
-func (h *Handler) Load(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) PublicLoad(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	query := r.URL.Query()
@@ -460,6 +460,7 @@ func makeHash(datum string, event string, ort string, stadt string) string {
 	return hash
 }
 
+// Create a single new Event
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
@@ -470,14 +471,12 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extract form values
 	datum := r.FormValue("datum")
 	event := r.FormValue("event")
 	ort := r.FormValue("ort")
 	stadt := r.FormValue("stadt")
 	link := r.FormValue("link")
 
-	// Parse the date
 	date, err := time.Parse("2006-01-02", datum)
 	if err != nil {
 		http.Error(w, "Invalid date format", http.StatusBadRequest)
@@ -497,7 +496,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Place: ort,
 		City:  stadt,
 		Link:  linkString,
-		Pic:   nil, // Assuming no picture is uploaded
+		Pic:   nil,
 		Hash:  hash,
 	})
 	if err != nil {
@@ -524,8 +523,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Takes requests from /events/manage/api/create/bulk
-func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
+// Takes a yaml file with multiple new events
+func (h *Handler) BulkCreate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
 
@@ -599,35 +598,31 @@ func (h *Handler) Bulk(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/events/manage", http.StatusSeeOther)
 }
 
-// Loads a html generated list by which represents the database state.
-// Newest entrys will be at the top
-func (h *Handler) LoadMutable(w http.ResponseWriter, r *http.Request) {
+// Loads all events descending, with all fields to alter events
+func (h *Handler) PrivateLoad(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
-	events, err := q.GetAllEventsDesc(ctx)
+	all, err := q.GetAllEventsDesc(ctx)
 	if err != nil {
-		logErr(w, "Could load all event by descending order.", err, http.StatusInternalServerError)
+		logErr(w, "Load all events desc", err, http.StatusInternalServerError)
 		return
 	}
-
-	// this can be done prettier => see checklist-tool
-	tmpl := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
-		"formatTime": formatTime,
-	}).ParseFS(h.InternalFS, "internal/events/templates/events-mutable.html"))
-	err = tmpl.Execute(w, map[string]any{
-		"Events": events,
-	})
+	bytes, err := json.Marshal(all)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	w.Write(bytes)
+	return
 }
 
+// Change a single cell of an event.
+// Takes the Hash to identify
 func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
 	// ctx := r.Context()
 	return
 }
 
-func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) BulkDelete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
 
