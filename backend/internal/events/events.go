@@ -598,16 +598,46 @@ func (h *Handler) BulkCreate(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/events/manage", http.StatusSeeOther)
 }
 
+type EventSmooth struct {
+	ID    int64
+	Name  string
+	Date  string
+	Place string
+	City  string
+	Link  *string
+}
+
 // Loads all events descending, with all fields to alter events
 func (h *Handler) PrivateLoad(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
+
 	all, err := q.GetAllEventsDesc(ctx)
 	if err != nil {
 		logErr(w, "Load all events desc", err, http.StatusInternalServerError)
 		return
 	}
-	bytes, err := json.Marshal(all)
+	// Transform the data, so the frontend can work with the values as they are
+	resp := make([]EventSmooth, len(all))
+	for i, e := range all {
+		// Just giving out the pure link if it is there
+		var link *string
+		if e.Link.Valid {
+			link = &e.Link.String
+		}
+		// Format the Date to German style
+		var date string
+		date = e.Date.Format("02.01.2006")
+		resp[i] = EventSmooth{
+			ID:    e.ID,
+			Name:  e.Name,
+			Date:  date,
+			Place: e.Place,
+			City:  e.City,
+			Link:  link,
+		}
+	}
+	bytes, err := json.Marshal(resp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
