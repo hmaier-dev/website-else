@@ -56,7 +56,10 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 	events.HandleFunc("/load", e.PublicLoad).Methods("GET")
 	events.HandleFunc(`/cal/ics/{id:\d+:}`, e.ProvideICSFile).Methods("GET")
 
-	// and this stuff is like /events/manage behind an auth
+	// and this stuff is like /events/manage behind an auth.
+	//
+	// We need the sub-path 'api' here, because in Traefik we need to address two different containers
+	// by the path 'events/manage'
 	manage := events.PathPrefix("/manage/api").Subrouter()
 	manage.HandleFunc("/load", e.PrivateLoad).Methods("GET")
 	manage.HandleFunc("/create", e.Create).Methods("POST")
