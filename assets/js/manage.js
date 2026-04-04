@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
         return `${day}.${month}.${year}`;
-      },
-      valueParser: (params) => {
-        if (!params.newValue) return null;
-        const [day, month, year] = params.newValue.split('.');
-        return `${year}-${month}-${day}`;
       }
+      // valueParser: (params) => {
+      //   if (!params.newValue) return null;
+      //   const [day, month, year] = params.newValue.split('.');
+      //   return `${year}-${month}-${day}`;
+      // }
     },
     { headerName: 'Ort', field: 'Place', editable: true, flex: 1 },
     { headerName: 'Stadt', field: 'City', editable: true, flex: 1 },
