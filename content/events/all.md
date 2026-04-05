@@ -1,5 +1,5 @@
 ---
-description: Vergangene und zukünftige Veranstaltungen
+description: Galerie aller Veranstaltungen
 title: Veranstaltungen
 ---
 
