@@ -3,7 +3,6 @@
 {{ .Content }}
 
 <!---- The next event --->
-
 <section class="relative px-8 pt-12 pb-12 overflow-hidden">
 	<div class="relative z-10 max-w-6xl mx-auto">
 		<div class="mb-6">
@@ -45,7 +44,7 @@
 </section>
 
 <!--- Upcomming events ---->
-
+<!--- Is rendered in js -->
 <section class="px-8 py-24 bg-surface-container-low/20">
 	<div class="max-w-6xl mx-auto">
 		<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
@@ -54,12 +53,13 @@
 				<p class="text-on-surface-variant max-w-sm">Verpasse keinen Termin. Hier kannst Du meine nächsten Slams, Auftritte und Workshops finden.</p>
 			</div>
 		</div>
+
 		<div id="next-events-cards-wrapper" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-auto-rows-fr"></div>
 	</div>
 </section>
 
 <!--- Previous events -->
-
+<!-- This also will be rendered in js -->
 <section class="px-8 py-24 bg-surface">
 	<div class="max-w-6xl mx-auto">
 		<div class="mb-12">
@@ -68,70 +68,10 @@
 				<span class="w-8 h-[2px] bg-outline-variant"></span>
 			</h3>
 		</div>
-		<div class="space-y-4">
-			<!-- Past Event Row 1 -->
-			<div class="flex flex-col md:flex-row items-center justify-between p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all group">
-				<div class="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-					<div class="w-16 text-center">
-						<p class="text-lg font-black text-on-surface-variant leading-none">22</p>
-						<p class="text-[10px] font-bold uppercase text-outline">AUG</p>
-					</div>
-					<div class="h-10 w-[1px] bg-outline-variant hidden md:block"></div>
-					<div>
-						<h5 class="text-lg font-bold text-on-surface group-hover:text-primary">Summer Editorial Retreat</h5>
-						<p class="text-xs text-on-surface-variant uppercase tracking-widest">Workshop &amp; Networking • Lago di Garda</p>
-					</div>
-				</div>
-				<div class="mt-4 md:mt-0">
-					<button class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-						Galerie ansehen
-						<span class="material-symbols-outlined text-sm" data-icon="image">image</span>
-					</button>
-				</div>
-			</div>
-			<!-- Past Event Row 2 -->
-			<div class="flex flex-col md:flex-row items-center justify-between p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all group">
-				<div class="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-					<div class="w-16 text-center">
-						<p class="text-lg font-black text-on-surface-variant leading-none">14</p>
-						<p class="text-[10px] font-bold uppercase text-outline">JUL</p>
-					</div>
-					<div class="h-10 w-[1px] bg-outline-variant hidden md:block"></div>
-					<div>
-						<h5 class="text-lg font-bold text-on-surface group-hover:text-primary">Berlin Fashion Week Spotlight</h5>
-						<p class="text-xs text-on-surface-variant uppercase tracking-widest">Live Performance • Kraftwerk Berlin</p>
-					</div>
-				</div>
-				<div class="mt-4 md:mt-0">
-					<button class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-						Galerie ansehen
-						<span class="material-symbols-outlined text-sm" data-icon="image">image</span>
-					</button>
-				</div>
-			</div>
-			<!-- Past Event Row 3 -->
-			<div class="flex flex-col md:flex-row items-center justify-between p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all group">
-				<div class="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-					<div class="w-16 text-center">
-						<p class="text-lg font-black text-on-surface-variant leading-none">02</p>
-						<p class="text-[10px] font-bold uppercase text-outline">JUN</p>
-					</div>
-					<div class="h-10 w-[1px] bg-outline-variant hidden md:block"></div>
-					<div>
-						<h5 class="text-lg font-bold text-on-surface group-hover:text-primary">Color &amp; Form Mastery</h5>
-						<p class="text-xs text-on-surface-variant uppercase tracking-widest">Online Masterclass • Webinar</p>
-					</div>
-				</div>
-				<div class="mt-4 md:mt-0">
-					<button class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-						Galerie ansehen
-						<span class="material-symbols-outlined text-sm" data-icon="image">image</span>
-					</button>
-				</div>
-			</div>
-		</div>
+		<div id="prev-events-cards-wrapper" class="space-y-4"></div>
 	</div>
 </section>
+
 {{ with resources.Get "js/overview.js" }}
 {{$opts := dict
 "minify" (cond hugo.IsDevelopment false true)
