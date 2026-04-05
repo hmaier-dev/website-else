@@ -1,5 +1,6 @@
 ---
 description: Überblick über Veranstaltung
-title: Veranstaltungen
+title: Veranstaltungs-Überblick
+layout: overview
 ---
 
