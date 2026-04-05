@@ -57,9 +57,28 @@ document.addEventListener('DOMContentLoaded', () => {
   gridApi = agGrid.createGrid(gridDiv, options);
 });
 
+document.getElementById('event-create-form').addEventListener('submit', async (e) => {
+  e.preventDefault(); // do NOT reload the page
 
-document.getElementById('publish-event').addEventListener('click', async () => {
-  document.getElementById('event-create-form').reset();
+  const form = e.target;
+
+  // const formData = new FormData(form);
+  // console.log(Object.fromEntries(formData));
+  
+  const body = new URLSearchParams(new FormData(form));
+  fetch('/events/manage/api/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body
+  });
+
+  // Clear the form when a submit has happend
+  setTimeout(() => {
+    e.target.reset();
+  }, 0);
+
   try {
     const res = await fetch('/events/manage/api/load');
     const data = await res.json();
@@ -68,3 +87,4 @@ document.getElementById('publish-event').addEventListener('click', async () => {
     console.error('Reload failed:', err);
   }
 });
+

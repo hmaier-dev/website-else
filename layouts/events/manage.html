@@ -2,7 +2,7 @@
 
 {{ .Content }}
 
-<form id="event-create-form" class="ag-theme-alpine p-4 max-w-[650px]" hx-post="/events/manage/api/create" hx-swap="none">
+<form id="event-create-form" class="ag-theme-alpine p-4 max-w-[650px]">
   <div class="space-y-2 mx-auto flex">
     <div class="flex-1 mr-4">
       <label for="event" class="block text-sm font-medium text-gray-700">Event</label>
@@ -35,7 +35,7 @@
   </div>
 
   <div class="block">
-    <button id="publish-event" class="mt-4 rounded-md border-gray-300 bg-blue-400 font-medium shadow-sm cursor-pointer p-1 w-full border">Veröffentlichen</button>
+    <button type="submit" id="publish-event" class="mt-4 rounded-md border-gray-300 bg-blue-400 font-medium shadow-sm cursor-pointer p-1 w-full border">Veröffentlichen</button>
   </div>
 
 </form>
