@@ -2,7 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const columnDefinitions = [
     { headerName: 'ID', field: 'ID', editable: true, flex: 0.5 },
     { headerName: 'Name', field: 'Name', filter: true, editable: true, flex: 1.5 },
-    { headerName: 'Datum', field: 'Date', editable: true, flex: 1 },
+    {
+      headerName: 'Datum', field: 'Date', editable: true, flex: 1, cellDataType: 'text',
+      comparator: (valueA, valueB) => {
+        const parse = (dateStr) => {
+          if (!dateStr) return 0;
+          const [day, month, year] = dateStr.split('.').map(Number);
+          return new Date(year, month - 1, day).getTime();
+        };
+        return parse(valueA) - parse(valueB);
+      }
+    },
     { headerName: 'Ort', field: 'Place', filter: true, editable: true, flex: 1 },
     { headerName: 'Stadt', field: 'City', filter: true, editable: true, flex: 1 },
     { headerName: 'Link', field: 'Link', editable: true, flex: 1, }
@@ -59,7 +69,7 @@ document.getElementById('event-create-form').addEventListener('submit', async (e
 
   // const formData = new FormData(form);
   // console.log(Object.fromEntries(formData));
-  
+
   const body = new URLSearchParams(new FormData(form));
   fetch('/events/manage/api/create', {
     method: 'POST',
