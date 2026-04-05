@@ -650,6 +650,7 @@ func (h *Handler) PrivateLoad(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
+
 	err := r.ParseForm()
 	if err != nil {
 		logErr(w, "Couldn't parse the form.", err, http.StatusBadRequest)
@@ -659,7 +660,7 @@ func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
 	idStr := r.FormValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		msg := fmt.Sprintf("The id:'%s' is invalid.", idStr)
+		msg := fmt.Sprintf("The id: '%s' is invalid.", idStr)
 		logErr(w, msg, err, http.StatusBadRequest)
 		return
 	}

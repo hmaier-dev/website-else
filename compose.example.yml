@@ -47,7 +47,7 @@ services:
       # - "traefik.http.routers.website.entrypoints=websecure"
       # - "traefik.http.routers.website.tls=true"
   backend:
-    image: "hmaierdev/website-else-backend:v2"
+    image: "hmaierdev/website-else-backend:local"
     container_name: "backend"
     restart: "unless-stopped"
     depends_on:
