@@ -575,3 +575,146 @@ func (q *Queries) LoadEventsRandom(ctx context.Context, limit int64) ([]LoadEven
 	}
 	return items, nil
 }
+
+const updateBeginByID = `-- name: UpdateBeginByID :exec
+UPDATE events SET begin = ? WHERE id = ?
+`
+
+type UpdateBeginByIDParams struct {
+	Begin sql.NullTime
+	ID    int64
+}
+
+func (q *Queries) UpdateBeginByID(ctx context.Context, arg UpdateBeginByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateBeginByID, arg.Begin, arg.ID)
+	return err
+}
+
+const updateCityByID = `-- name: UpdateCityByID :exec
+UPDATE events SET city = ? WHERE id = ?
+`
+
+type UpdateCityByIDParams struct {
+	City string
+	ID   int64
+}
+
+func (q *Queries) UpdateCityByID(ctx context.Context, arg UpdateCityByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateCityByID, arg.City, arg.ID)
+	return err
+}
+
+const updateCoordinatesByID = `-- name: UpdateCoordinatesByID :exec
+UPDATE events SET coordinates = ? WHERE id = ?
+`
+
+type UpdateCoordinatesByIDParams struct {
+	Coordinates sql.NullString
+	ID          int64
+}
+
+func (q *Queries) UpdateCoordinatesByID(ctx context.Context, arg UpdateCoordinatesByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateCoordinatesByID, arg.Coordinates, arg.ID)
+	return err
+}
+
+const updateDateByID = `-- name: UpdateDateByID :exec
+UPDATE events SET date = ? WHERE id = ?
+`
+
+type UpdateDateByIDParams struct {
+	Date time.Time
+	ID   int64
+}
+
+func (q *Queries) UpdateDateByID(ctx context.Context, arg UpdateDateByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateDateByID, arg.Date, arg.ID)
+	return err
+}
+
+const updateDoorsByID = `-- name: UpdateDoorsByID :exec
+UPDATE events SET doors = ? WHERE id = ?
+`
+
+type UpdateDoorsByIDParams struct {
+	Doors sql.NullTime
+	ID    int64
+}
+
+func (q *Queries) UpdateDoorsByID(ctx context.Context, arg UpdateDoorsByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateDoorsByID, arg.Doors, arg.ID)
+	return err
+}
+
+const updateHashByID = `-- name: UpdateHashByID :exec
+UPDATE events SET hash = ? WHERE id = ?
+`
+
+type UpdateHashByIDParams struct {
+	Hash string
+	ID   int64
+}
+
+func (q *Queries) UpdateHashByID(ctx context.Context, arg UpdateHashByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateHashByID, arg.Hash, arg.ID)
+	return err
+}
+
+const updateLinkByID = `-- name: UpdateLinkByID :exec
+UPDATE events SET link = ? WHERE id = ?
+`
+
+type UpdateLinkByIDParams struct {
+	Link sql.NullString
+	ID   int64
+}
+
+func (q *Queries) UpdateLinkByID(ctx context.Context, arg UpdateLinkByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateLinkByID, arg.Link, arg.ID)
+	return err
+}
+
+const updateNameByID = `-- name: UpdateNameByID :exec
+
+UPDATE events SET name = ? WHERE id = ?
+`
+
+type UpdateNameByIDParams struct {
+	Name string
+	ID   int64
+}
+
+// ##################################################
+// ## Add changes to a single value
+func (q *Queries) UpdateNameByID(ctx context.Context, arg UpdateNameByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateNameByID, arg.Name, arg.ID)
+	return err
+}
+
+const updatePicByID = `-- name: UpdatePicByID :exec
+UPDATE events SET pic = ? WHERE id = ?
+`
+
+type UpdatePicByIDParams struct {
+	Pic []byte
+	ID  int64
+}
+
+func (q *Queries) UpdatePicByID(ctx context.Context, arg UpdatePicByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updatePicByID, arg.Pic, arg.ID)
+	return err
+}
+
+const updatePlaceByID = `-- name: UpdatePlaceByID :exec
+UPDATE events SET place = ? WHERE id = ?
+`
+
+type UpdatePlaceByIDParams struct {
+	Place string
+	ID    int64
+}
+
+func (q *Queries) UpdatePlaceByID(ctx context.Context, arg UpdatePlaceByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updatePlaceByID, arg.Place, arg.ID)
+	return err
+}

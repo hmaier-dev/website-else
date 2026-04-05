@@ -56,3 +56,38 @@ SELECT id FROM events WHERE name = ? AND date = ? AND city = ? AND place = ? ORD
 -- name: DeleteEventByID :exec
 DELETE FROM events
 WHERE id = ?;
+
+-- ##################################################
+-- ## Add changes to a single value
+
+-- name: UpdateNameByID :exec
+UPDATE events SET name = ? WHERE id = ?;
+
+-- name: UpdateDateByID :exec
+UPDATE events SET date = ? WHERE id = ?;
+
+-- name: UpdateDoorsByID :exec
+UPDATE events SET doors = ? WHERE id = ?;
+ 
+-- name: UpdateBeginByID :exec
+UPDATE events SET begin = ? WHERE id = ?;
+ 
+-- name: UpdatePlaceByID :exec
+UPDATE events SET place = ? WHERE id = ?;
+
+-- name: UpdateCityByID :exec
+UPDATE events SET city = ? WHERE id = ?;
+ 
+-- name: UpdateCoordinatesByID :exec
+UPDATE events SET coordinates = ? WHERE id = ?;
+ 
+-- name: UpdateLinkByID :exec
+UPDATE events SET link = ? WHERE id = ?;
+ 
+-- name: UpdatePicByID :exec
+UPDATE events SET pic = ? WHERE id = ?;
+ 
+-- name: UpdateHashByID :exec
+UPDATE events SET hash = ? WHERE id = ?;
+
+ 

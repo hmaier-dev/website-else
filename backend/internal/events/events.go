@@ -644,10 +644,35 @@ func (h *Handler) PrivateLoad(w http.ResponseWriter, r *http.Request) {
 	w.Write(bytes)
 }
 
-// Change a single cell of an event.
-// Takes the Hash to identify
+// Handles changes to a single cell of an event
 func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
-	// ctx := r.Context()
+	ctx := r.Context()
+	q := db.New(h.DB)
+	err := r.ParseForm()
+	if err != nil {
+		logErr(w, "Couldn't parse the form.", err, http.StatusBadRequest)
+		return
+	}
+
+	id := r.FormValue("id")
+	field := r.FormValue("field")
+	value := r.FormValue("value")
+
+	// Convert special datatypes back to their database form
+	if field == "Date" {
+		date, err := time.Parse("02.01.2006", value)
+		if err != nil {
+			logErr(w, "Wrong time-data format.", err, http.StatusBadRequest)
+			return
+		}
+	}
+	if field == "Link" {
+		if value == "" {
+			return
+		}
+		link := sql.NullString{String: value, Valid: true}
+	}
+
 	return
 }
 
