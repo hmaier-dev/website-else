@@ -645,6 +645,8 @@ func (h *Handler) PrivateLoad(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handles changes to a single cell of an event
+// Idea: Instead of receiving just one value at the time, we could
+// insert the complete row and skip a lot of the logic down below
 func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	q := db.New(h.DB)
@@ -654,26 +656,80 @@ func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := r.FormValue("id")
+	idStr := r.FormValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		msg := fmt.Sprintf("The id:'%s' is invalid.", idStr)
+		logErr(w, msg, err, http.StatusBadRequest)
+		return
+	}
 	field := r.FormValue("field")
 	value := r.FormValue("value")
 
-	// Convert special datatypes back to their database form
-	if field == "Date" {
+	// This humongous switch-case-statement is done, because I refuse to pass in the complete row.
+	// Because of this infantility I need to declare for each field a separate SQL-Query
+	switch field {
+	case "Name":
+		args := db.UpdateNameByIDParams{Name: value, ID: id}
+		q.UpdateNameByID(ctx, args)
+	case "Date":
 		date, err := time.Parse("02.01.2006", value)
+		args := db.UpdateDateByIDParams{Date: date, ID: id}
 		if err != nil {
-			logErr(w, "Wrong time-data format.", err, http.StatusBadRequest)
+			logErr(w, "Wrong time-data format. We want 'dd.mm.yyyy'/'02.01.2006'", err, http.StatusBadRequest)
 			return
 		}
-	}
-	if field == "Link" {
+		q.UpdateDateByID(ctx, args)
+	case "Doors":
+		if value == "" {
+			return
+		}
+		// 15:04 is hh:mm
+		t, err := time.Parse("15:04", value)
+		if err != nil {
+			logErr(w, "Wrong time-data format. We want 'hh:mm'/'15:04'", err, http.StatusBadRequest)
+			return
+		}
+		doors := sql.NullTime{Time: t, Valid: true}
+		args := db.UpdateDoorsByIDParams{Doors: doors, ID: id}
+		q.UpdateDoorsByID(ctx, args)
+	case "Begin":
+		if value == "" {
+			return
+		}
+		// 15:04 is hh:mm
+		t, err := time.Parse("15:04", value)
+		if err != nil {
+			logErr(w, "Wrong time-data format. We want 'hh:mm'/'15:04'", err, http.StatusBadRequest)
+			return
+		}
+		begin := sql.NullTime{Time: t, Valid: true}
+		args := db.UpdateBeginByIDParams{Begin: begin, ID: id}
+		q.UpdateBeginByID(ctx, args)
+	case "Place":
+		args := db.UpdatePlaceByIDParams{Place: value, ID: id}
+		q.UpdatePlaceByID(ctx, args)
+	case "City":
+		args := db.UpdateCityByIDParams{City: value, ID: id}
+		q.UpdateCityByID(ctx, args)
+	case "Coordinates":
+		if value == "" {
+			return
+		}
+		coords := sql.NullString{String: value, Valid: true}
+		args := db.UpdateCoordinatesByIDParams{Coordinates: coords, ID: id}
+		q.UpdateCoordinatesByID(ctx, args)
+	case "Link":
 		if value == "" {
 			return
 		}
 		link := sql.NullString{String: value, Valid: true}
+		args := db.UpdateLinkByIDParams{Link: link, ID: id}
+		q.UpdateLinkByID(ctx, args)
+	case "Hash":
+		args := db.UpdateHashByIDParams{Hash: value, ID: id}
+		q.UpdateHashByID(ctx, args)
 	}
-
-	return
 }
 
 func (h *Handler) BulkDelete(w http.ResponseWriter, r *http.Request) {
