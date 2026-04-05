@@ -4,35 +4,43 @@
 
 <!---- The next event --->
 
-<section class="relative px-8 pt-12 pb-20 overflow-hidden">
-	<div class="absolute inset-0 bg-gradient-to-br from-surface-container-low to-surface z-0"></div>
+<section class="relative px-8 pt-12 pb-12 overflow-hidden">
 	<div class="relative z-10 max-w-6xl mx-auto">
 		<div class="mb-6">
 			<span class="text-4xl font-black text-on-surface tracking-tighter mb-2">Der nächste Termin</span>
 		</div>
 		<div class="grid lg:grid-cols-2 gap-12 items-center">
 			<div>
-				<h2 id="event-name-hero" class="text-5xl lg:text-7xl font-black text-on-surface leading-[0.9] tracking-tighter mb-8 italic"></h2>
+				<h2 class="text-6xl lg:text-8xl font-black text-on-surface leading-[0.9] tracking-tighter mb-8 italic" id="event-name-hero">Vogue Night &amp; Editorial Talk</h2>
 				<div class="space-y-6 mb-10">
 					<div class="flex items-start gap-4">
+						<!-- Calendar SVG -->
+						<svg class="h-8 w-8 text-primary mt-1" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+						</svg>
 						<div>
-							<p class="text-sm font-bold text-on-surface">Samstag, 12. Oktober 2024</p>
-							<!-- <p class="text-xs text-on-surface-variant">Einlass ab 19:30 Uhr</p> -->
+							<p id="hero-date" class="text-md font-bold text-on-surface"></p>
+							<p id="hero-doors" class="text-sm text-on-surface-variant"></p>
 						</div>
 					</div>
 					<div class="flex items-start gap-4">
+						<!-- Location SVG -->
+						<svg class="h-8 w-8 text-primary mt-1" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+							<path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+						</svg>
 						<div>
-							<p class="text-sm font-bold text-on-surface">Berlin Art Collective Hall</p>
-							<p class="text-xs text-on-surface-variant">Heideufer 14, Berlin Mitte</p>
+							<p id="hero-place" class="text-md font-bold text-on-surface"></p>
+							<p id="hero-city" class="text-sm text-on-surface-variant"></p>
 						</div>
 					</div>
 				</div>
-				<button class="bg-primary text-white px-8 py-4 rounded-xl font-bold tracking-wide hover:translate-y-[-4px] transition-all duration-300 shadow-lg shadow-primary/20 flex items-center gap-3">
-					Tickets Reservieren
-					<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
-				</button>
 			</div>
 		</div>
+	</div>
+
+	<div>
+		<a href="" class="w-full text-lg bg-violet-600 text-white py-2 px-10 rounded-md hover:bg-violet-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Mehr Infos</a>
 	</div>
 </section>
 
@@ -43,7 +51,7 @@
 		<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
 			<div>
 				<h3 class="text-4xl font-black text-on-surface tracking-tighter mb-2">Alle nächsten Termine</h3>
-				<p class="text-on-surface-variant max-w-sm">Verpassen Sie kein Highlight. Hier finden Sie alle kommenden Workshops, Shows und Vorträge.</p>
+				<p class="text-on-surface-variant max-w-sm">Verpasse keinen Termin. Hier kannst Du meine nächsten Slams, Auftritte und Workshops finden.</p>
 			</div>
 		</div>
 		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
