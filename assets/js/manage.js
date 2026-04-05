@@ -30,10 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body
         });
-
-        if (!res.ok) {
-          throw new Error("Changing the value failed :(")
-        }
       } catch (err) {
         console.log(err);
       }
@@ -79,6 +75,7 @@ document.getElementById('event-create-form').addEventListener('submit', async (e
     e.target.reset();
   }, 0);
 
+  // Reload the agGrid
   try {
     const res = await fetch('/events/manage/api/load');
     const data = await res.json();
