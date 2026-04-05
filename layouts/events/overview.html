@@ -1,3 +1,225 @@
 {{ define "main" }}
-  <p>Hello World</p>
+
+{{ .Content }}
+
+<!---- The next event --->
+
+<section class="relative px-8 pt-12 pb-20 overflow-hidden">
+	<div class="absolute inset-0 bg-gradient-to-br from-surface-container-low to-surface z-0"></div>
+	<div class="relative z-10 max-w-6xl mx-auto">
+		<div class="mb-6">
+			<span class="text-4xl font-black text-on-surface tracking-tighter mb-2">Der nächste Termin</span>
+		</div>
+		<div class="grid lg:grid-cols-2 gap-12 items-center">
+			<div>
+				<h2 id="event-name-hero" class="text-5xl lg:text-7xl font-black text-on-surface leading-[0.9] tracking-tighter mb-8 italic"></h2>
+				<div class="space-y-6 mb-10">
+					<div class="flex items-start gap-4">
+						<div>
+							<p class="text-sm font-bold text-on-surface">Samstag, 12. Oktober 2024</p>
+							<!-- <p class="text-xs text-on-surface-variant">Einlass ab 19:30 Uhr</p> -->
+						</div>
+					</div>
+					<div class="flex items-start gap-4">
+						<div>
+							<p class="text-sm font-bold text-on-surface">Berlin Art Collective Hall</p>
+							<p class="text-xs text-on-surface-variant">Heideufer 14, Berlin Mitte</p>
+						</div>
+					</div>
+				</div>
+				<button class="bg-primary text-white px-8 py-4 rounded-xl font-bold tracking-wide hover:translate-y-[-4px] transition-all duration-300 shadow-lg shadow-primary/20 flex items-center gap-3">
+					Tickets Reservieren
+					<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!--- Upcomming events ---->
+
+<section class="px-8 py-24 bg-surface-container-low/20">
+	<div class="max-w-6xl mx-auto">
+		<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+			<div>
+				<h3 class="text-4xl font-black text-on-surface tracking-tighter mb-2">Alle nächsten Termine</h3>
+				<p class="text-on-surface-variant max-w-sm">Verpassen Sie kein Highlight. Hier finden Sie alle kommenden Workshops, Shows und Vorträge.</p>
+			</div>
+		</div>
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+			<!-- Compact Card 1 -->
+			<div class="group bg-white p-8 rounded-[2rem] border border-violet-100 hover:border-primary/30 hover:shadow-2xl hover:shadow-violet-200/50 transition-all duration-500">
+				<div class="flex justify-between items-start mb-8">
+					<div class="bg-violet-50 px-4 py-2 rounded-2xl border border-violet-100">
+						<p class="text-xl font-black text-primary leading-none">24</p>
+						<p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest text-center mt-1">OCT</p>
+					</div>
+					<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all">
+						<img alt="Thumb" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBolFQJtOH9kQJWTTqUU6sYU5gl7ebPVrWdSU8bT3fRubhwJ6LaQdbcKRcX6BMB7MMid7Vh-RDJzfu1NfY7AX1URuwdelVmn4L5x9njVv_O2M_IpNIPcPlLAiANE_2jaOaiJMuJSfZ2whG0dwxo_uoZ3MdMJXtuTAIcevWQQjX2C0CtJnnsssfmPpFYt-ovBaMG7Cy3dNH4LXuvOzxvoLOQnalwwnFlhVwr8l0rMf_3jiAvLI-6i8GYFmfm929XsJwLnVip3vHBzNM">
+					</div>
+				</div>
+				<div>
+					<p class="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3">Workshop</p>
+					<h4 class="text-2xl font-black text-on-surface leading-tight mb-6 group-hover:text-primary transition-colors">Editorial Content Mastery</h4>
+					<div class="space-y-2 mb-8">
+						<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+							<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+							<span>10:00 - 16:00</span>
+						</div>
+						<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+							<span class="material-symbols-outlined text-lg" data-icon="pin_drop">pin_drop</span>
+							<span>Hamburg — Studio Loft</span>
+						</div>
+					</div>
+					<button class="w-full py-4 bg-violet-50 text-primary rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Details</button>
+				</div>
+			</div>
+			<!-- Compact Card 2 -->
+			<div class="group bg-white p-8 rounded-[2rem] border border-violet-100 hover:border-primary/30 hover:shadow-2xl hover:shadow-violet-200/50 transition-all duration-500">
+				<div class="flex justify-between items-start mb-8">
+					<div class="bg-violet-50 px-4 py-2 rounded-2xl border border-violet-100">
+						<p class="text-xl font-black text-primary leading-none">05</p>
+						<p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest text-center mt-1">NOV</p>
+					</div>
+					<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all">
+						<img alt="Thumb" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQikmS9uR2aVad37rtJJGBpf87skV29yolL5SOKXiPKbtTLo33Sj5dEfMnep5YwTtsjz5214i4lJ7i91CbfeJfxVFhNxRTRKD4hpQqAYTiz-fZa-aqBGDA6wZKt5kyKm6mVgrLXnd6n_95aclOUrAqrk8WGmAUj6qc_HYAY6WxcYhnob99ZEVtzKSyeSUosqyDZMHYpRaChljVtPUrkmrGKjEmk65ab1ufeSFU92SNSbaCcjWzph0zSxHBo3MqMFBah4_XwrLCNEUr">
+					</div>
+				</div>
+				<div>
+					<p class="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3">Exhibition</p>
+					<h4 class="text-2xl font-black text-on-surface leading-tight mb-6 group-hover:text-primary transition-colors">Unseen Perspectives: Solo Show</h4>
+					<div class="space-y-2 mb-8">
+						<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+							<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+							<span>18:00 - 22:00</span>
+						</div>
+						<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+							<span class="material-symbols-outlined text-lg" data-icon="pin_drop">pin_drop</span>
+							<span>Munich — Gallery Space</span>
+						</div>
+					</div>
+					<button class="w-full py-4 bg-violet-50 text-primary rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Details</button>
+				</div>
+			</div>
+			<!-- Compact Card 3 -->
+			<div class="group bg-white p-8 rounded-[2rem] border border-violet-100 hover:border-primary/30 hover:shadow-2xl hover:shadow-violet-200/50 transition-all duration-500">
+				<div class="flex justify-between items-start mb-8">
+					<div class="bg-violet-50 px-4 py-2 rounded-2xl border border-violet-100">
+						<p class="text-xl font-black text-primary leading-none">19</p>
+						<p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest text-center mt-1">NOV</p>
+					</div>
+					<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+						<span class="material-symbols-outlined text-primary" data-icon="videocam">videocam</span>
+					</div>
+				</div>
+				<div>
+					<p class="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3">Live Talk</p>
+					<h4 class="text-2xl font-black text-on-surface leading-tight mb-6 group-hover:text-primary transition-colors">Beyond the Frame: Digital Art</h4>
+					<div class="space-y-2 mb-8">
+						<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+							<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+							<span>15:00 - 17:30</span>
+						</div>
+						<div class="flex items-center gap-3 text-on-surface-variant text-sm">
+							<span class="material-symbols-outlined text-lg" data-icon="language">language</span>
+							<span>Online via Zoom</span>
+						</div>
+					</div>
+					<button class="w-full py-4 bg-violet-50 text-primary rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Details</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!--- Previous events -->
+
+<section class="px-8 py-24 bg-surface">
+	<div class="max-w-6xl mx-auto">
+		<div class="mb-12">
+			<h3 class="text-2xl font-black text-on-surface tracking-tighter flex items-center gap-3">
+				Vergangene Termine
+				<span class="w-8 h-[2px] bg-outline-variant"></span>
+			</h3>
+		</div>
+		<div class="space-y-4">
+			<!-- Past Event Row 1 -->
+			<div class="flex flex-col md:flex-row items-center justify-between p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all group">
+				<div class="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+					<div class="w-16 text-center">
+						<p class="text-lg font-black text-on-surface-variant leading-none">22</p>
+						<p class="text-[10px] font-bold uppercase text-outline">AUG</p>
+					</div>
+					<div class="h-10 w-[1px] bg-outline-variant hidden md:block"></div>
+					<div>
+						<h5 class="text-lg font-bold text-on-surface group-hover:text-primary">Summer Editorial Retreat</h5>
+						<p class="text-xs text-on-surface-variant uppercase tracking-widest">Workshop &amp; Networking • Lago di Garda</p>
+					</div>
+				</div>
+				<div class="mt-4 md:mt-0">
+					<button class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+						Galerie ansehen
+						<span class="material-symbols-outlined text-sm" data-icon="image">image</span>
+					</button>
+				</div>
+			</div>
+			<!-- Past Event Row 2 -->
+			<div class="flex flex-col md:flex-row items-center justify-between p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all group">
+				<div class="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+					<div class="w-16 text-center">
+						<p class="text-lg font-black text-on-surface-variant leading-none">14</p>
+						<p class="text-[10px] font-bold uppercase text-outline">JUL</p>
+					</div>
+					<div class="h-10 w-[1px] bg-outline-variant hidden md:block"></div>
+					<div>
+						<h5 class="text-lg font-bold text-on-surface group-hover:text-primary">Berlin Fashion Week Spotlight</h5>
+						<p class="text-xs text-on-surface-variant uppercase tracking-widest">Live Performance • Kraftwerk Berlin</p>
+					</div>
+				</div>
+				<div class="mt-4 md:mt-0">
+					<button class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+						Galerie ansehen
+						<span class="material-symbols-outlined text-sm" data-icon="image">image</span>
+					</button>
+				</div>
+			</div>
+			<!-- Past Event Row 3 -->
+			<div class="flex flex-col md:flex-row items-center justify-between p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all group">
+				<div class="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+					<div class="w-16 text-center">
+						<p class="text-lg font-black text-on-surface-variant leading-none">02</p>
+						<p class="text-[10px] font-bold uppercase text-outline">JUN</p>
+					</div>
+					<div class="h-10 w-[1px] bg-outline-variant hidden md:block"></div>
+					<div>
+						<h5 class="text-lg font-bold text-on-surface group-hover:text-primary">Color &amp; Form Mastery</h5>
+						<p class="text-xs text-on-surface-variant uppercase tracking-widest">Online Masterclass • Webinar</p>
+					</div>
+				</div>
+				<div class="mt-4 md:mt-0">
+					<button class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+						Galerie ansehen
+						<span class="material-symbols-outlined text-sm" data-icon="image">image</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{{ with resources.Get "js/overview.js" }}
+{{$opts := dict
+"minify" (cond hugo.IsDevelopment false true)
+"sourceMap" (cond hugo.IsDevelopment "linked" "none")
+}}
+{{ with . | js.Build $opts }}
+{{ if hugo.IsDevelopment }}
+<script src="{{ .RelPermalink }}"></script>
+{{ else }}
+{{ with . | fingerprint }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}
+
 {{ end }}
