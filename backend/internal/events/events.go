@@ -37,20 +37,6 @@ func formatTime(s time.Time) template.HTML {
 	return template.HTML(s.Format("02.01.2006"))
 }
 
-type Event struct {
-	Name        string
-	Date        time.Time
-	Doors       time.Time
-	Begin       time.Time
-	Place       string
-	City        string
-	Coordinates string
-	Link        *string
-	Hash        string
-	Separator   *string
-	Upcomming   *bool
-}
-
 // This interface is needed for accessing the different Event*-structs.
 // sqlc generates per query a different struct, which got the same field as the other ones.
 // The following interface is made to serialize the data
@@ -211,51 +197,40 @@ func adaptPrevRow(rows []db.LoadEventsPrevRow) []EventRow {
 	return out
 }
 
-// ##########################################################################################################
-// Single event
+// ############################################################################################################################
+// Note to future me: When a new query with a new db.Struct is generated, you need to add the same boilerplate from above here
+// ############################################################################################################################
 
-type EventByIDRow struct {
-	r db.GetEventByIDRow
+type Event struct {
+	Name  string
+	Date  time.Time
+	FDate string
+	// Doors       time.Time
+	// Begin       time.Time
+	Place string
+	City  string
+	// Coordinates string
+	Link *string
+	// Hash        string
+	Separator *string
+	Upcomming *bool
 }
 
-func (id EventByIDRow) GetName() string        { return id.r.Name }
-func (id EventByIDRow) GetDate() time.Time     { return id.r.Date }
-func (id EventByIDRow) GetDoors() time.Time    { return id.r.Doors.Time }
-func (id EventByIDRow) GetBegin() time.Time    { return id.r.Begin.Time }
-func (id EventByIDRow) GetPlace() string       { return id.r.Place }
-func (id EventByIDRow) GetCity() string        { return id.r.City }
-func (id EventByIDRow) GetCoordinates() string { return id.r.Coordinates.String }
-func (id EventByIDRow) GetLink() *string {
-	if !id.r.Link.Valid || id.r.Link.String == "" {
-		return nil
-	}
-	return &id.r.Link.String
-}
-func (id EventByIDRow) GetHash() string { return id.r.Hash }
-
-func adaptByIDRow(row db.GetEventByIDRow) EventByIDRow {
-	return EventByIDRow{r: row}
-}
-
-// ##########################################################################################################
-// When a new query with a new db.Struct is generated, you need to add the same boilerplate from above here
-// ###########################################################################################################
-
-// In the future I may gonna need to add custom-values
-// This way
+// Exposes different value to the API
 func constructEvents(rows []EventRow) []Event {
 	var events = make([]Event, len(rows))
 	for i, r := range rows {
 		events[i] = Event{
-			Name:        r.GetName(),
-			Date:        r.GetDate(),
-			Doors:       r.GetDoors(),
-			Begin:       r.GetBegin(),
-			Place:       r.GetPlace(),
-			City:        r.GetCity(),
-			Coordinates: r.GetCoordinates(),
-			Link:        r.GetLink(),
-			Hash:        r.GetHash(),
+			Name:  r.GetName(),
+			Date:  r.GetDate(),
+			FDate: r.GetDate().Format("02.01.2006"),
+			// Doors:       r.GetDoors(),
+			// Begin:       r.GetBegin(),
+			Place: r.GetPlace(),
+			City:  r.GetCity(),
+			// Coordinates: r.GetCoordinates(),
+			Link: r.GetLink(),
+			// Hash:        r.GetHash(),
 		}
 	}
 	return events
@@ -274,7 +249,7 @@ type urlArgs struct {
 	Upcomming string
 }
 
-// Returns []db.Event
+// Handles the different options receives in the API call
 func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 	q := db.New(h.DB)
 

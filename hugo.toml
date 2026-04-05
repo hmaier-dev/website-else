@@ -24,7 +24,7 @@ disablePathToLower = true
     weight = 10
   [[menus.main]]
     name = 'events'
-    pageRef = '/events/all'
+    pageRef = '/events/overview'
     weight = 20
   [[menus.main]]
     name = 'about-me'
