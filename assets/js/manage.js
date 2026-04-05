@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
       mode: 'multiRow'
     },
     onCellValueChanged: async (params) => {
-      console.log(params);
       if (params.oldValue === params.newValue) return;
       try {
         const body = new URLSearchParams({
