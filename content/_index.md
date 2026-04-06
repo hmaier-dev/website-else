@@ -3,12 +3,7 @@ description: Elisa Adam, Kunstschaffende lädt zu diversen Möglichkeiten ein.
 title: Home
 ---
 
-{{< jesus1 >}}
-
-
-Elisa Adam – [Einfach Else](https://www.instagram.com/einfach_else/) Willkommen auf meiner Website!
-Hier erwartet dich eine vielfältige Person, mit zahlreichen Interessen und Talenten.- Nimm dir die Zeit und stöbere ein bisschen.
-In Liebe Einfach Else
+{{< erster-kontakt >}}
 
 {{< talent-section >}}
 
@@ -54,8 +49,6 @@ Ob Hip-Hop-Konzerte, Soli-Veranstaltungen oder farbenfrohe Bühnenprogramme – 
 </br>
 
 Erreichen kannst du mich entweder über [instagram](https://www.instagram.com/einfach_else/) oder das folgende Kontakt-Formular:
-
-{{< instagram url="https://www.instagram.com/einfach_else/">}}
 
 {{< contact-formular >}}
 
