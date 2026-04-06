@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
-<head>
-  {{ partial "head.html" . }}
-</head>
-<body class="min-h-screen flex flex-col">
+	<head>
+		{{ partial "head.html" . }}
+	</head>
+	<body class="min-h-screen flex flex-col">
 
-  {{ partial "nav.html" .}}
+		{{ partial "nav.html" .}}
 
-  <main class="min-h-[calc(100vh-3rem)] max-sm:mt-16 sm:ml-48">
-  {{ block "main" . }}{{ end }}
-  </main>
+		<main class="min-h-[calc(100vh-3rem)] max-sm:mt-16 sm:ml-48">
+			{{ block "main" . }}{{ end }}
+		</main>
+	</body>
 
-</body>
+	{{ partial "footer.html" }}
 </html>
