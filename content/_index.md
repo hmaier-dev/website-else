@@ -32,7 +32,7 @@ Ob als Aktmodell oder in stilvollen Outfits – **Einfach Else** steht für Zeic
 Hast du eine Anfrage? Dann melde dich gerne per E-Mail.
 {{% /talent %}}
 
-{{% talent title="Organisatorin" img="media/squat1.webp" %}}
+{{% talent title="Organisatorin" img="media/hiphop-in-crowd.webp" %}}
 Trotz allem, was sie noch tut, ist Einfach Else auch als Organisatorin von Events in und um Leipzig aktiv.
 Ob Hip-Hop-Konzerte, Soli-Veranstaltungen oder farbenfrohe Bühnenprogramme – sie weiß, wie man die richtigen Menschen zusammenbringt und unvergessliche Events kreiert.
 {{% /talent %}}
