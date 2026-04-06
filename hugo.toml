@@ -38,7 +38,3 @@ disablePathToLower = true
     name = 'model'
     pageRef = '/model'
     weight = 40
-  [[menus.main]]
-    name = 'impressum'
-    pageRef = '/impressum'
-    weight = 50
