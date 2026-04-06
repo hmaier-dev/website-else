@@ -1,0 +1,7 @@
+{{ $title := .Get "title" }}
+<div class="lg:px-40 md:px-20 max-sm:px-10">
+	<h2>{{- $title -}}</h2>
+	<p>
+		{{ .Inner | markdownify }}
+	</p>
+</div>

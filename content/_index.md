@@ -43,10 +43,6 @@ Ob Hip-Hop-Konzerte, Soli-Veranstaltungen oder farbenfrohe Bühnenprogramme – 
 </br>
 </br>
 
-{{< zettel-in-hand >}}
-
-</br>
-</br>
 
 Erreichen kannst du mich entweder über [instagram](https://www.instagram.com/einfach_else/) oder das folgende Kontakt-Formular:
 
