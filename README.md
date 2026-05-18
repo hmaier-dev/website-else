@@ -1,4 +1,5 @@
 ## Develop locally
+Alles zum Entwickeln findet man in der `shell.nix`. Damit begibt man sich in eine passende Entwicklungsumgebung.
 
 ### Frontend Only
 If you want to develop the website further, do it locally. You can start a server with hugo:
