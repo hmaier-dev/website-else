@@ -1,15 +1,29 @@
 { pkgs ? import <nixpkgs> {} }:
 
+let
+  # Fetch Hugo v0.160.1 binary (tar.gz)
+  hugo-tarball = pkgs.fetchurl {
+    url = "https://github.com/gohugoio/hugo/releases/download/v0.160.1/hugo_0.160.1_linux-amd64.tar.gz";
+    sha256 = "sha256:2f72fefa6ce944907f74c36c35abcaa306cdd22e64647a9ee5b328fc0bfb67be";
+  };
+
+  # Extract Hugo binary from the tarball
+  hugo-bin = pkgs.runCommand "hugo-bin" {
+    nativeBuildInputs = [ pkgs.btar ];
+  } ''
+    mkdir -p $out/bin
+    tar -xzf ${hugo-tarball} -C $out/bin
+    chmod +x $out/bin/hugo
+  '';
+
+in
+
 pkgs.mkShell {
-  name = "hugo-v0.161.1-env";
+  name = "hugo-tailwind-env";
 
   buildInputs = with pkgs; [
-    git
-    hugo
-    nodejs_24
+    hugo-bin
+    # Use the prepackaged version, because nixOS cannot run dynamically linked executables
+    tailwindcss_4
   ];
-  shellHook = ''
-    npm install tailwindcss
-  '';
 }
-
