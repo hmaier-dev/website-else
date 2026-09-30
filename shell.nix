@@ -25,5 +25,14 @@ pkgs.mkShell {
     hugo-bin
     # Use the prepackaged version, because nixOS cannot run dynamically linked executables
     tailwindcss_4
+    # I need to convert large photo, in something that loads fast in the browser
+    libwebp
   ];
+
+  shellHook = ''
+    echo "Willkommen in der Entwicklungsumgebung von Elses Website!"
+    # tailwindcss --version
+    hugo version
+    cwebp -version
+  '';
 }
