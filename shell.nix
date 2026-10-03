@@ -30,7 +30,10 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
+    echo ""
+    echo "-------------------------------------------------------------------------"
     echo "Willkommen in der Entwicklungsumgebung von Elses Website!"
+    echo "-------------------------------------------------------------------------"
     # tailwindcss --version
     hugo version
     cwebp -version
