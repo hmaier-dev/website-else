@@ -17,7 +17,7 @@ Ideal für:
 
 {{< link-zum-kontaktformular >}}
 
-Referenzen:
+**Referenzen**:
 
 - Exil Festival (2022)
 - Pangea Festival (2023 & 2026)
@@ -51,7 +51,7 @@ Also melde dich jetzt an!
 
 {{< link-zum-kontaktformular >}}
 
-Referenzen:
+**Referenzen**:
 
 - Waldheim Stadtbibliothek (2023)
 - Heizhaus Leipzig (2024)
