@@ -25,14 +25,17 @@ Referenzen:
 
 ## Schreibworkshop – Kreatives Schreiben für Einsteiger:innen und Fortgeschrittene
 
+{{< text-mit-bild-auf-rechter-seite src="" alt="Hier sollte eigentlich ein Bild sein." >}}
 Tauche ein in die Welt des kreativen Schreibens! Dieser Workshop vermittelt dir die Grundlagen verschiedener Textformen: von Gedichten und Lyrik über Prosa bis hin zu Kurzgeschichten. Neben praktischen Übungen werden auch theoretische Aspekte wie stilistische Mittel, Reimschemata und der Aufbau von Texten behandelt.
 
 Am Ende des Workshops entscheidest du selbst, in welcher Form du schreiben möchtest. Im Anschluss wird das Vortragen und Präsentieren der Texte geübt: zunächst in Kleingruppen, später (auf freiwilliger Basis) vor der gesamten Gruppe. Dabei verfeinerst du Betonung, Pausensetzung und Vortragsweise.
 Also melde dich jetzt an!
 
+{{< /text-mit-bild-auf-rechter-seite >}}
+
 {{< link-zum-kontaktformular >}}
 
-Referenzen:
+**Referenzen**:
 
 - Tiez Chemnitz (2022 & 2024)
 - Oldenburg Kreyenbrück (2021)
