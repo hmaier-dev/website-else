@@ -15,11 +15,13 @@ Ideal für:
 ✔ Schulklassen & Gruppen
 ✔ Alle, die ein neues, aktives Hobby ausprobieren möchten
 
+{{< link-zum-kontaktformular >}}
+
 Referenzen:
 
-* Exil Festival (2022)
-* Pangea Festival (2023 & 2026)
-* Kosmos Festival (2025)
+- Exil Festival (2022)
+- Pangea Festival (2023 & 2026)
+- Kosmos Festival (2025)
 
 ## Schreibworkshop – Kreatives Schreiben für Einsteiger:innen und Fortgeschrittene
 
@@ -28,10 +30,12 @@ Tauche ein in die Welt des kreativen Schreibens! Dieser Workshop vermittelt dir
 Am Ende des Workshops entscheidest du selbst, in welcher Form du schreiben möchtest. Im Anschluss wird das Vortragen und Präsentieren der Texte geübt: zunächst in Kleingruppen, später (auf freiwilliger Basis) vor der gesamten Gruppe. Dabei verfeinerst du Betonung, Pausensetzung und Vortragsweise.
 Also melde dich jetzt an!
 
+{{< link-zum-kontaktformular >}}
+
 Referenzen:
 
-* Tiez Chemnitz (2022 & 2024)
-* Oldenburg Kreyenbrück (2021)
+- Tiez Chemnitz (2022 & 2024)
+- Oldenburg Kreyenbrück (2021)
 
 
 ## Poetry Slam-Workshop – Freies Schreiben & Performen lernen
@@ -42,11 +46,15 @@ In diesem Workshop erarbeitest du die Grundlagen des Schreibens und analysiers
 Sobald die ersten Texte stehen, geht es ans Performen: Wie setze ich Pausen und Betonungen? Wie beziehe ich das Publikum ein? Und wie wirke ich selbstsicher auf der Bühne?
 Also melde dich jetzt an!
 
+{{< link-zum-kontaktformular >}}
+
 Referenzen:
 
-* Waldheim Stadtbibliothek (2023)
-* Heizhaus Leipzig (2024)
-* drei-tägiger Workshop am Gymnasium Werdau (2026)
+- Waldheim Stadtbibliothek (2023)
+- Heizhaus Leipzig (2024)
+- drei-tägiger Workshop am Gymnasium Werdau (2026)
+
+
 
 ## Moderationsworkshop – Dein Auftritt auf der Bühne
 
@@ -54,9 +62,9 @@ Du hast noch keine Bühnenerfahrung, möchtest dich aber als Moderator:in auspro
 In Gruppen- oder Einzelworkshops erarbeiten wir gemeinsam deinen individuellen Bühnen- und Moderationsstil. Dank meines sonderpädagogischen Hintergrunds gebe ich dir praktische Tipps, um jede Gruppe zum Zuhören zu bewegen – ob bei Animation, inhaltlichen Schwerpunkten oder Veranstaltungsmoderation. Bei mir lernst du Grundlagen und Feinheiten der Moderation. Denn von meiner jahrelangen Moderationserfahrung profitierst du direkt.
 Bereit für deinen ersten Auftritt? Dann melde dich jetzt an!
 
-(Unter jedem “Dann melde dich jetzt an!” —> wäre es cool, wenn es Zugang zum Kontaktformular oder einen Link gibt. Das die “Hemmschwelle” sinkt, mich zu kontaktieren.)
+{{< link-zum-kontaktformular >}}
 
-* ab November 2026
+- ab November 2026
 
 ## Kinderanimation – Unterhaltung für Geburtstage, Feste & Festivals
 
@@ -73,7 +81,8 @@ Lust, dabei zu sein? Dann buche jetzt dein individuelles Animationsprogramm!
 
 Meine Erfahrungen:
 
-* sieben Jahre Betreuerin im Ferienlager
-* Bachelor-Abschluss in Sonderpädagogik an der Universität Oldenburg
-* zahlreiche Praktika in unterschiedlichsten sozialen Einrichtungen
+- sieben Jahre Betreuerin im Ferienlager
+- Bachelor-Abschluss in Sonderpädagogik an der Universität Oldenburg
+- zahlreiche Praktika in unterschiedlichsten sozialen Einrichtungen
 
+{{< link-zum-kontaktformular >}}
