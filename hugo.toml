@@ -23,14 +23,14 @@ disablePathToLower = true
     pageRef = '/'
     weight = 10
   [[menus.main]]
-    name = 'events'
-    pageRef = '/events/overview'
+    name = 'über-mich'
+    pageRef = '/about-me'
     weight = 20
   [[menus.main]]
-    name = 'about-me'
-    pageRef = '/about-me'
+    name = 'angebote'
+    pageRef = '/angebote'
     weight = 30
   [[menus.main]]
-    name = 'workshops'
-    pageRef = '/workshops'
+    name = 'events'
+    pageRef = '/events/overview'
     weight = 40
