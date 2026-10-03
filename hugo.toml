@@ -22,14 +22,20 @@ disablePathToLower = true
     name = 'home'
     pageRef = '/'
     weight = 10
+  [menus.main.params]
+    icon = "home"
   [[menus.main]]
     name = 'über-mich'
     pageRef = '/about-me'
     weight = 20
+  [menus.main.params]
+    icon = "user"
   [[menus.main]]
     name = 'angebote'
     pageRef = '/angebote'
     weight = 30
+  [menus.main.params]
+    icon = "tools"
   [[menus.main]]
     name = "jonglieren"
     parent = "angebote"
@@ -63,3 +69,5 @@ disablePathToLower = true
     name = 'events'
     pageRef = '/events/overview'
     weight = 40
+  [menus.main.params]
+    icon = "kalendar"
