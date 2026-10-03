@@ -1,0 +1,11 @@
+{{- $anchor := printf "%s#%s" .Page.RelPermalink .Anchor | safeURL -}}
+<h{{ .Level }} id="{{ .Anchor | safeURL }}" class="group relative scroll-mt-24">
+  {{- .Text | safeHTML -}}
+  {{- if and (ge .Level 2) (le .Level 5) -}}
+    <a href="{{ $anchor }}"
+       class="opacity-0 group-hover:opacity-100 transition-opacity
+              absolute -left-6 top-1/2 -translate-y-1/2
+              text-gray-400 hover:text-gray-600 no-underline"
+       aria-label="Link zu diesem Abschnitt">#</a>
+  {{- end -}}
+</h{{ .Level }}>
