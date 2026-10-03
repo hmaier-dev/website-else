@@ -1,15 +1,8 @@
 @import "tailwindcss";
 
 @layer base {
-  /* Workshops */
-  h1 {
-    @apply text-3xl sm:text-4xl font-extrabold tracking-tight 
-           pb-2 mb-4 border-b-2 border-violet-400;
-  }
-
-  /* Index */
   h2 {
-    @apply text-2xl sm:text-3xl font-semibold tracking-tight 
+    @apply text-2xl sm:text-3xl font-semibold tracking-tight
            mb-3 mt-4 relative pb-3;
   }
   h2::after {
