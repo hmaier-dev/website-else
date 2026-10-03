@@ -1,0 +1,5 @@
+<!-- Tools SVG -->
+<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 max-sm:w-4 max-sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+    d="M14.7 6.3a1 1 0 00-1.4 0l-8 8a1 1 0 000 1.4l3 3a1 1 0 001.4 0l8-8a1 1 0 000-1.4l-3-3z" />
+</svg>
