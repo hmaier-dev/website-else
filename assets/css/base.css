@@ -2,8 +2,7 @@
 
 @layer base {
   h2 {
-    @apply text-2xl sm:text-3xl font-semibold tracking-tight
-           mb-3 mt-4 relative pb-3;
+    @apply text-2xl sm:text-3xl font-semibold tracking-tight;
   }
   h2::after {
     content: "";
@@ -11,8 +10,7 @@
   }
 
   h3 {
-    @apply text-xl font-medium tracking-tight
-           mt-3 mb-2;
+    @apply text-xl font-medium tracking-tight;
   }
 
   /* Links inside content */
@@ -25,6 +23,14 @@
 
   p {
     @apply text-justify leading-relaxed hyphens-auto;
+  }
+  /* By default Tailwind removes the links styling for lists */
+  /* In main be want to have a basic kind of unordered lists */
+  main > * > ul {
+    @apply ml-8 list-disc;
+  }
+  main > * > ul > li{
+    @apply my-2;
   }
 
 }

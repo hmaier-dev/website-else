@@ -34,6 +34,27 @@ Ideal für:
 <br>
 <br>
 
+
+## Poetry Slam-Workshop – Freies Schreiben & Performen lernen
+
+{{< text-mit-bild-auf-linker-seite src="./media/scream-on-stage.webp" alt="Hier sollte eigentlich ein Bild sein." >}}
+Poetry Slam ist die ideale Kunstform für Schreibanfänger:innen: Hier gibt es kaum Vorgaben – ob gereimt oder frei, Prosa oder Lyrik, humorvoll oder emotional. Die Kreativität kennt keine Grenzen! Ob Perspektivwechsel („Wie lebt es sich als Couch?“) oder Alltagssituationen mit neuem Blickwinkel: im Poetry Slam ist alles möglich.
+
+In diesem Workshop erarbeitest du die Grundlagen des Schreibens und analysierst an Beispielen (Videos & Texte) stilistische Mittel sowie elementare Elemente von Poetry-Slam-Texten. Themenfindung, Ausarbeitung und Pointensetzung stehen dabei im Fokus.
+Sobald die ersten Texte stehen, geht es ans Performen: Wie setze ich Pausen und Betonungen? Wie beziehe ich das Publikum ein? Und wie wirke ich selbstsicher auf der Bühne?
+{{< /text-mit-bild-auf-linker-seite >}}
+
+{{< link-zum-kontaktformular text="Geb Dir ein Ruck und meld' Dich an!" >}}
+
+[**Referenzen**:]({{< relref "referenzen#poetry-poesie-gedichte" >}})
+
+- Waldheim Stadtbibliothek (2023)
+- Heizhaus Leipzig (2024)
+- drei-tägiger Workshop am Gymnasium Werdau (2026)
+
+<br>
+<br>
+
 ## Schreibworkshop – Kreatives Schreiben für Einsteiger:innen und Fortgeschrittene
 
 {{< text-mit-bild-auf-rechter-seite src="./media/zettel-in-hand.webp" alt="Hier sollte eigentlich ein Bild sein." >}}
@@ -53,30 +74,9 @@ Am Ende des Workshops entscheidest du selbst, in welcher Form du schreiben möch
 <br>
 <br>
 
-## Poetry Slam-Workshop – Freies Schreiben & Performen lernen
-
-{{< text-mit-bild-auf-linker-seite src="./media/vortrag1.webp" alt="Hier sollte eigentlich ein Bild sein." >}}
-Poetry Slam ist die ideale Kunstform für Schreibanfänger:innen: Hier gibt es kaum Vorgaben – ob gereimt oder frei, Prosa oder Lyrik, humorvoll oder emotional. Die Kreativität kennt keine Grenzen! Ob Perspektivwechsel („Wie lebt es sich als Couch?“) oder Alltagssituationen mit neuem Blickwinkel: im Poetry Slam ist alles möglich.
-
-In diesem Workshop erarbeitest du die Grundlagen des Schreibens und analysierst an Beispielen (Videos & Texte) stilistische Mittel sowie elementare Elemente von Poetry-Slam-Texten. Themenfindung, Ausarbeitung und Pointensetzung stehen dabei im Fokus.
-Sobald die ersten Texte stehen, geht es ans Performen: Wie setze ich Pausen und Betonungen? Wie beziehe ich das Publikum ein? Und wie wirke ich selbstsicher auf der Bühne?
-{{< /text-mit-bild-auf-linker-seite >}}
-
-{{< link-zum-kontaktformular text="Geb Dir ein Ruck und meld' Dich an!" >}}
-
-**Referenzen**:
-
-- Waldheim Stadtbibliothek (2023)
-- Heizhaus Leipzig (2024)
-- drei-tägiger Workshop am Gymnasium Werdau (2026)
-
-<br>
-<br>
-
-
 ## Moderationsworkshop – Dein Auftritt auf der Bühne
 
-{{< text-mit-bild-auf-rechter-seite src="./media/IMG_5516.webp" alt="Hier sollte eigentlich ein Bild sein." >}}
+{{< text-mit-bild-auf-rechter-seite src="./media/talk-on-stage1.webp" alt="Hier sollte eigentlich ein Bild sein." >}}
 Du hast noch keine Bühnenerfahrung, möchtest dich aber als Moderator:in ausprobieren?
 
 Dir juckt es in den Fingern, endlich ein Mikrofon in der Hand zu halten? Egal, ob mit oder ohne Vorerfahrung: bei mir bist du genau richtig!
