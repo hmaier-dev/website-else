@@ -1,16 +1,19 @@
 {{/* Usage:
-{{< text-mit-bild-auf-linker-seite src="" alt="Hier sollte eigentlich ein Bild sein." >}}
+{{< text-mit-bild-auf-linker-seite src="./media/some-pic.webp" alt="Hier sollte eigentlich ein Bild sein." >}}
   Hier kommt der Text rein.
 {{< /text-mit-bild-auf-linker-seite >}}
 */}}
 
+{{- $src := or (.Get "src") "" }}
+{{ $pic := resources.Get $src }}
+
 <div class="my-8 flex flex-col md:flex-row md:items-center gap-6">
   <div class="md:basis-1/3 order-1">
     <img
-      src="{{ .Get "src" }}"
+      src="{{ $pic.RelPermalink }}"
       alt="{{ .Get "alt" | default "" }}"
       loading="lazy"
-      class="w-full h-auto rounded-xl shadow-md object-cover"
+      class="w-full h-auto rounded-xl shadow-md object-cover aspect-[4/3]"
     >
   </div>
   <div class="prose max-w-none md:basis-2/3 order-2">
