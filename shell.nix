@@ -1,4 +1,7 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import (fetchTarball {
+  url = "https://github.com/NixOS/nixpkgs/archive/refs/tags/26.05.tar.gz";
+})
+{} }:
 
 let
   # Fetch Hugo v0.160.1 binary (tar.gz)
