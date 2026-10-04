@@ -31,11 +31,13 @@ function generateHero(next) {
 	const date = document.getElementById('hero-date')
 	const place = document.getElementById('hero-place')
 	const city = document.getElementById('hero-city')
+	const link = document.getElementById('hero-link')
 
 	name.innerHTML = next["Name"]
 	date.innerHTML = next["FDate"]
 	place.innerHTML = next["Place"]
 	city.innerHTML = next["City"]
+	link.href = next["Link"]
 }
 
 function generateUpcommingEvents(next) {
