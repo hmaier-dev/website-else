@@ -108,7 +108,7 @@ function generatePreviousEvents(prev) {
 					</div>
 				</div>
 				<div class="mt-4 md:mt-0">
-					<a href="/events/all" class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">Alle Events anzeigen</a>
+					<a href="/events/next" class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">Alle Events anzeigen</a>
 				</div>
 			</div>
     `
