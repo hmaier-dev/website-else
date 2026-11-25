@@ -1,6 +1,7 @@
 ---
 description: Galerie aller Veranstaltungen
-title: Veranstaltungen
+title: Alle Termine
+kicker: Events
 layout: all
 ---
 

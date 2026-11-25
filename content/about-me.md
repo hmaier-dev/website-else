@@ -1,8 +1,8 @@
 ---
 description: Interview mit Elisa Adam über ihren Werdegang und ihre Person.
 title: Über Elisa Adam
+kicker: Über mich
 ---
-</br>
 
 {{< about-me-picture >}}
 
@@ -17,7 +17,6 @@ Derzeit widmet sie sich leidenschaftlich dem Schreiben.
 
 ## Ein (Selbst-)Interview zum Kennenlernen
 
-</br>
 
 ### Guten Tag, Einfach Else. Schön, dass du dir heute die Zeit nimmst. Wir starten direkt mit der ersten Frage: Seit wann schreibst du eigentlich?
 

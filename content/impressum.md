@@ -1,10 +1,11 @@
 ---
 description: Impressum und Datenschutzerklärung
 title: Impressum
+kicker: Rechtliches
 ---
 ## **Impressum**
 
-**Angaben gemäß § 5 TMG:**
+**Angaben gemäß § 5 DDG:**
 
 Elisa Adam (Künstlername: Einfach Else)
 
@@ -12,7 +13,7 @@ Kurt-Eisner-Straße 72
 
 04275 Leipzig
 
-**Kontakt:** E-Mail: [elisa.adam@ymail.com](mailto:kontakt@elisa.adam@ymail.com)
+**Kontakt:** E-Mail: [elisa.adam@ymail.com](mailto:elisa.adam@ymail.com)
 
 **Berufsbezeichnung:** Sonderpädagogin & Künstlerin
 
@@ -30,7 +31,7 @@ Kurt-Eisner-Straße 72
 
 04275 Leipzig
 
-E-Mail: [elisa.adam@ymail.com](mailto:kontakt@elisa.adam@ymail.com)
+E-Mail: [elisa.adam@ymail.com](mailto:elisa.adam@ymail.com)
 
 ### **2. Erhebung und Speicherung persönlicher Daten**
 

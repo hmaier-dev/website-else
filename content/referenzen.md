@@ -1,6 +1,7 @@
 ---
 description: An diesen Events hat Einfach Else bisher mitgewirkt.
 title: Referenzen
+kicker: Bühnen & Projekte
 ---
 
 ## Moderation

@@ -1,8 +1,11 @@
 baseURL = "https://elisa-adam.com/"
 # baseURL = "http://localhost/"
 languageCode = "de-de"
-title = "elisa-adam"
+title = "Einfach Else"
 disablePathToLower = true
+
+[params]
+  description = "Elisa Adam alias Einfach Else: Poetry Slam, Moderation, Workshops und die Late Night Show aus Leipzig."
 
 ## Needed for css.TailwindCSS
 [[build.cachebusters]]
@@ -19,54 +22,55 @@ disablePathToLower = true
 
 [menus]
   [[menus.main]]
-    name = 'home'
+    name = 'Home'
     pageRef = '/'
     weight = 10
   [menus.main.params]
     icon = "home"
   [[menus.main]]
-    name = 'über-mich'
+    name = 'Über mich'
     pageRef = '/about-me'
     weight = 20
   [menus.main.params]
     icon = "user"
   [[menus.main]]
-    name = 'angebote'
+    name = 'Angebote'
+    identifier = 'angebote'
     pageRef = '/angebote'
     weight = 30
   [menus.main.params]
     icon = "tools"
   [[menus.main]]
-    name = "jonglieren"
+    name = "Jonglieren"
     parent = "angebote"
     url = "/angebote/#jonglierworkshop--jonglieren-lernen-für-anfängerinnen-und-gruppen"
     weight = 1
   [[menus.main]]
-    name = "schreiben"
+    name = "Schreiben"
     parent = "angebote"
     url = "/angebote/#schreibworkshop--kreatives-schreiben-für-einsteigerinnen-und-fortgeschrittene"
     weight = 2
 
   [[menus.main]]
-    name = "poetry slam"
+    name = "Poetry Slam"
     parent = "angebote"
     url = "/angebote/#poetry-slam-workshop--freies-schreiben--performen-lernen"
     weight = 3
 
   [[menus.main]]
-    name = "moderation"
+    name = "Moderation"
     parent = "angebote"
     url = "/angebote/#moderationsworkshop--dein-auftritt-auf-der-bühne"
     weight = 4
 
   [[menus.main]]
-    name = "kinderanimation"
+    name = "Kinderanimation"
     parent = "angebote"
     url = "/angebote/#kinderanimation--unterhaltung-für-geburtstage-feste--festivals"
     weight = 5
 
   [[menus.main]]
-    name = 'events'
+    name = 'Events'
     pageRef = '/events/overview'
     weight = 40
   [menus.main.params]
