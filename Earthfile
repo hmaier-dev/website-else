@@ -14,10 +14,10 @@ build:
   RUN ls -la public
   RUN find ./public
   # SAVE ARTIFACT ./public AS LOCAL ./public
-  SAVE ARTIFACT ./public 
+  SAVE ARTIFACT ./public
 
 run:
-  FROM nginx:1.27.4
+  FROM nginx:stable-alpine3.24
   ARG tag
   LABEL org.opencontainers.image.source='https://codeberg.org/schnelles_geraet/website-else'
   COPY +build/public /usr/share/nginx/html
