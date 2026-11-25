@@ -1,7 +1,9 @@
 VERSION 0.8
 
 build:
-  FROM hmaierdev/hugo-plus-tailwind:v2
+  # Basis-Image (Hugo + Tailwind) wird direkt aus ./Dockerfile gebaut,
+  # damit Hugo- und Tailwind-Version im Repo versioniert sind.
+  FROM DOCKERFILE .
 
   # Hugo cannot work in root (/)
   WORKDIR tmp

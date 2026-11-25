@@ -6,6 +6,6 @@ RUN tar -xvzf hugo_0.154.5_linux-amd64.tar.gz
 RUN chmod +x hugo
 RUN mv hugo /usr/local/bin/hugo
 
-RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.0-beta.8/tailwindcss-linux-x64
+RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v4.3.5/tailwindcss-linux-x64
 RUN chmod +x tailwindcss-linux-x64
 RUN mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
