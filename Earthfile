@@ -26,16 +26,16 @@ run:
   EXPOSE 8080
   SAVE IMAGE --push hmaierdev/website-else:$tag
 
-setup-ssh:
-  FROM debian:bullseye
-  RUN apt-get update && apt-get install -y openssh-client rsync
-  RUN mkdir -p ~/.ssh
-  RUN --secret key echo "$key" > /root/.ssh/id_ed25519
-  RUN chmod 600 /root/.ssh/id_ed25519
-  RUN --secret known_hosts echo "$known_hosts" > /root/.ssh/known_hosts
+# setup-ssh:
+#   FROM debian:bullseye
+#   RUN apt-get update && apt-get install -y openssh-client rsync
+#   RUN mkdir -p ~/.ssh
+#   RUN --secret key echo "$key" > /root/.ssh/id_ed25519
+#   RUN chmod 600 /root/.ssh/id_ed25519
+#   RUN --secret known_hosts echo "$known_hosts" > /root/.ssh/known_hosts
 
-deploy:
-  BUILD +run
-  FROM +setup-ssh
-  RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "docker pull hmaierdev/website-else:latest"
-  RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "cd $dir; docker compose down website; docker compose up -d website"
+# deploy:
+#   BUILD +run
+#   FROM +setup-ssh
+#   RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "docker pull hmaierdev/website-else:latest"
+#   RUN --no-cache --secret username --secret host --secret dir ssh $username@$host "cd $dir; docker compose down website; docker compose up -d website"

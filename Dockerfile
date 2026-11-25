@@ -1,6 +1,6 @@
 ## This is the base for hmaierdev/hugo-plus-tailwind/
-FROM debian:bullseye
-RUN apt-get update && apt-get install -y curl 
+FROM debian:bookworm
+RUN apt-get update && apt-get install -y curl
 RUN curl -SLO https://github.com/gohugoio/hugo/releases/download/v0.154.5/hugo_0.154.5_linux-amd64.tar.gz
 RUN tar -xvzf hugo_0.154.5_linux-amd64.tar.gz
 RUN chmod +x hugo
