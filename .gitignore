@@ -7,3 +7,6 @@ tailwindcss
 bin/
 sqlite.db
 events.yml
+node_modules/
+resources/
+package-lock.json
