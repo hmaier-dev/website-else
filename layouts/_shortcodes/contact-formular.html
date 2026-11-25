@@ -1,76 +1,45 @@
 {{- /*
-displays a contact forumlar
-@examples
-{{< contact-formular >}}
+Kontaktformular (sendet an das Go-Backend unter /mailbox/contact)
+  {{< contact-formular >}}
+*/ -}}
+<section id="contact" class="not-prose mx-auto my-16 max-w-7xl px-4 sm:px-6">
+	<div class="grid overflow-hidden rounded-[2rem] border-2 border-ink bg-ink text-paper shadow-pop-lg lg:grid-cols-2">
+		<div class="relative overflow-hidden p-8 sm:p-12">
+			<div aria-hidden="true" class="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-lilac-500/60 blur-2xl"></div>
+			<span class="sticker relative -rotate-2">Kontakt</span>
+			<h2 class="relative mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight !text-paper sm:text-6xl">Lass uns was <span class="text-lime">zusammen</span> machen!</h2>
+			<p class="relative mt-6 max-w-md text-lg text-paper/75">Moderation, Auftritt, Workshop oder einfach eine Frage? Schreib mir. Ich melde mich so schnell wie möglich.</p>
+		</div>
 
-*/}}
-<!--This is very dirty and needs to be changed!-->
-<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"></script>
+		<form hx-post="/mailbox/contact"
+		      hx-swap="none"
+		      hx-on::after-request="if (event.detail.successful) { this.reset(); this.querySelector('[data-ok]').hidden = false; this.querySelector('[data-err]').hidden = true } else { this.querySelector('[data-err]').hidden = false }"
+		      class="flex flex-col gap-5 bg-lilac-300 p-8 text-ink sm:p-12 lg:border-l-2 lg:border-ink">
 
-<section id="contact" class="my-4">
-  <form hx-post="/mailbox/contact"
-        hx-trigger="submit"
-        hx-swap="none"
-        hx-on-htmx-after-request="this.reset()"
-        class="max-w-xl mx-auto bg-white/60 backdrop-blur-md 
-               p-6 rounded-2xl shadow-md flex flex-col gap-4">
+			<div>
+				<label for="name" class="mb-1.5 block font-headline font-bold">Name</label>
+				<input type="text" id="name" name="name" required autocomplete="name" class="field">
+			</div>
 
-    <!-- Name -->
-    <div>
-      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-        Name
-      </label>
-      <input type="text" id="name" name="name" required
-             class="w-full px-3 py-2 rounded-xl border border-gray-300 
-                    focus:outline-none focus:ring-2 focus:ring-violet-400" />
-    </div>
+			<div>
+				<label for="email" class="mb-1.5 block font-headline font-bold">E-Mail</label>
+				<input type="email" id="email" name="email" required autocomplete="email" class="field">
+			</div>
 
-    <!-- Email -->
-    <div>
-      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-        E-Mail
-      </label>
-      <input type="email" id="email" name="email" required
-             class="w-full px-3 py-2 rounded-xl border border-gray-300 
-                    focus:outline-none focus:ring-2 focus:ring-violet-400" />
-    </div>
+			<div>
+				<label for="message" class="mb-1.5 block font-headline font-bold">Nachricht</label>
+				<textarea id="message" name="message" rows="5" required class="field resize-y"></textarea>
+			</div>
 
-    <!-- Subject -->
-    <!-- <div> -->
-    <!--   <label for="subject" class="block text-sm font-medium text-gray-700 mb-1"> -->
-    <!--     Betreff -->
-    <!--   </label> -->
-    <!--   <input type="text" id="subject" name="subject" -->
-    <!--          class="w-full px-3 py-2 rounded-xl border border-gray-300  -->
-    <!--                 focus:outline-none focus:ring-2 focus:ring-violet-400" /> -->
-    <!-- </div> -->
+			<label for="approval" class="flex items-start gap-3 text-sm">
+				<input id="approval" name="approval" type="checkbox" required class="mt-0.5 h-5 w-5 shrink-0 accent-ink">
+				<span>Ich stimme der Verarbeitung meiner Daten gemäß der <a href='{{ "/impressum" | relURL }}' class="font-semibold underline">Datenschutzerklärung</a> zu.</span>
+			</label>
 
-    <!-- Message -->
-    <div>
-      <label for="message" class="block text-sm font-medium text-gray-700 mb-1">
-        Nachricht
-      </label>
-      <textarea id="message" name="message" rows="5" required
-                class="w-full px-3 py-2 rounded-xl border border-gray-300 
-                       focus:outline-none focus:ring-2 focus:ring-violet-400"></textarea>
-    </div>
+			<button type="submit" class="btn-ink w-full !py-4 !text-lg">Abschicken ✦</button>
 
-    <!-- Approval Checkbox -->
-    <div class="flex items-center gap-2">
-      <input id="approval" name="approval" type="checkbox" required
-             class="h-4 w-4 text-violet-600 border-gray-300 rounded 
-                    focus:ring-violet-500">
-      <label for="approval" class="text-sm text-gray-700">
-        Ich stimme der Verarbeitung meiner Daten gemäß der Datenschutzerklärung zu.
-      </label>
-    </div>
-
-    <!-- Submit Button -->
-    <button type="submit"
-            class="w-full py-2 px-4 bg-violet-400/80 text-gray-800 font-semibold 
-                   rounded-xl shadow-md transition-all duration-200 
-                   hover:bg-violet-500 hover:text-white">
-      Abschicken
-    </button>
-  </form>
+			<p data-ok hidden class="rounded-2xl border-2 border-ink bg-lime px-4 py-3 font-semibold" role="status">Danke! Deine Nachricht ist angekommen.</p>
+			<p data-err hidden class="rounded-2xl border-2 border-ink bg-white px-4 py-3 font-semibold" role="alert">Das hat leider nicht geklappt. Versuch es bitte später nochmal.</p>
+		</form>
+	</div>
 </section>

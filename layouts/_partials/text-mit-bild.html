@@ -1,0 +1,12 @@
+{{- /* Gemeinsame Vorlage für text-mit-bild-auf-linker-seite / -rechter-seite. Param: ctx, side ("left"|"right") */ -}}
+{{- $left := eq .side "left" -}}
+<div class="not-prose my-10 grid items-center gap-8 md:grid-cols-5 md:gap-12">
+	<div class="md:col-span-2 {{ if not $left }}md:order-2{{ end }}">
+		<div class="overflow-hidden rounded-3xl border-2 border-ink shadow-pop transition-transform duration-300 hover:rotate-0 {{ if $left }}-rotate-2{{ else }}rotate-2{{ end }}">
+			{{ partial "img.html" (dict "src" (.ctx.Get "src") "alt" (.ctx.Get "alt") "class" "aspect-[4/5] w-full object-cover" "sizes" "(min-width: 768px) 420px, 100vw") }}
+		</div>
+	</div>
+	<div class="space-y-4 text-lg leading-relaxed text-ink/90 md:col-span-3">
+		{{ .inner | markdownify }}
+	</div>
+</div>

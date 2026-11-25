@@ -1,58 +1,85 @@
-<nav class="fixed top-0 left-0 z-10
-            flex flex-col items-center
-            h-full w-48 justify-center
-            backdrop-blur-md bg-violet-300/70 shadow-lg
-            text-lg font-medium text-gray-700
-            max-sm:h-16 max-sm:w-full
-            max-sm:flex-row max-sm:justify-evenly
-            max-sm:items-center max-sm:text-sm max-sm:px-2">
+<header class="sticky top-0 z-40 border-b-2 border-ink bg-paper/90 backdrop-blur-md">
+	<nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6" aria-label="Hauptnavigation">
 
-	<ul class="flex flex-col md:items-start sm:items-center gap-3
-             max-sm:flex-row max-sm:gap-1 max-sm:w-full max-sm:justify-evenly">
-		{{ range site.Menus.main }}
-		<li class="max-sm:flex-1">
-			<a href="{{ .URL }}" class="nav-link flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 ease-in-out hover:bg-violet-400/30 hover:text-violet-900 max-sm:px-2 max-sm:py-1 max-sm:justify-center">
-				<div class="flex items-center gap-1 max-sm:flex-col max-sm:gap-0">
-					{{ with .Params.icon }}
-					<span class="[&>svg]:w-5 [&>svg]:h-5 max-sm:[&>svg]:w-4 max-sm:[&>svg]:h-4">
-						{{ partial "icon.html" . }}
-					</span>
+		<a href="{{ "/" | relURL }}" class="group flex items-center gap-2 font-headline text-2xl font-extrabold tracking-tight">
+			<span class="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-lilac-300 text-lg shadow-pop-sm transition-transform group-hover:rotate-12">E</span>
+			<span>Einfach&nbsp;Else<span class="text-lilac-500">.</span></span>
+		</a>
+
+		<ul class="hidden items-center gap-1 lg:flex">
+			{{ range site.Menus.main }}
+			<li class="relative group/item">
+				<a href="{{ .URL }}" class="nav-link flex items-center gap-1 rounded-full px-4 py-2 font-headline font-semibold transition-colors hover:bg-lilac-200">
+					{{ .Name }}
+					{{ if .HasChildren }}
+					<svg class="h-4 w-4 transition-transform group-hover/item:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
 					{{ end }}
-					<span class="capitalize max-sm:text-[0.75rem]">{{ .Name }}</span>
-				</div>
-			</a>
-
-			{{ if .HasChildren }}
-			<ul data-submenu class="ml-8 mt-1 flex flex-col gap-1 text-base max-sm:hidden">
-				{{ range .Children }}
-				<li>
-					<a href="{{ .URL }}" class="nav-link block px-3 py-1 rounded-lg transition-all duration-200 ease-in-out hover:bg-violet-400/30 hover:text-violet-900">
-						{{ .Name }}
-					</a>
-				</li>
+				</a>
+				{{ if .HasChildren }}
+				<ul class="invisible absolute left-0 top-full w-60 pt-2 opacity-0 transition-all group-hover/item:visible group-hover/item:opacity-100 group-focus-within/item:visible group-focus-within/item:opacity-100">
+					<li class="card-pop overflow-hidden p-2">
+						<ul>
+						{{ range .Children }}
+						<li><a href="{{ .URL }}" class="block rounded-xl px-4 py-2 font-medium hover:bg-lime">{{ .Name }}</a></li>
+						{{ end }}
+						</ul>
+					</li>
+				</ul>
 				{{ end }}
-			</ul>
+			</li>
 			{{ end }}
-		</li>
-		{{ end }}
-	</ul>
-</nav>
+		</ul>
+
+		<div class="flex items-center gap-2">
+			<a href="{{ "/kontakt" | relURL }}" class="btn-accent hidden sm:inline-flex !px-5 !py-2.5">Buchen&nbsp;✦</a>
+			<button type="button" id="menu-toggle" class="grid h-11 w-11 place-items-center rounded-full border-2 border-ink bg-white shadow-pop-sm lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menü öffnen">
+				<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path class="menu-open" d="M4 7h16M4 12h16M4 17h16"/><path class="menu-close hidden" d="M6 6l12 12M18 6L6 18"/></svg>
+			</button>
+		</div>
+	</nav>
+
+	<div id="mobile-menu" class="hidden border-t-2 border-ink bg-lilac-300 lg:hidden">
+		<ul class="mx-auto max-w-7xl space-y-1 px-4 py-6 sm:px-6">
+			{{ range site.Menus.main }}
+			<li>
+				<a href="{{ .URL }}" class="nav-link block rounded-2xl px-4 py-3 font-headline text-3xl font-extrabold tracking-tight hover:bg-lime">{{ .Name }}</a>
+				{{ if .HasChildren }}
+				<ul class="mb-2 ml-4 flex flex-wrap gap-2 px-4">
+					{{ range .Children }}
+					<li><a href="{{ .URL }}" class="inline-block rounded-full border-2 border-ink bg-white px-3 py-1 text-sm font-semibold">{{ .Name }}</a></li>
+					{{ end }}
+				</ul>
+				{{ end }}
+			</li>
+			{{ end }}
+			<li class="pt-4"><a href="{{ "/kontakt" | relURL }}" class="btn-accent w-full !text-lg">Jetzt buchen ✦</a></li>
+		</ul>
+	</div>
+</header>
 
 <script>
-	document.addEventListener("DOMContentLoaded", () => {
-		const normalize = p => (p.endsWith("/") ? p.slice(0, -1) : p);
-		const currentPath = normalize(window.location.pathname);
-		
+	(() => {
+		const btn = document.getElementById("menu-toggle");
+		const menu = document.getElementById("mobile-menu");
+		const setOpen = (open) => {
+			menu.classList.toggle("hidden", !open);
+			btn.setAttribute("aria-expanded", String(open));
+			btn.setAttribute("aria-label", open ? "Menü schließen" : "Menü öffnen");
+			btn.querySelector(".menu-open").classList.toggle("hidden", open);
+			btn.querySelector(".menu-close").classList.toggle("hidden", !open);
+		};
+		btn.addEventListener("click", () => setOpen(menu.classList.contains("hidden")));
+		menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setOpen(false)));
+
+		// Aktuelle Seite markieren
+		const normalize = p => (p.length > 1 && p.endsWith("/") ? p.slice(0, -1) : p);
+		const current = normalize(window.location.pathname);
 		document.querySelectorAll(".nav-link").forEach(link => {
-			if (normalize(link.getAttribute("href")) !== currentPath) return;
-			
-			link.classList.add("bg-violet-500/40", "text-violet-900");
-			
-			// If this is a sub point, highlight its parent a bit as well
-			const parentLink = link.closest("[data-submenu]")
-			?.closest("li")
-			?.querySelector(":scope > .nav-link");
-			parentLink?.classList.add("bg-violet-400/20", "text-violet-900");
-			});
-			});
+			const href = normalize(new URL(link.href, window.location.href).pathname);
+			if (href === current) {
+				link.classList.add("bg-ink", "!text-paper");
+				link.setAttribute("aria-current", "page");
+			}
+		});
+	})();
 </script>

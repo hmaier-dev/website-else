@@ -1,5 +1,8 @@
 {{ define "main" }}
-<div class="max-sm:mx-5 sm:mx-10 md:mx-20 lg:mx-30 xl:mx-40 2xl:mx-50 flex-grow">
-	{{ .Content }}
+{{ partial "page-header.html" . }}
+<div class="mx-auto px-4 py-12 sm:px-6 {{ if .Params.wide }}max-w-6xl{{ else }}max-w-3xl{{ end }}">
+	<div class="prose-else">
+		{{ .Content }}
+	</div>
 </div>
 {{ end }}

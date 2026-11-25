@@ -1,21 +1,68 @@
-<section class="flex flex-col justify-center overflow-hidden bg-surface" id="home">
-	<div class="container mx-auto px-8 md:pt-40 sm:pt-20 pt-10 md:pb-40 pb-10 min-h-vh">
-		<div class="max-w-5xl">
-			<p class="text-primary font-headline font-bold tracking-[0.2em] mb-6 uppercase animate-pulse">Elisa Adam ist</p>
-			<h1 class="text-6xl md:text-8xl lg:text-[10rem] font-headline font-black italic tracking-tighter leading-[0.85] text-on-background mb-12">
-				Einfach<br>
-				Else.
-			</h1>
-			<div class="flex flex-col md:flex-row md:items-end gap-8">
-				<p class="text-xl md:text-2xl font-body font-light text-on-surface-variant max-w-xl leading-relaxed">
-					Willkommen auf meiner Website!
-					Hier erwartet dich eine vielfältige Person, mit zahlreichen Interessen und Talenten. Nimm dir die Zeit und stöbere ein bisschen.
-					In Liebe, Else!
-				</p>
-				<a class="inline-flex items-center bg-violet-300 gap-2 bg-primary text-on-primary text-lg px-8 py-4 rounded-lg font-headline font-bold hover:bg-primary-container transition-all hover:-translate-y-1 shadow-md " href='{{ absURL "/events/overview" }}'>
-					Zu den nächsten Veranstaltungen
-				</a>
+{{- /*
+Startbereich der Homepage.
+Das Querbild wird im Front Matter von content/_index.md gesetzt:
+  hero_image: "media/dein-querbild.webp"
+Solange es leer ist, erscheint ein Platzhalter.
+*/ -}}
+{{- $hero := .Page.Params.hero_image -}}
+<section id="home" class="relative overflow-hidden bg-paper">
+	<div aria-hidden="true" class="pointer-events-none absolute -left-24 top-24 h-80 w-80 rounded-full bg-lilac-200 blur-3xl"></div>
+	<div aria-hidden="true" class="pointer-events-none absolute right-0 top-0 h-96 w-96 rounded-full bg-lime/40 blur-3xl"></div>
+
+	<div class="relative mx-auto max-w-7xl px-4 pb-12 pt-12 sm:px-6 md:pt-20">
+		<div aria-hidden="true" class="absolute right-6 top-28 hidden flex-col items-end gap-5 lg:flex">
+			<span class="sticker rotate-6 bg-lilac-300 !text-xl !px-6 !py-3 shadow-pop-sm">Poetry Slam</span>
+			<span class="sticker -rotate-3 bg-white !text-xl !px-6 !py-3 shadow-pop-sm mr-16">Moderation</span>
+			<span class="sticker rotate-3 !text-xl !px-6 !py-3 shadow-pop-sm">Late Night Show</span>
+			<span class="sticker -rotate-6 bg-lilac-500 !text-paper !text-xl !px-6 !py-3 shadow-pop-sm mr-10">Workshops</span>
+		</div>
+
+		<span class="sticker -rotate-3">Elisa Adam ist</span>
+
+		<h1 class="mt-6 font-headline font-extrabold leading-[0.82] tracking-[-0.04em] text-[clamp(4.5rem,17vw,15rem)]">
+			Einfach<br>
+			<span class="relative inline-block">
+				<span class="relative z-10">Else</span><span class="relative z-10 text-lilac-500">.</span>
+				<span aria-hidden="true" class="absolute -bottom-1 left-0 right-[0.3em] z-0 h-[0.28em] -rotate-1 rounded-full bg-lime"></span>
+			</span>
+		</h1>
+
+		<div class="mt-10 grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-end">
+			<p class="max-w-xl text-xl leading-relaxed text-ink/80 sm:text-2xl">
+				Poetin, Moderatorin, Workshop-Leiterin &amp; Organisatorin aus Leipzig.
+				Hier erwartet dich eine vielfältige Person mit zahlreichen Talenten. Nimm dir Zeit und stöbere ein bisschen.
+				<span class="mt-2 block font-headline font-bold text-ink">In Liebe, Else ♥</span>
+			</p>
+			<div class="flex flex-wrap gap-3 md:justify-end">
+				<a class="btn-ink" href="{{ "/events/overview" | relURL }}">Nächste Termine →</a>
+				<a class="btn-accent" href="{{ "/kontakt" | relURL }}">Else buchen ✦</a>
 			</div>
+		</div>
+
+		<div class="relative mt-14">
+			<span aria-hidden="true" class="sticker absolute -top-5 right-6 z-10 rotate-6 bg-lilac-300 sm:right-16">Live on Stage</span>
+			<div class="overflow-hidden rounded-[2rem] border-2 border-ink shadow-pop-lg">
+				{{- if $hero -}}
+					{{ partial "img.html" (dict "src" $hero "alt" "Elisa Adam alias Einfach Else" "class" "aspect-[16/9] md:aspect-[21/9] w-full object-cover" "eager" true) }}
+				{{- else -}}
+				<div class="relative grid aspect-[16/9] w-full place-items-center bg-lilac-200 md:aspect-[21/9]"
+				     style="background-image: repeating-linear-gradient(-45deg, transparent 0 22px, rgb(255 255 255 / .45) 22px 44px);">
+					<div class="text-center">
+						<svg class="mx-auto h-14 w-14 text-lilac-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></svg>
+						<p class="mt-3 font-headline text-2xl font-extrabold">Querbild folgt</p>
+						<p class="mt-1 text-sm text-ink/60">Platzhalter · <code>hero_image</code> in <code>content/_index.md</code> setzen</p>
+					</div>
+				</div>
+				{{- end -}}
+			</div>
+		</div>
+	</div>
+
+	<div class="overflow-hidden border-y-2 border-ink bg-lilac-500 py-4 text-paper" aria-hidden="true">
+		<div class="flex w-max animate-marquee gap-10 whitespace-nowrap font-headline text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
+			{{ range seq 2 }}
+			<span>Poetry Slam</span><span class="text-lime">✦</span><span>Moderation</span><span class="text-lime">✦</span><span>Late Night Show</span><span class="text-lime">✦</span><span>Workshops</span><span class="text-lime">✦</span><span>Events</span><span class="text-lime">✦</span>
+			{{ end }}
 		</div>
 	</div>
 </section>

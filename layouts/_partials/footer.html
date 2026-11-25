@@ -1,27 +1,41 @@
-<!-- <footer class="my-3 mt-auto"> -->
-<!-- <span class="block w-full text-center text-xs"> -->
-<!-- made during arbeitslosigkeit by <a href="https://codeberg.org/schnelles_geraet/website-else" class="underline  hover:no-underline hover:text-gray-800">hendrik</a> ♥ -->
-<!-- </span> -->
-<!-- </footer> -->
-
-<footer class="py-12 px-8 bg-violet-100/30 tonal-shift max-sm:mt-16 sm:ml-48">
-	<hr class="mb-4">
-	<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-		<div>
-			<h5 class="text-lg font-bold text-slate-800  font-headline">Einfach Elses Website</h5>
-			<p class="text-[10px] font-manrope text-xs tracking-widest uppercase font-medium text-slate-500 mt-1">© 2026 ELISA ADAM. Alle Rechte vorbehalten.</p>
+<footer class="mt-24 bg-ink text-paper">
+	<div class="overflow-hidden border-y-2 border-ink bg-lime py-3 text-ink" aria-hidden="true">
+		<div class="flex w-max animate-marquee gap-8 whitespace-nowrap font-headline text-2xl font-extrabold uppercase tracking-tight">
+			{{ range seq 2 }}
+			<span>Poetry Slam</span><span>✦</span><span>Moderation</span><span>✦</span><span>Workshops</span><span>✦</span><span>Late Night Show</span><span>✦</span><span>Kinderanimation</span><span>✦</span><span>Leipzig</span><span>✦</span>
+			{{ end }}
 		</div>
-		<div class="flex gap-8 items-center">
+	</div>
 
-			<a class="uppercase font-medium text-slate-500 hover:text-violet-400 transition-colors" href='{{ absURL "impressum" }}'>Impressum</a>
-			<a class="uppercase font-medium text-slate-500 hover:text-violet-400 transition-colors" href="https://www.instagram.com/einfach_else/">
-				Instagram
-			</a>
-			<a href="https://www.instagram.com/einfach_else/">
-				<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
-					<path fill="#f55376" d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20 c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20 C42.014,38.383,38.417,41.986,34.017,41.99z"></path><path fill="#fac8d5" d="M24,31c-3.859,0-7-3.14-7-7s3.141-7,7-7s7,3.14,7,7S27.859,31,24,31z M24,19c-2.757,0-5,2.243-5,5 s2.243,5,5,5s5-2.243,5-5S26.757,19,24,19z"></path><circle cx="31.5" cy="16.5" r="1.5" fill="#fac8d5"></circle><path fill="#fac8d5" d="M30,37H18c-3.859,0-7-3.14-7-7V18c0-3.86,3.141-7,7-7h12c3.859,0,7,3.14,7,7v12 C37,33.86,33.859,37,30,37z M18,13c-2.757,0-5,2.243-5,5v12c0,2.757,2.243,5,5,5h12c2.757,0,5-2.243,5-5V18c0-2.757-2.243-5-5-5H18 z"></path>
-				</svg>
-			</a>
+	<div class="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[2fr_1fr_1fr]">
+		<div>
+			<p class="font-headline text-5xl font-extrabold leading-none tracking-tight sm:text-7xl">Einfach<br>Else<span class="text-lime">.</span></p>
+			<p class="mt-6 max-w-sm text-paper/70">Poetry Slam, Moderation &amp; Workshops aus Leipzig. Lust auf eine Zusammenarbeit? Schreib mir!</p>
+			<a href="{{ "/kontakt" | relURL }}" class="btn-accent mt-8 !shadow-none hover:!shadow-[5px_5px_0_0_var(--color-lilac-400)]">Kontakt aufnehmen →</a>
+		</div>
+		<div>
+			<p class="mb-4 font-headline text-sm font-bold uppercase tracking-widest text-lilac-300">Seiten</p>
+			<ul class="space-y-2">
+				{{ range site.Menus.main }}
+				<li><a href="{{ .URL }}" class="hover:text-lime hover:underline">{{ .Name }}</a></li>
+				{{ end }}
+				<li><a href="{{ "/referenzen" | relURL }}" class="hover:text-lime hover:underline">Referenzen</a></li>
+			</ul>
+		</div>
+		<div>
+			<p class="mb-4 font-headline text-sm font-bold uppercase tracking-widest text-lilac-300">Folgen</p>
+			<ul class="space-y-2">
+				<li><a href="https://www.instagram.com/einfach_else/" class="inline-flex items-center gap-2 hover:text-lime hover:underline" rel="noopener">
+					<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+					@einfach_else</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="border-t border-paper/15">
+		<div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm text-paper/60 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+			<p>© {{ now.Year }} Elisa Adam. Alle Rechte vorbehalten.</p>
+			<p><a href="{{ "/impressum" | relURL }}" class="hover:text-lime hover:underline">Impressum &amp; Datenschutz</a></p>
 		</div>
 	</div>
 </footer>

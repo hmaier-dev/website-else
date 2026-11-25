@@ -1,16 +1,18 @@
-{{ $title := .Get "title" }}
-{{ $img := cond (.Get "img") (resources.Get (.Get "img")) nil }}
-
-<div class="group">
-	<div class="overflow-hidden rounded-xl bg-surface-container-high mb-8 aspect-[4/3] relative">
-		<img src="{{ $img.RelPermalink}}" alt="Hier sollte eigentlich ein Bild sein." class="m-2 max-sm:w-96 max-sm:m-1 w-full h-full object-cover origin-center inset-0 absolute">
+{{- /*
+{{< talent title="Moderation" img="media/jesus2.webp" >}}
+Text in **Markdown**
+{{< /talent >}}
+*/ -}}
+{{- $title := .Get "title" -}}
+<article class="card-pop group flex flex-col overflow-hidden hover:-translate-y-1 hover:shadow-pop-lg md:even:translate-y-12 md:even:hover:translate-y-11 [counter-increment:talent]">
+	<div class="relative aspect-[4/3] overflow-hidden border-b-2 border-ink bg-lilac-200">
+		{{ partial "img.html" (dict "src" (.Get "img") "alt" $title "class" "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" "sizes" "(min-width: 768px) 600px, 100vw") }}
+		<span class="absolute left-4 top-4 grid h-12 w-12 place-items-center rounded-full border-2 border-ink bg-lime font-headline text-lg font-extrabold before:content-[counter(talent,decimal-leading-zero)]"></span>
 	</div>
-	<h4 class="text-2xl font-headline font-bold mb-4 italic">{{ $title }}</h4>
-	<p class="text-on-surface-variant leading-relaxed mb-6">
-		{{ .Inner | markdownify }}
-	</p>
-	<!-- <div class="flex gap-4"> -->
-	<!-- <a class="bg-on-surface text-surface px-4 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors" href="#">Shop Gallery</a> -->
-	<!-- <a class="border border-outline/30 px-4 py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-surface-container-high transition-colors" href="#contact">Custom Work</a> -->
-	<!-- </div> -->
-</div>
+	<div class="flex flex-1 flex-col p-6 sm:p-8">
+		<h3 class="text-3xl font-extrabold tracking-tight">{{ $title }}</h3>
+		<div class="mt-3 space-y-3 text-ink/80 [&_strong]:text-ink">
+			{{ .Inner | markdownify }}
+		</div>
+	</div>
+</article>

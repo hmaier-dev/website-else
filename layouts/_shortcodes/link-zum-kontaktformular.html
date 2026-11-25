@@ -1,3 +1,2 @@
-<a class="" href='{{ absURL "/kontakt" }}'>
-    {{ .Get "text" }}
-</a>
+{{- /* {{< link-zum-kontaktformular text="Melde dich gerne an!" >}} */ -}}
+<a class="btn-accent !no-underline hover:!bg-lime" href='{{ "/kontakt" | relURL }}'>{{ .Get "text" }} →</a>

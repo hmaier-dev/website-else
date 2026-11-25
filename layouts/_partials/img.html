@@ -1,0 +1,39 @@
+{{- /*
+Responsives Bild: Hugo erzeugt automatisch verkleinerte WebP-Versionen.
+Die Originale in assets/media sind teils mehrere MB groß.
+
+@param src    Pfad unter assets/ (z. B. "media/jesus2.webp") oder eine Resource
+@param alt    Alternativtext
+@param class  CSS-Klassen für <img>
+@param sizes  sizes-Attribut (Standard: 100vw)
+@param eager  true → nicht lazy laden (z. B. Bild ganz oben)
+*/ -}}
+{{- $res := .src -}}
+{{- if eq (printf "%T" $res) "string" -}}
+  {{- $res = resources.Get (strings.TrimPrefix "./" $res) -}}
+{{- end -}}
+{{- with $res -}}
+  {{- $widths := slice 480 800 1200 1800 -}}
+  {{- $srcset := slice -}}
+  {{- $fallback := . -}}
+  {{- if and (eq .MediaType.MainType "image") (ne .MediaType.SubType "svg") -}}
+    {{- range $widths -}}
+      {{- if le . $res.Width -}}
+        {{- $r := $res.Resize (printf "%dx webp q78" .) -}}
+        {{- $srcset = $srcset | append (printf "%s %dw" $r.RelPermalink .) -}}
+        {{- $fallback = $r -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if not $srcset -}}
+      {{- $srcset = $srcset | append (printf "%s %dw" $res.RelPermalink $res.Width) -}}
+    {{- end -}}
+  {{- end -}}
+<img src="{{ $fallback.RelPermalink }}"
+  {{- with $srcset }} srcset="{{ delimit . ", " }}" sizes="{{ or $.sizes "100vw" }}"{{ end }}
+  {{- if and $fallback.Width (ne $fallback.MediaType.SubType "svg") }} width="{{ $fallback.Width }}" height="{{ $fallback.Height }}"{{ end }}
+  alt="{{ or $.alt "" }}"
+  {{- with $.class }} class="{{ . }}"{{ end }}
+  {{- if $.eager }} fetchpriority="high"{{ else }} loading="lazy" decoding="async"{{ end }}>
+{{- else -}}
+  {{- warnf "img.html: Bild nicht gefunden: %v" $.src -}}
+{{- end -}}

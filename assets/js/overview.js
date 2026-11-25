@@ -1,121 +1,98 @@
 document.addEventListener('DOMContentLoaded', () => {
-
 	const nextEvent = '/events/load?out=json&sort=next&head=4'
 	const prevEvent = '/events/load?out=json&sort=prev&head=3'
 
 	fetch(nextEvent)
 		.then(response => response.json())
 		.then(data => {
+			if (!Array.isArray(data) || data.length === 0) {
+				generateEmptyState()
+				return
+			}
 			generateHero(data[0])
 			generateUpcommingEvents(data)
 		})
 		.catch(error => {
-			console.error('Error:', error);
-		});
+			console.error('Error:', error)
+			generateEmptyState()
+		})
 
 	fetch(prevEvent)
 		.then(response => response.json())
-		.then(data => {
-			generatePreviousEvents(data)
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
+		.then(data => generatePreviousEvents(Array.isArray(data) ? data : []))
+		.catch(error => console.error('Error:', error))
+})
 
-});
+// Werte aus der Datenbank nie ungeprüft als HTML einsetzen
+function esc(value) {
+	return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+}
 
+function generateEmptyState() {
+	document.getElementById('event-name-hero').textContent = 'Bald geht’s weiter!'
+	document.getElementById('next-events-cards-wrapper').innerHTML = `
+		<p class="card-pop col-span-full p-8 text-lg">Gerade sind keine Termine eingetragen. Schau bald wieder vorbei oder folge mir auf
+		<a class="font-semibold underline" href="https://www.instagram.com/einfach_else/">Instagram</a>.</p>`
+}
 
 function generateHero(next) {
-
-	const name = document.getElementById('event-name-hero')
-	const date = document.getElementById('hero-date')
-	const place = document.getElementById('hero-place')
-	const city = document.getElementById('hero-city')
+	document.getElementById('event-name-hero').textContent = next['Name']
+	document.getElementById('hero-date').textContent = next['FDate']
+	document.getElementById('hero-place').textContent = next['Place']
+	document.getElementById('hero-city').textContent = next['City']
 	const link = document.getElementById('hero-link')
-
-	name.innerHTML = next["Name"]
-	date.innerHTML = next["FDate"]
-	place.innerHTML = next["Place"]
-	city.innerHTML = next["City"]
-	link.href = next["Link"]
+	if (next['Link']) {
+		link.href = next['Link']
+	} else {
+		link.remove()
+	}
+	const details = document.getElementById('hero-details')
+	details.classList.remove('hidden')
+	details.classList.add('flex')
 }
 
 function generateUpcommingEvents(next) {
-	html = ""
-	const arr = next.slice(1)
-	for (const event of arr) {
-		const name = event["Name"]
-		const date = new Date(event["Date"])
-		// Get the three-letter month abbreviation
-		const abbr = date.toLocaleString('de-DE', { month: 'short' });
-		// Get the day as two digits (e.g., "08")
-		const day = date.getDate().toString().padStart(2, '0');
-
-		const place = event["Place"]
-		const city = event["City"]
-		add = `
-			<div class="group bg-white p-8 rounded-[2rem] border border-violet-100 hover:border-primary/30 hover:shadow-2xl hover:shadow-violet-200/50 shadow-md transition-all duration-500">
-				<div class="flex justify-between items-start mb-8">
-					<div class="bg-violet-50 px-4 py-2 rounded-2xl border border-violet-100">
-						<p class="text-xl font-black text-primary leading-none">${day}</p>
-						<p class="text-[10px] font-bold text-primary/60 uppercase tracking-widest text-center mt-1">${abbr}</p>
+	const colors = ['bg-lime', 'bg-lilac-300', 'bg-white']
+	let html = ''
+	next.slice(1).forEach((event, i) => {
+		const date = new Date(event['Date'])
+		const abbr = date.toLocaleString('de-DE', { month: 'short' }).replace('.', '')
+		const day = date.getDate().toString().padStart(2, '0')
+		const link = event['Link']
+		html += `
+			<article class="card-pop group flex flex-col p-6 hover:-translate-y-1 hover:shadow-pop-lg">
+				<div class="mb-8 flex items-start justify-between">
+					<div class="${colors[i % colors.length]} rounded-2xl border-2 border-ink px-4 py-2 text-center">
+						<p class="font-headline text-3xl font-extrabold leading-none">${day}</p>
+						<p class="mt-1 text-xs font-bold uppercase tracking-widest">${esc(abbr)}</p>
 					</div>
+					<span class="text-3xl text-lilac-500 transition-transform group-hover:rotate-90" aria-hidden="true">✦</span>
 				</div>
-				<div>
-					<p class="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3"></p>
-					<h4 class="text-2xl font-black text-on-surface leading-tight mb-6 group-hover:text-primary transition-colors">${name}</h4>
-					<div class="space-y-2 mb-8">
-						<div class="flex items-center gap-3 text-on-surface-variant text-sm">
-							<span></span>
-							<span></span>
-						</div>
-						<div class="flex items-center gap-3 text-on-surface-variant text-sm">
-							<span></span>
-							<span>${place}, ${city}</span>
-						</div>
-					</div>
-					<button class="w-full py-4 bg-violet-50 text-primary rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Details</button>
-				</div>
-			</div>
-    `
-		html += add
-	}
+				<h3 class="font-headline text-2xl font-extrabold leading-tight">${esc(event['Name'])}</h3>
+				<p class="mt-3 flex-1 text-ink/70">${esc(event['Place'])}, ${esc(event['City'])}</p>
+				${link ? `<a href="${esc(link)}" class="btn-lilac mt-6 w-full">Details →</a>` : ''}
+			</article>`
+	})
 	document.getElementById('next-events-cards-wrapper').innerHTML = html
 }
 
 function generatePreviousEvents(prev) {
-	html = ""
+	let html = ''
 	for (const event of prev) {
-		const name = event["Name"]
-		const date = new Date(event["Date"])
-		// Get the three-letter month abbreviation
-		const abbr = date.toLocaleString('en-US', { month: 'short' });
-		// Get the day as two digits (e.g., "08")
-		const day = date.getDate().toString().padStart(2, '0');
-		const place = event["Place"]
-		const city = event["City"]
-		add = `
-			<div class="flex flex-col md:flex-row items-center justify-between p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all group">
-				<div class="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-					<div class="w-16 text-center">
-						<p class="text-lg font-black text-on-surface-variant leading-none">${day}</p>
-						<p class="text-[10px] font-bold uppercase text-outline">${abbr}</p>
-					</div>
-					<div class="h-10 w-[1px] bg-outline-variant hidden md:block"></div>
-					<div>
-						<h5 class="text-lg font-bold text-on-surface group-hover:text-primary">${name}</h5>
-						<p class="text-xs text-on-surface-variant uppercase tracking-widest">${place} • ${city}</p>
-					</div>
+		const date = new Date(event['Date'])
+		const abbr = date.toLocaleString('de-DE', { month: 'short' }).replace('.', '')
+		const day = date.getDate().toString().padStart(2, '0')
+		html += `
+			<div class="flex items-center gap-6 rounded-2xl border-2 border-ink/15 bg-white p-5 opacity-70 transition-all hover:border-ink hover:opacity-100">
+				<div class="w-14 shrink-0 text-center">
+					<p class="font-headline text-2xl font-extrabold leading-none">${day}</p>
+					<p class="text-xs font-bold uppercase text-ink/60">${esc(abbr)}</p>
 				</div>
-				<div class="mt-4 md:mt-0">
-					<a href="/events/next" class="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">Alle Events anzeigen</a>
+				<div>
+					<h3 class="font-headline text-lg font-bold">${esc(event['Name'])}</h3>
+					<p class="text-sm uppercase tracking-widest text-ink/60">${esc(event['Place'])} • ${esc(event['City'])}</p>
 				</div>
-			</div>
-    `
-		html += add
+			</div>`
 	}
 	document.getElementById('prev-events-cards-wrapper').innerHTML = html
-
 }
-
-

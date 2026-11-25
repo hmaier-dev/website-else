@@ -1,22 +1,6 @@
 {{/* Usage:
-{{< text-mit-bild-auf-rechter-seite src="./media/some-other-pic.webp" alt="Hier sollte eigentlich ein Bild sein." >}}
+{{< text-mit-bild-auf-rechter-seite src="./media/some-pic.webp" alt="Beschreibung des Bildes" >}}
   Hier kommt der Text rein.
 {{< /text-mit-bild-auf-rechter-seite >}}
-
 */}}
-
-{{- $src := or (.Get "src") "" }}
-{{ $pic := resources.Get $src }}
-<div class="my-8 flex flex-col md:flex-row md:items-center gap-6">
-  <div class="prose max-w-none md:basis-2/3 order-2 md:order-1">
-    {{ .Inner | markdownify }}
-  </div>
-  <div class="md:basis-1/3 order-1 md:order-2">
-    <img
-      src="{{ $pic.RelPermalink }}"
-      alt="{{ .Get "alt" | default "" }}"
-      loading="lazy"
-      class="w-full h-auto rounded-xl shadow-md object-cover aspect-[4/3]"
-    >
-  </div>
-</div>
+{{ partial "text-mit-bild.html" (dict "ctx" . "inner" .Inner "side" "right") }}

@@ -1,0 +1,10 @@
+{{- /* Großer Seitenkopf mit Titel. Nutzt .Title, .Description und optional .Params.kicker */ -}}
+<section class="relative overflow-hidden border-b-2 border-ink bg-lilac-300">
+	<div aria-hidden="true" class="pointer-events-none absolute -right-20 -top-24 h-44 w-44 rounded-full sm:-right-16 sm:-top-20 sm:h-72 sm:w-72 border-2 border-ink bg-lime"></div>
+	<div aria-hidden="true" class="pointer-events-none absolute right-40 -bottom-24 hidden h-48 w-48 rounded-full border-2 border-ink bg-lilac-500 md:block"></div>
+	<div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+		<span class="sticker -rotate-2 bg-white">{{ with .Params.kicker }}{{ . }}{{ else }}Einfach Else{{ end }}</span>
+		<h1 class="mt-6 max-w-4xl text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">{{ .Title }}</h1>
+		{{ with .Description }}<p class="mt-6 max-w-2xl text-lg text-ink/80 sm:text-xl">{{ . }}</p>{{ end }}
+	</div>
+</section>

@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
+<html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
 	<head>
 		{{ partial "head.html" . }}
 	</head>
 	<body class="min-h-screen flex flex-col">
+		<a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 btn-accent">Zum Inhalt springen</a>
 
-		{{ partial "nav.html" .}}
+		{{ partial "nav.html" . }}
 
-		<main class="min-h-[calc(100vh-3rem)] max-sm:mt-16 sm:ml-48">
+		<main id="inhalt" class="flex-1">
 			{{ block "main" . }}{{ end }}
 		</main>
-	</body>
 
-	{{ partial "footer.html" }}
+		{{ partial "footer.html" . }}
+	</body>
 </html>

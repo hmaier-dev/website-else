@@ -1,17 +1,10 @@
 {{- /*
-Centers text
-
-@examples
-
+Hervorgehobener Textblock
   {{< italic-block >}}
     some text
   {{< /italic-block >}}
-
-
-*/}}
-
-
-<div class="italic-block block italic md:p-20 max-sm:p-10 leading-relaxed hyphens-auto">
-    {{ .Inner | markdownify }}
+*/ -}}
+<div class="relative my-12 rounded-3xl border-2 border-ink bg-lilac-100 p-8 text-xl italic leading-relaxed shadow-pop sm:p-12">
+	<span aria-hidden="true" class="absolute -top-8 left-6 font-headline text-8xl font-extrabold not-italic leading-none text-lilac-500">“</span>
+	{{ .Inner | markdownify }}
 </div>
-

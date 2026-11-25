@@ -2,77 +2,49 @@
 
 {{ .Content }}
 
-<!---- The next event --->
-<section class="relative px-8 pt-12 p-6 overflow-hidden">
-	<div class="max-w-6xl mx-auto">
-		<div class="mb-6">
-			<span class="text-4xl font-black text-on-surface tracking-tighter mb-2">Der nächste Termin</span>
-		</div>
-		<div class="grid lg:grid-cols-2 gap-12 items-center">
-			<div>
-				<h1 class="text-6xl lg:text-8xl font-black text-on-surface leading-[0.9] tracking-tighter mb-8 italic" id="event-name-hero"></h1>
-				<div class="space-y-6 mb-10">
-					<div class="flex items-start gap-4">
-						<!-- Calendar SVG -->
-						<svg class="h-8 w-8 text-primary mt-1" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-						</svg>
-						<div>
-							<p id="hero-date" class="text-md font-bold text-on-surface"></p>
-							<p id="hero-doors" class="text-sm text-on-surface-variant"></p>
-						</div>
-					</div>
-					<div class="flex items-start gap-4">
-						<!-- Location SVG -->
-						<svg class="h-8 w-8 text-primary mt-1" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-							<path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-						</svg>
-						<div>
-							<p id="hero-place" class="text-md font-bold text-on-surface"></p>
-							<p id="hero-city" class="text-sm text-on-surface-variant"></p>
-						</div>
-					</div>
-				</div>
-				<div>
-					<a href="" id="hero-link" class="w-full text-lg bg-violet-600 text-white py-2 px-10 rounded-md hover:bg-violet-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Mehr Infos</a>
-				</div>
+<!-- Der nächste Termin -->
+<section class="relative overflow-hidden border-b-2 border-ink bg-lilac-300">
+	<div aria-hidden="true" class="pointer-events-none absolute -right-20 -top-24 h-44 w-44 rounded-full border-2 border-ink bg-lime sm:h-80 sm:w-80"></div>
+	<div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+		<span class="sticker -rotate-2 bg-white">Der nächste Termin</span>
+		<h1 id="event-name-hero" class="mt-6 max-w-5xl text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">Termine werden geladen …</h1>
+		<div id="hero-details" class="mt-10 hidden flex-col gap-6 sm:flex-row sm:items-center">
+			<div class="flex items-center gap-3 rounded-full border-2 border-ink bg-white px-5 py-3 shadow-pop-sm">
+				<svg class="h-6 w-6 text-lilac-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+				<span id="hero-date" class="font-headline font-bold"></span>
 			</div>
+			<div class="flex items-center gap-3 rounded-full border-2 border-ink bg-white px-5 py-3 shadow-pop-sm">
+				<svg class="h-6 w-6 text-lilac-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+				<span class="font-headline font-bold"><span id="hero-place"></span>, <span id="hero-city"></span></span>
+			</div>
+			<a href="" id="hero-link" class="btn-ink">Mehr Infos →</a>
 		</div>
 	</div>
 </section>
 
-<!--- Upcomming events ---->
-<!--- Is rendered in js -->
-<section class="px-8 py-10 bg-surface-container-low/20">
-	<div class="max-w-6xl mx-auto">
-		<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-			<div>
-				<h3 class="text-4xl font-black text-on-surface tracking-tighter mb-2">Die nächsten Termine</h3>
-				<p class="text-on-surface-variant max-w-sm">Verpasse keinen Termin. Hier kannst Du meine nächsten Slams, Auftritte und Workshops finden.</p>
-			</div>
+<!-- Die nächsten Termine (per JS befüllt) -->
+<section class="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+	<div class="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+		<div>
+			<h2 class="text-4xl font-extrabold tracking-tight sm:text-6xl">Die nächsten <span class="marker">Termine</span></h2>
+			<p class="mt-4 max-w-md text-lg text-ink/70">Verpasse nichts: Hier findest du meine nächsten Slams, Auftritte und Workshops.</p>
 		</div>
-
-		<div id="next-events-cards-wrapper" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-auto-rows-fr"></div>
+		<a href="{{ "/events/next" | relURL }}" class="btn-lilac self-start md:self-auto">Alle Termine →</a>
 	</div>
+	<div id="next-events-cards-wrapper" class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"></div>
 </section>
 
-<!--- Previous events -->
-<!-- This also will be rendered in js -->
-<section class="px-8 py-24 bg-surface">
-	<div class="max-w-6xl mx-auto">
-		<div class="mb-12">
-			<h3 class="text-2xl font-black text-on-surface tracking-tighter flex items-center gap-3">
-				Vergangene Termine
-				<span class="w-8 h-[2px] bg-outline-variant"></span>
-			</h3>
-		</div>
-		<div id="prev-events-cards-wrapper" class="space-y-4"></div>
-	</div>
+<!-- Vergangene Termine (per JS befüllt) -->
+<section class="mx-auto max-w-7xl px-4 pb-8 sm:px-6">
+	<h2 class="mb-8 flex items-center gap-4 text-2xl font-extrabold tracking-tight">
+		Vergangene Termine
+		<span class="h-0.5 flex-1 bg-ink/15"></span>
+	</h2>
+	<div id="prev-events-cards-wrapper" class="space-y-4"></div>
 </section>
 
 {{ with resources.Get "js/overview.js" }}
-{{$opts := dict
+{{ $opts := dict
 "minify" (cond hugo.IsDevelopment false true)
 "sourceMap" (cond hugo.IsDevelopment "linked" "none")
 }}
