@@ -1,0 +1,61 @@
+{{ define "orders-panel" }}
+<div id="orders-panel">
+	<div class="mb-6 flex flex-wrap items-center gap-2" role="tablist">
+		<button type="button" role="tab" aria-selected="{{ eq .Status "paid" }}"
+		        hx-get="/manage/api/orders?status=paid" hx-target="#orders-panel" hx-swap="outerHTML"
+		        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Status "paid" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
+			Zu versenden <span class="ml-1 opacity-70">{{ .Open }}</span>
+		</button>
+		<button type="button" role="tab" aria-selected="{{ eq .Status "shipped" }}"
+		        hx-get="/manage/api/orders?status=shipped" hx-target="#orders-panel" hx-swap="outerHTML"
+		        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Status "shipped" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
+			Versendet
+		</button>
+	</div>
+
+	<div class="grid gap-6 lg:grid-cols-2">
+	{{ range .Orders }}
+		<article class="card-pop flex flex-col p-6">
+			<div class="flex flex-wrap items-start justify-between gap-2">
+				<div>
+					<h3 class="font-headline text-2xl font-extrabold">{{ orderNumber .ID }}</h3>
+					<p class="text-sm text-ink/60">bezahlt am {{ date .When }}</p>
+				</div>
+				<span class="sticker {{ if eq .Status "shipped" }}bg-lilac-200{{ end }}">{{ if eq .Status "shipped" }}versendet{{ else }}{{ euro .TotalCents }}{{ end }}</span>
+			</div>
+
+			<ul class="mt-5 divide-y-2 divide-ink/10 border-y-2 border-ink/10">
+				{{ range .Lines }}
+				<li class="flex justify-between gap-4 py-2"><span><b>{{ .Quantity }}×</b> {{ .Name }}</span><span class="shrink-0">{{ euro (mul .PriceCents .Quantity) }}</span></li>
+				{{ end }}
+				<li class="flex justify-between gap-4 py-2 text-ink/70"><span>Versand</span><span>{{ euro .ShippingCents }}</span></li>
+				<li class="flex justify-between gap-4 py-2 font-bold"><span>Summe</span><span>{{ euro .TotalCents }}</span></li>
+			</ul>
+
+			<div class="mt-5 grid flex-1 gap-4 sm:grid-cols-2">
+				<div>
+					<p class="mb-1 text-xs font-bold uppercase tracking-widest text-ink/50">Lieferadresse</p>
+					<p class="whitespace-pre-line">{{ .ShippingAddress }}</p>
+				</div>
+				<div>
+					<p class="mb-1 text-xs font-bold uppercase tracking-widest text-ink/50">Kontakt</p>
+					<a href="mailto:{{ .PayerEmail }}?subject=Deine Bestellung {{ orderNumber .ID }}" class="break-all font-semibold underline">{{ .PayerEmail }}</a>
+					<p class="mt-2 text-xs text-ink/50">PayPal: {{ .CaptureID }}</p>
+				</div>
+			</div>
+
+			{{ if eq .Status "paid" }}
+			<button type="button" hx-post="/manage/api/orders/{{ .ID }}/shipped" hx-target="#orders-panel" hx-swap="outerHTML"
+			        hx-confirm="{{ orderNumber .ID }} als versendet markieren?" class="btn-accent mt-6 w-full">Als versendet markieren ✓</button>
+			{{ else if .ShippedAt.Valid }}
+			<p class="mt-6 text-sm text-ink/60">Versendet am {{ date .ShippedAt.Time }}</p>
+			{{ end }}
+		</article>
+	{{ else }}
+		<p class="rounded-3xl border-2 border-dashed border-ink/30 p-8 text-center text-ink/60 lg:col-span-2">
+			{{ if eq .Status "paid" }}Keine offenen Bestellungen. 🎉{{ else }}Noch nichts versendet.{{ end }}
+		</p>
+	{{ end }}
+	</div>
+</div>
+{{ end }}
