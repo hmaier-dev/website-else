@@ -1,0 +1,2 @@
+{{- /* Formatiert einen Euro-Betrag deutsch: 14 → "14,00 €". Parameter: Zahl in Euro */ -}}
+{{- return printf "%s €" (replace (printf "%.2f" (float .)) "." ",") -}}

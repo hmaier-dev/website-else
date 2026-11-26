@@ -1,0 +1,41 @@
+{{- /*
+Liest Shop-Einstellungen und Produkte aus dem Front Matter von content/shop.md,
+prüft sie und gibt eine einheitliche Struktur zurück (Preise in Cent).
+Fehler brechen den Hugo-Build mit einer verständlichen Meldung ab.
+*/ -}}
+{{- $s := .Params.shop | default dict -}}
+{{- $products := slice -}}
+{{- $seen := dict -}}
+{{- range $i, $p := .Params.produkte -}}
+  {{- $id := $p.id | default "" | string -}}
+  {{- if not (findRE `^[a-z0-9][a-z0-9-]*$` $id) -}}
+    {{- errorf "shop.md: Produkt Nr. %d hat keine gültige id (nur a-z, 0-9, -): %q" (add $i 1) $id -}}
+  {{- end -}}
+  {{- if index $seen $id -}}
+    {{- errorf "shop.md: Produkt-id %q ist doppelt" $id -}}
+  {{- end -}}
+  {{- $seen = merge $seen (dict $id true) -}}
+  {{- if not $p.name -}}{{- errorf "shop.md: Produkt %q hat keinen name" $id -}}{{- end -}}
+  {{- $price := float ($p.preis | default 0) -}}
+  {{- if le $price 0.0 -}}{{- errorf "shop.md: Produkt %q hat keinen gültigen preis" $id -}}{{- end -}}
+  {{- $available := true -}}
+  {{- if isset $p "verfuegbar" -}}{{- $available = $p.verfuegbar -}}{{- end -}}
+  {{- $products = $products | append (dict
+        "id" $id
+        "name" ($p.name | string)
+        "price" $price
+        "price_cents" (int (math.Round (mul $price 100)))
+        "available" $available
+        "image" ($p.bild | default "")
+        "description" ($p.beschreibung | default "")
+     ) -}}
+{{- end -}}
+{{- return dict
+      "currency" ($s.waehrung | default "EUR")
+      "shipping_cents" (int (math.Round (mul (float ($s.versandkosten | default 0)) 100)))
+      "free_shipping_from_cents" (int (math.Round (mul (float ($s.versandkostenfrei_ab | default 0)) 100)))
+      "shipping_countries" ($s.lieferlaender | default (slice "DE"))
+      "delivery" ($s.lieferzeit | default "")
+      "tax_note" ($s.steuerhinweis | default "")
+      "products" $products
+-}}
