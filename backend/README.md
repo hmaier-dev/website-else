@@ -32,7 +32,7 @@ Die Seite `/manage` (Hugo, `layouts/manage.html`) lädt ihre Inhalte per htmx vo
 |---|---|
 | Termine | `GET/POST /manage/api/events`, `GET/PUT/DELETE /manage/api/events/{id}`, `GET /manage/api/events/{id}/edit`, `POST /manage/api/events/bulk` (YAML-Upload) |
 | Bestellungen | `GET /manage/api/orders?status=paid\|shipped`, `POST /manage/api/orders/{id}/shipped` |
-| Nachrichten | `GET /manage/api/messages`, `POST /manage/api/messages/{id}/read` |
+| Nachrichten | `GET /manage/api/messages?view=inbox\|archived`, `GET /manage/api/messages/badge`, `POST /manage/api/messages/{id}/{read\|unread\|archive\|unarchive}`, `DELETE /manage/api/messages/{id}` |
 
 **Anmeldung:** Traefik schützt `/manage` und `/manage/api` per ForwardAuth mit Authentik (siehe `compose.example.yml`).
 Zusätzlich lässt das Backend Anfragen an `/manage/api` nur durch, wenn der Header `X-authentik-username` gesetzt ist
@@ -44,6 +44,31 @@ Lokal ohne Authentik:
 MANAGE_AUTH_HEADER= ./bin/backend        # Prüfung aus (nur lokal!)
 curl -H "X-authentik-username: else" localhost:3000/manage/api/events   # oder Header mitschicken
 ```
+
+## Kontaktformular
+- Anfragen landen in der Tabelle `mailbox` und erscheinen in `/manage` → „Nachrichten“
+  (Posteingang / Erledigt, gelesen/ungelesen, löschen). Der Reiter zeigt die Zahl der ungelesenen Nachrichten.
+- Das Backend prüft die Eingaben (Pflichtfelder, gültige E-Mail, max. 5000 Zeichen).
+- Spam-Falle: Das unsichtbare Feld `website` füllen nur Bots aus. Solche Anfragen werden still verworfen.
+- Nachrichteninhalte werden nicht mehr ins Log geschrieben.
+
+## E-Mail-Benachrichtigung (optional)
+Bei jeder neuen Anfrage und jeder bezahlten Bestellung kann das Backend eine Mail verschicken.
+Bei Anfragen ist `Reply-To` die Absenderin – „Antworten“ im Mailprogramm schreibt ihr also direkt.
+Ohne `SMTP_HOST` ist die Funktion aus.
+
+| Variable | Beispiel | |
+|---|---|---|
+| `SMTP_HOST` | `smtp.example.org` | Pflicht, sonst keine Mails |
+| `SMTP_PORT` | `587` | 587 = STARTTLS (Standard), 465 = TLS |
+| `SMTP_USERNAME` | `website@elisa-adam.com` | Login beim Mailanbieter |
+| `SMTP_PASSWORD` | | Passwort bzw. App-Passwort, **nicht ins Git** |
+| `SMTP_FROM` | `website@elisa-adam.com` | Absender (Standard: `SMTP_USERNAME`) |
+| `NOTIFY_EMAIL` | `else@example.org, hendrik@example.org` | Empfänger, mit Komma getrennt |
+| `SITE_URL` | `https://elisa-adam.com` | für den Link zur Verwaltung in der Mail |
+
+Ohne Verschlüsselung wird nichts verschickt (`SMTP_INSECURE=true` nur für lokale Tests mit z. B. Mailpit).
+Schlägt der Versand fehl, steht das im Log; die Nachricht selbst ist trotzdem gespeichert.
 
 ## Shop mit PayPal
 Die Produkte stehen in `content/shop.md`. Hugo erzeugt daraus zusätzlich `/shop/index.json`.
