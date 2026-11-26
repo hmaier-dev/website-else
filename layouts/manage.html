@@ -4,15 +4,15 @@
   Traefik + Authentik schützen /manage und /manage/api.
 */}}
 <section class="border-b-2 border-ink bg-lilac-300">
-	<div class="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4 py-10 sm:px-6">
+	<div class="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4 py-5 sm:px-6 sm:py-10">
 		<div>
-			<span class="sticker -rotate-2 bg-white">{{ .Params.kicker }}</span>
-			<h1 class="mt-4 text-5xl font-extrabold tracking-tight sm:text-6xl">{{ .Title }}</h1>
+			<span class="sticker -rotate-2 bg-white max-sm:hidden">{{ .Params.kicker }}</span>
+			<h1 class="text-4xl font-extrabold tracking-tight sm:mt-4 sm:text-6xl">{{ .Title }}</h1>
 		</div>
-		<nav class="flex flex-wrap gap-2" role="tablist" aria-label="Bereiche">
+		<nav class="grid w-full grid-cols-3 gap-2 sm:flex sm:w-auto sm:flex-wrap" role="tablist" aria-label="Bereiche">
 			{{ range slice (slice "termine" "Termine") (slice "bestellungen" "Bestellungen") (slice "nachrichten" "Nachrichten") }}
 			<a href="{{ $.RelPermalink }}#{{ index . 0 }}" role="tab" data-tab="{{ index . 0 }}"
-			   class="manage-tab rounded-full border-2 border-ink bg-white px-5 py-2.5 font-headline font-bold shadow-pop-sm hover:bg-lime aria-selected:bg-ink aria-selected:text-paper">{{ index . 1 }}{{ if eq (index . 0) "nachrichten" }}<span hx-get="/manage/api/messages/badge" hx-trigger="load, messages-changed from:body" hx-swap="innerHTML"></span>{{ end }}</a>
+			   class="manage-tab relative flex min-h-11 items-center justify-center gap-1 whitespace-nowrap rounded-full border-2 border-ink bg-white px-2 py-2 text-sm font-headline font-bold shadow-pop-sm hover:bg-lime aria-selected:bg-ink aria-selected:text-paper sm:px-5 sm:py-2.5 sm:text-base">{{ index . 1 }}{{ if eq (index . 0) "nachrichten" }}<span class="max-sm:absolute max-sm:-right-1.5 max-sm:-top-2.5 max-sm:[&>span]:ml-0" hx-get="/manage/api/messages/badge" hx-trigger="load, messages-changed from:body" hx-swap="innerHTML"></span>{{ end }}</a>
 			{{ end }}
 		</nav>
 	</div>
