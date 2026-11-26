@@ -92,18 +92,43 @@
 		})
 
 		// Fehler vom Backend sichtbar machen (z. B. abgelaufene Anmeldung)
+		const banner = document.getElementById("manage-error")
+		const showLogin = () => {
+			banner.replaceChildren(
+				"Du bist nicht (mehr) angemeldet. ",
+				Object.assign(document.createElement("button"), {
+					type: "button",
+					textContent: "Neu anmelden →",
+					className: "ml-2 rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold",
+					onclick: () => location.reload(),
+				}),
+			)
+			banner.hidden = false
+		}
+		const showText = text => { banner.textContent = text; banner.hidden = false }
+
 		document.body.addEventListener("htmx:responseError", e => {
-			const el = document.getElementById("manage-error")
 			const status = e.detail.xhr.status
-			el.textContent = status === 401
-				? "Du bist nicht (mehr) angemeldet. Bitte lade die Seite neu."
-				: "Da ist etwas schiefgelaufen (" + status + "): " + (e.detail.xhr.responseText || "").slice(0, 200)
-			el.hidden = false
+			if (status === 401) return showLogin()
+			showText("Da ist etwas schiefgelaufen (" + status + "): " + (e.detail.xhr.responseText || "").slice(0, 200))
 		})
-		document.body.addEventListener("htmx:sendError", () => {
-			const el = document.getElementById("manage-error")
-			el.textContent = "Der Server ist gerade nicht erreichbar."
-			el.hidden = false
+
+		// Läuft die Anmeldung ab, leitet Authentik Hintergrund-Anfragen zum Login um.
+		// Das blockt der Browser (CORS) und htmx meldet nur "sendError".
+		// Deshalb einmal nachfragen: Weiterleitung → Login nötig, sonst ist der Server weg.
+		let checking = false
+		document.body.addEventListener("htmx:sendError", async () => {
+			if (checking || !banner.hidden) return
+			checking = true
+			try {
+				const r = await fetch("/manage/api/messages/badge", { redirect: "manual", cache: "no-store" })
+				if (r.type === "opaqueredirect" || r.status === 401) showLogin()
+				else showText("Da ist etwas schiefgelaufen. Bitte lade die Seite neu.")
+			} catch (_) {
+				showText("Der Server ist gerade nicht erreichbar.")
+			} finally {
+				checking = false
+			}
 		})
 	})()
 </script>

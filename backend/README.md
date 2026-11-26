@@ -39,6 +39,16 @@ Zusätzlich lässt das Backend Anfragen an `/manage/api` nur durch, wenn der Hea
 (den setzt Authentik nach dem Login). Fehlt die Middleware in Traefik, bleibt die Verwaltung also zu (HTTP 401) statt offen zu sein.
 Wichtig: In der Authentik-Middleware `authResponseHeaders=X-authentik-username,...` setzen, damit Traefik den Header weiterreicht.
 
+**Beide Routen brauchen die Middleware** – die Seite `/manage` *und* die API `/manage/api`.
+Ist nur die API geschützt, lädt die Seite ohne Login, und die Hintergrund-Anfragen (htmx) werden von Authentik
+zum Login umgeleitet. Das blockt der Browser mit
+`... has been blocked by CORS policy: Redirect is not allowed for a preflight request`.
+Erst der Aufruf der Seite selbst leitet zum Login weiter und setzt das Cookie für die Domain.
+
+Außerdem muss auf der Website-Domain der Pfad `/outpost.goauthentik.io/` zum Authentik-Server geroutet werden
+und die Anwendung dem (Embedded) Outpost zugewiesen sein.
+Läuft die Anmeldung ab, während `/manage` offen ist, zeigt die Seite „Du bist nicht (mehr) angemeldet“ mit einem Knopf zum Neu-Anmelden.
+
 Lokal ohne Authentik:
 ```bash
 MANAGE_AUTH_HEADER= ./bin/backend        # Prüfung aus (nur lokal!)

@@ -44,6 +44,7 @@ services:
       - "traefik.http.routers.manage-page.priority=25"
       - "traefik.http.routers.manage-page.rule=Host(`localhost`) && (PathPrefix(`/manage`) || PathPrefix(`/events/manage`))"
       - "traefik.http.routers.manage-page.entrypoints=web"
+      ## WICHTIG: Seite UND API (unten) brauchen die Middleware, sonst blockt der Browser die Login-Weiterleitung (CORS)
       # - "traefik.http.routers.manage-page.middlewares=authentik@docker"
       # - "traefik.http.routers.website.entrypoints=websecure"
       # - "traefik.http.routers.website.tls=true"
