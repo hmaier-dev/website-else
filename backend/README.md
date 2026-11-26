@@ -70,6 +70,45 @@ Ohne `SMTP_HOST` ist die Funktion aus.
 Ohne Verschlüsselung wird nichts verschickt (`SMTP_INSECURE=true` nur für lokale Tests mit z. B. Mailpit).
 Schlägt der Versand fehl, steht das im Log; die Nachricht selbst ist trotzdem gespeichert.
 
+### Mit Proton Mail
+
+**Weg A – SMTP-Token (empfohlen, keine Bridge nötig).**
+Funktioniert mit bezahltem Proton-Tarif und einer Adresse auf **eigener Domain** (z. B. `website@elisa-adam.com`),
+nicht mit `@proton.me`/`@protonmail.com`. Welche Tarife genau berechtigt sind, steht auf
+<https://proton.me/support/smtp-submission>.
+1. Domain `elisa-adam.com` in Proton hinzufügen (Einstellungen → Domainnamen) und die angezeigten DNS-Einträge
+   (MX, SPF, DKIM, DMARC) beim DNS-Anbieter eintragen.
+2. Adresse `website@elisa-adam.com` anlegen.
+3. Einstellungen → IMAP/SMTP → **SMTP-Tokens** → Token für diese Adresse erzeugen.
+4. Im Backend:
+   ```
+   SMTP_HOST=smtp.protonmail.ch
+   SMTP_PORT=587
+   SMTP_USERNAME=website@elisa-adam.com
+   SMTP_PASSWORD=<SMTP-Token>
+   NOTIFY_EMAIL=<wohin die Benachrichtigungen gehen>
+   ```
+
+**Weg B – Proton Mail Bridge** (wenn keine eigene Domain bei Proton).
+Die Bridge muss dauerhaft laufen und angemeldet sein, z. B. als eigener Container im selben Docker-Netz.
+Sie verwendet ein **selbstsigniertes Zertifikat**, deshalb:
+1. Bridge einmalig interaktiv anmelden; Bridge zeigt danach SMTP-Benutzername und ein **Bridge-Passwort** an
+   (nicht das Proton-Passwort).
+2. Das TLS-Zertifikat der Bridge exportieren (Bridge-Einstellungen → Erweitert → TLS-Zertifikate exportieren;
+   bei Docker-Images liegt es meist im Daten-Volume) und in den Backend-Container mounten.
+3. Im Backend:
+   ```
+   SMTP_HOST=protonmail-bridge          # Containername der Bridge
+   SMTP_PORT=1025                       # SMTP-Port der Bridge (STARTTLS)
+   SMTP_USERNAME=<von der Bridge angezeigt>
+   SMTP_PASSWORD=<Bridge-Passwort>
+   SMTP_FROM=<deine Proton-Adresse>
+   SMTP_TLS_CA_FILE=/certs/bridge-cert.pem
+   SMTP_TLS_SERVER_NAME=127.0.0.1       # Name im Bridge-Zertifikat, falls abweichend vom Host
+   ```
+   Lässt sich das Zertifikat nicht exportieren, geht notfalls `SMTP_TLS_SKIP_VERIFY=true` –
+   aber nur, wenn die Bridge ausschließlich im internen Docker-Netz erreichbar ist.
+
 ## Shop mit PayPal
 Die Produkte stehen in `content/shop.md`. Hugo erzeugt daraus zusätzlich `/shop/index.json`.
 Das Backend lädt diesen Katalog (`SHOP_CATALOG_URL`) und rechnet **jeden Preis selbst nach** – der Browser schickt nur Produkt-IDs und Mengen.
