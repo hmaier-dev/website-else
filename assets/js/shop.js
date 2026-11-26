@@ -1,8 +1,9 @@
 // Warenkorb und PayPal-Checkout für /shop.
 //
 // Der Warenkorb liegt nur im Browser (localStorage). Beim Bezahlen werden nur
-// Produkt-IDs und Mengen ans Backend geschickt – die Preise rechnet das Backend
-// selbst aus dem Katalog nach.
+// Produkt-IDs, Mengen und – bei frei wählbaren Preisen – der gewählte Preis
+// ans Backend geschickt. Das Backend rechnet alles mit dem Katalog nach und
+// akzeptiert Wunschpreise nur innerhalb der Spanne aus content/shop.md.
 
 const STORAGE_KEY = 'else-cart'
 const MAX_QTY = 10
@@ -12,18 +13,25 @@ const products = Object.fromEntries(data.products.map(p => [p.id, p]))
 const money = new Intl.NumberFormat('de-DE', { style: 'currency', currency: data.currency })
 const euro = cents => money.format(cents / 100)
 const $ = id => document.getElementById(id)
+const flexible = p => p.min_cents > 0 && p.max_cents > 0
+const inRange = (p, cents) => Number.isInteger(cents) && cents >= p.min_cents && cents <= p.max_cents
 
 // --- Warenkorb-Speicher ------------------------------------------------------
+// Format: { "produkt-id": { q: Menge, p: Preis in Cent } }
 
 function loadCart() {
 	let raw = {}
 	try { raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {} } catch (_) { /* privater Modus o. ä. */ }
 	const cart = {}
-	for (const [id, qty] of Object.entries(raw)) {
+	for (const [id, entry] of Object.entries(raw)) {
+		const p = products[id]
+		// alte Speicherform { id: Menge } weiter lesen
+		const q = typeof entry === 'number' ? entry : entry && entry.q
 		// Artikel, die es nicht mehr gibt oder die ausverkauft sind, still entfernen
-		if (products[id] && products[id].available && Number.isInteger(qty) && qty > 0) {
-			cart[id] = Math.min(qty, MAX_QTY)
-		}
+		if (!p || !p.available || !Number.isInteger(q) || q < 1) continue
+		let price = p.price_cents
+		if (flexible(p) && entry && inRange(p, entry.p)) price = entry.p
+		cart[id] = { q: Math.min(q, MAX_QTY), p: price }
 	}
 	return cart
 }
@@ -37,21 +45,50 @@ function saveCart() {
 
 function setQty(id, qty) {
 	if (qty <= 0) delete cart[id]
-	else cart[id] = Math.min(qty, MAX_QTY)
+	else cart[id] = { q: Math.min(qty, MAX_QTY), p: cart[id] ? cart[id].p : products[id].price_cents }
 	saveCart()
 }
 
 function totals() {
 	let count = 0
 	let subtotal = 0
-	for (const [id, qty] of Object.entries(cart)) {
-		count += qty
-		subtotal += products[id].price_cents * qty
+	for (const { q, p } of Object.values(cart)) {
+		count += q
+		subtotal += p * q
 	}
 	const free = data.free_shipping_from_cents > 0 && subtotal >= data.free_shipping_from_cents
 	const shipping = count === 0 || free ? 0 : data.shipping_cents
 	return { count, subtotal, shipping, total: subtotal + shipping }
 }
+
+// --- Preis selbst wählen -----------------------------------------------------
+
+// gewählter Preis aus dem Eingabefeld, in Cent; null wenn ungültig
+function chosenPrice(id) {
+	const input = document.querySelector(`[data-price-for="${CSS.escape(id)}"]`)
+	if (!input) return products[id].price_cents
+	const cents = Math.round(parseFloat(String(input.value).replace(',', '.')) * 100)
+	return inRange(products[id], cents) ? cents : null
+}
+
+// Zahlenfeld und Schieberegler gegenseitig abgleichen
+document.addEventListener('input', e => {
+	const slider = e.target.closest('[data-slider-for]')
+	if (slider) {
+		const input = document.querySelector(`[data-price-for="${CSS.escape(slider.dataset.sliderFor)}"]`)
+		input.value = slider.value
+		input.setCustomValidity('')
+		return
+	}
+	const input = e.target.closest('[data-price-for]')
+	if (input) {
+		const id = input.dataset.priceFor
+		const ok = chosenPrice(id) !== null
+		input.setCustomValidity(ok ? '' : `Bitte zwischen ${euro(products[id].min_cents)} und ${euro(products[id].max_cents)}`)
+		const slider = document.querySelector(`[data-slider-for="${CSS.escape(id)}"]`)
+		if (ok && slider) slider.value = input.value
+	}
+})
 
 // --- Anzeige -----------------------------------------------------------------
 
@@ -67,18 +104,18 @@ function render() {
 	$('cart-fab').hidden = t.count === 0
 	$('cart-fab-total').textContent = `(${t.count}) · ${euro(t.total)}`
 
-	$('cart-lines').innerHTML = Object.entries(cart).map(([id, qty]) => {
+	$('cart-lines').innerHTML = Object.entries(cart).map(([id, { q, p: price }]) => {
 		const p = products[id]
 		return `
 			<li class="flex items-center gap-3 py-3">
 				<div class="min-w-0 flex-1">
 					<p class="font-semibold leading-tight">${esc(p.name)}</p>
-					<p class="text-sm text-ink/60">${euro(p.price_cents)}</p>
+					<p class="text-sm text-ink/60">${euro(price)}${flexible(p) ? ' · dein Preis' : ''}</p>
 				</div>
 				<div class="flex items-center rounded-full border-2 border-ink">
 					<button type="button" data-dec="${esc(id)}" class="h-8 w-8 rounded-full font-bold hover:bg-lilac-200" aria-label="Eins weniger">−</button>
-					<span class="w-6 text-center font-bold" aria-label="Menge">${qty}</span>
-					<button type="button" data-inc="${esc(id)}" class="h-8 w-8 rounded-full font-bold hover:bg-lilac-200 disabled:opacity-30" aria-label="Eins mehr" ${qty >= MAX_QTY ? 'disabled' : ''}>+</button>
+					<span class="w-6 text-center font-bold" aria-label="Menge">${q}</span>
+					<button type="button" data-inc="${esc(id)}" class="h-8 w-8 rounded-full font-bold hover:bg-lilac-200 disabled:opacity-30" aria-label="Eins mehr" ${q >= MAX_QTY ? 'disabled' : ''}>+</button>
 				</div>
 			</li>`
 	}).join('')
@@ -103,15 +140,24 @@ document.addEventListener('click', e => {
 	const add = e.target.closest('[data-add]')
 	if (add) {
 		const id = add.dataset.add
-		setQty(id, (cart[id] || 0) + 1)
+		const price = chosenPrice(id)
+		if (price === null) {
+			const input = document.querySelector(`[data-price-for="${CSS.escape(id)}"]`)
+			input.reportValidity()
+			return
+		}
+		// Bei frei wählbarem Preis gilt der zuletzt gewählte Preis für alle Exemplare
+		cart[id] = { q: Math.min((cart[id] ? cart[id].q : 0) + 1, MAX_QTY), p: price }
+		saveCart()
 		add.textContent = 'Hinzugefügt ✓'
 		setTimeout(() => { add.textContent = 'In den Warenkorb' }, 1200)
 		return
 	}
+	const qty = id => (cart[id] ? cart[id].q : 0)
 	const inc = e.target.closest('[data-inc]')
-	if (inc) return setQty(inc.dataset.inc, (cart[inc.dataset.inc] || 0) + 1)
+	if (inc) return setQty(inc.dataset.inc, qty(inc.dataset.inc) + 1)
 	const dec = e.target.closest('[data-dec]')
-	if (dec) return setQty(dec.dataset.dec, (cart[dec.dataset.dec] || 0) - 1)
+	if (dec) return setQty(dec.dataset.dec, qty(dec.dataset.dec) - 1)
 })
 
 // --- PayPal ------------------------------------------------------------------
@@ -143,7 +189,7 @@ function loadPayPal() {
 
 			createOrder: async () => {
 				showMessage('')
-				const items = Object.entries(cart).map(([id, quantity]) => ({ id, quantity }))
+				const items = Object.entries(cart).map(([id, { q, p }]) => ({ id, quantity: q, price_cents: p }))
 				const r = await fetch('/shop/api/orders', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },

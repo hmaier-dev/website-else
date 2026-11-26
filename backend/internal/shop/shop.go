@@ -64,6 +64,8 @@ type cartRequest struct {
 	Items []struct {
 		ID       string `json:"id"`
 		Quantity int64  `json:"quantity"`
+		// Nur bei Produkten mit frei wählbarem Preis beachtet, sonst ignoriert.
+		PriceCents int64 `json:"price_cents"`
 	} `json:"items"`
 }
 
@@ -160,8 +162,16 @@ func priceCart(c *Catalog, req cartRequest) ([]OrderLine, int64, error) {
 			return nil, 0, errors.New("Ein Artikel ist doppelt im Warenkorb.")
 		}
 		seen[p.ID] = true
-		lines = append(lines, OrderLine{ID: p.ID, Name: p.Name, Quantity: it.Quantity, PriceCents: p.PriceCents})
-		total += p.PriceCents * it.Quantity
+		price := p.PriceCents // fester Preis aus dem Katalog – was der Browser schickt, zählt nicht
+		if p.Flexible() {
+			if it.PriceCents < p.MinCents || it.PriceCents > p.MaxCents {
+				return nil, 0, fmt.Errorf("Für %s kannst du einen Preis zwischen %s und %s wählen.",
+					p.Name, FormatEuro(p.MinCents), FormatEuro(p.MaxCents))
+			}
+			price = it.PriceCents
+		}
+		lines = append(lines, OrderLine{ID: p.ID, Name: p.Name, Quantity: it.Quantity, PriceCents: price})
+		total += price * it.Quantity
 	}
 	return lines, total, nil
 }

@@ -16,7 +16,16 @@ Fehler brechen den Hugo-Build mit einer verständlichen Meldung ab.
   {{- end -}}
   {{- $seen = merge $seen (dict $id true) -}}
   {{- if not $p.name -}}{{- errorf "shop.md: Produkt %q hat keinen name" $id -}}{{- end -}}
-  {{- $price := float ($p.preis | default 0) -}}
+  {{- /* Fester Preis: preis. Frei wählbar: preis_min + preis_max (preis = Vorschlag, optional) */ -}}
+  {{- $min := float ($p.preis_min | default 0) -}}
+  {{- $max := float ($p.preis_max | default 0) -}}
+  {{- $flexible := or (gt $min 0.0) (gt $max 0.0) -}}
+  {{- $price := float ($p.preis | default $min) -}}
+  {{- if $flexible -}}
+    {{- if or (le $min 0.0) (le $max 0.0) -}}{{- errorf "shop.md: Produkt %q braucht preis_min UND preis_max" $id -}}{{- end -}}
+    {{- if lt $max $min -}}{{- errorf "shop.md: Produkt %q: preis_max ist kleiner als preis_min" $id -}}{{- end -}}
+    {{- if or (lt $price $min) (gt $price $max) -}}{{- errorf "shop.md: Produkt %q: preis (Vorschlag) liegt nicht zwischen preis_min und preis_max" $id -}}{{- end -}}
+  {{- end -}}
   {{- if le $price 0.0 -}}{{- errorf "shop.md: Produkt %q hat keinen gültigen preis" $id -}}{{- end -}}
   {{- $available := true -}}
   {{- if isset $p "verfuegbar" -}}{{- $available = $p.verfuegbar -}}{{- end -}}
@@ -25,6 +34,11 @@ Fehler brechen den Hugo-Build mit einer verständlichen Meldung ab.
         "name" ($p.name | string)
         "price" $price
         "price_cents" (int (math.Round (mul $price 100)))
+        "flexible" $flexible
+        "min" $min
+        "max" $max
+        "min_cents" (cond $flexible (int (math.Round (mul $min 100))) 0)
+        "max_cents" (cond $flexible (int (math.Round (mul $max 100))) 0)
         "available" $available
         "image" ($p.bild | default "")
         "description" ($p.beschreibung | default "")

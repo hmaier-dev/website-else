@@ -28,6 +28,7 @@ func testCatalog() *Catalog {
 			{ID: "buch", Name: "Schlicht und Dicht Kunst", PriceCents: 1400, Available: true},
 			{ID: "poster", Name: "Poster A2", PriceCents: 2500, Available: true},
 			{ID: "ausverkauft", Name: "Sticker", PriceCents: 300, Available: false},
+			{ID: "soli", Name: "Soli-Postkarten", PriceCents: 850, MinCents: 500, MaxCents: 2000, Available: true},
 		},
 	}
 }
@@ -224,5 +225,43 @@ func TestOrderNotification(t *testing.T) {
 	o := rec.orders[0]
 	if o.Number != "EE-00001" || o.Total != "32,90 €" || !strings.Contains(o.Address, "Musterstraße 1") || o.Lines[0] != "2× Schlicht und Dicht Kunst (28,00 €)" {
 		t.Errorf("Inhalt falsch: %+v", o)
+	}
+}
+
+func TestFlexiblePrice(t *testing.T) {
+	e := setup(t)
+	amount := func(id string) string {
+		return e.fake.Orders[id]["purchase_units"].([]any)[0].(map[string]any)["amount"].(map[string]any)["value"].(string)
+	}
+
+	// Gewählter Preis innerhalb der Spanne wird übernommen: 2 × 12,00 + 4,90 Versand
+	code, res := e.call(t, "POST", "/shop/api/orders", `{"items":[{"id":"soli","quantity":2,"price_cents":1200}]}`)
+	if code != http.StatusCreated || amount(res["id"]) != "28.90" {
+		t.Fatalf("HTTP %d %v, Betrag %v", code, res, amount(res["id"]))
+	}
+
+	// Außerhalb der Spanne oder ohne Preis → abgelehnt
+	for _, body := range []string{
+		`{"items":[{"id":"soli","quantity":1,"price_cents":499}]}`,
+		`{"items":[{"id":"soli","quantity":1,"price_cents":2001}]}`,
+		`{"items":[{"id":"soli","quantity":1}]}`,
+	} {
+		if code, res := e.call(t, "POST", "/shop/api/orders", body); code != http.StatusUnprocessableEntity || !strings.Contains(res["error"], "5,00 €") {
+			t.Errorf("%s → HTTP %d %v, erwartet 422 mit Spanne", body, code, res)
+		}
+	}
+
+	// Bei festen Preisen bleibt ein mitgeschickter Preis wirkungslos (1 × 14,00 + 4,90)
+	_, res = e.call(t, "POST", "/shop/api/orders", `{"items":[{"id":"buch","quantity":1,"price_cents":100}]}`)
+	if amount(res["id"]) != "18.90" {
+		t.Errorf("fester Preis manipulierbar: %v", amount(res["id"]))
+	}
+}
+
+func TestCatalogRejectsBadRange(t *testing.T) {
+	c := testCatalog()
+	c.Products = append(c.Products, Product{ID: "kaputt", Name: "x", PriceCents: 500, MinCents: 900, MaxCents: 100, Available: true})
+	if err := c.validate(); err == nil {
+		t.Error("Spanne mit max < min wurde akzeptiert")
 	}
 }

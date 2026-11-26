@@ -21,9 +21,28 @@
 				</div>
 				<div class="flex flex-1 flex-col p-6">
 					<h2 class="font-headline text-2xl font-extrabold leading-tight tracking-tight">{{ .name }}</h2>
+					{{ if .flexible }}
+					<p class="mt-2 font-headline text-xl font-bold text-lilac-700">Preis frei wählbar</p>
+					<p class="text-sm text-ink/60">zwischen {{ partial "shop/price.html" .min }} und {{ partial "shop/price.html" .max }}</p>
+					{{ else }}
 					<p class="mt-2 font-headline text-xl font-bold text-lilac-700">{{ partial "shop/price.html" .price }}</p>
+					{{ end }}
 					<div class="mt-3 flex-1 space-y-2 text-ink/80 [&_strong]:text-ink">{{ .description | markdownify }}</div>
 					{{ if .available }}
+					{{ if .flexible }}
+					<label class="mt-5 block">
+						<span class="mb-1 block font-headline font-bold">Dein Preis</span>
+						<span class="flex items-center gap-2">
+							<input type="number" data-price-for="{{ .id }}" inputmode="decimal"
+							       min="{{ .min }}" max="{{ .max }}" step="0.5" value="{{ printf "%.2f" .price }}"
+							       class="field !w-32 text-right font-headline text-lg font-bold" aria-describedby="range-{{ .id }}">
+							<span class="font-headline text-lg font-bold">€</span>
+						</span>
+						<input type="range" data-slider-for="{{ .id }}" min="{{ .min }}" max="{{ .max }}" step="0.5" value="{{ printf "%.2f" .price }}"
+						       class="mt-3 w-full accent-lilac-600" aria-label="Preis wählen">
+						<span id="range-{{ .id }}" class="flex justify-between text-xs text-ink/60"><span>{{ partial "shop/price.html" .min }}</span><span>{{ partial "shop/price.html" .max }}</span></span>
+					</label>
+					{{ end }}
 					<button type="button" data-add="{{ .id }}" class="btn-accent mt-6 w-full">In den Warenkorb</button>
 					{{ else }}
 					<button type="button" disabled class="btn mt-6 w-full cursor-not-allowed bg-paper text-ink/50 !shadow-none">Gerade nicht verfügbar</button>
@@ -89,7 +108,7 @@
 
 {{- $public := slice -}}
 {{- range $c.products -}}
-  {{- $public = $public | append (dict "id" .id "name" .name "price_cents" .price_cents "available" .available) -}}
+  {{- $public = $public | append (dict "id" .id "name" .name "price_cents" .price_cents "min_cents" .min_cents "max_cents" .max_cents "available" .available) -}}
 {{- end -}}
 {{- $data := dict
       "currency" $c.currency
