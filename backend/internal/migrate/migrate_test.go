@@ -3,6 +3,7 @@ package migrate
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"testing"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -28,5 +29,34 @@ func TestAddsMissingColumn(t *testing.T) {
 	}
 	if name != "Max" || archived != 0 {
 		t.Errorf("got %q %d", name, archived)
+	}
+}
+
+func TestCleansLinks(t *testing.T) {
+	ctx := context.Background()
+	db, _ := sql.Open("sqlite3", ":memory:")
+	db.SetMaxOpenConns(1)
+	db.Exec(`CREATE TABLE mailbox (id INTEGER PRIMARY KEY, name TEXT, IsRead INT)`)
+	db.Exec(`CREATE TABLE events (id INTEGER PRIMARY KEY, link TEXT)`)
+	for _, l := range []any{"null", " NULL ", "", "  https://kolinar.net", "Eintritt: Spendenbasis", nil} {
+		db.Exec(`INSERT INTO events (link) VALUES (?)`, l)
+	}
+	if err := Run(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	rows, _ := db.Query(`SELECT link FROM events ORDER BY id`)
+	var got []string
+	for rows.Next() {
+		var l sql.NullString
+		rows.Scan(&l)
+		if l.Valid {
+			got = append(got, l.String)
+		} else {
+			got = append(got, "<NULL>")
+		}
+	}
+	want := []string{"<NULL>", "<NULL>", "<NULL>", "https://kolinar.net", "Eintritt: Spendenbasis", "<NULL>"}
+	if strings.Join(got, "|") != strings.Join(want, "|") {
+		t.Errorf("got %q\nwant %q", got, want)
 	}
 }

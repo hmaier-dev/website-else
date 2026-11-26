@@ -210,6 +210,8 @@ type Event struct {
 	City  string
 	// Coordinates string
 	Link *string
+	// Hinweis statt Link (z. B. "Eintritt: Spendenbasis"), siehe links.go
+	Note *string `json:",omitempty"`
 	// Hash        string
 	Separator *string
 	Upcomming *bool
@@ -237,8 +239,20 @@ func constructEvents(rows []EventRow) []Event {
 			Place: r.GetPlace(),
 			City:  r.GetCity(),
 			// Coordinates: r.GetCoordinates(),
-			Link: r.GetLink(),
+			Link: nil,
 			// Hash:        r.GetHash(),
+		}
+	}
+	// Link-Feld aufteilen: echte Links bleiben Link, Text wird Hinweis, "null" verschwindet
+	for i, r := range rows {
+		if l := r.GetLink(); l != nil {
+			link, note := splitLink(*l)
+			if link != "" {
+				events[i].Link = &link
+			}
+			if note != "" {
+				events[i].Note = &note
+			}
 		}
 	}
 	return events

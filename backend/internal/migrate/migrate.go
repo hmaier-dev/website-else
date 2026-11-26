@@ -21,8 +21,27 @@ var columns = []column{
 	{"mailbox", "archived", "INT NOT NULL DEFAULT 0"},
 }
 
-// Run legt fehlende Spalten an. Mehrfaches Ausführen ist unbedenklich.
+// Datenbereinigungen, die bei jedem Start laufen dürfen (idempotent).
+var dataFixes = []struct{ Name, SQL string }{
+	// Altdaten aus der früheren Tabellen-Verwaltung: wörtlich "null" oder nur Leerzeichen als Link
+	{"Termine: leere/\"null\"-Links entfernt", `UPDATE events SET link = NULL WHERE link IS NOT NULL AND (trim(link) = '' OR lower(trim(link)) = 'null')`},
+	{"Termine: Leerzeichen um Links entfernt", `UPDATE events SET link = trim(link) WHERE link IS NOT NULL AND link <> trim(link)`},
+}
+
+// Run legt fehlende Spalten an und bereinigt Altdaten. Mehrfaches Ausführen ist unbedenklich.
 func Run(ctx context.Context, db *sql.DB) error {
+	defer func() {
+		for _, f := range dataFixes {
+			res, err := db.ExecContext(ctx, f.SQL)
+			if err != nil {
+				log.Printf("migrate: %s fehlgeschlagen: %v", f.Name, err)
+				continue
+			}
+			if n, _ := res.RowsAffected(); n > 0 {
+				log.Printf("migrate: %s (%d)", f.Name, n)
+			}
+		}
+	}()
 	for _, c := range columns {
 		ok, err := hasColumn(ctx, db, c.Table, c.Name)
 		if err != nil {
