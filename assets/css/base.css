@@ -217,6 +217,29 @@
   @apply btn bg-ink text-paper;
 }
 
+
+/* --------------------------------------------------------------------------
+   Scrollbereich mit Scrollleiste im Website-Stil (Flieder auf hellem Flieder)
+   -------------------------------------------------------------------------- */
+@utility scroll-else {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: auto;
+  scrollbar-color: var(--color-lilac-500) var(--color-lilac-100);
+  &::-webkit-scrollbar { width: 14px; }
+  &::-webkit-scrollbar-track {
+    background: var(--color-lilac-100);
+    border-radius: 9999px;
+    border: 2px solid var(--color-ink);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-lilac-500);
+    border-radius: 9999px;
+    border: 2px solid var(--color-ink);
+  }
+  &::-webkit-scrollbar-thumb:hover { background: var(--color-lilac-600); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
