@@ -96,6 +96,41 @@ func (q *Queries) CountEvents(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const createOrder = `-- name: CreateOrder :exec
+
+INSERT INTO orders (
+  paypal_order_id, status, items, item_total_cents, shipping_cents, total_cents, currency, created_at
+) VALUES (
+  ?, 'created', ?, ?, ?, ?, ?, ?
+)
+`
+
+type CreateOrderParams struct {
+	PaypalOrderID  string
+	Items          string
+	ItemTotalCents int64
+	ShippingCents  int64
+	TotalCents     int64
+	Currency       string
+	CreatedAt      time.Time
+}
+
+// ################################################################
+// SECTION for orders
+// ################################################################
+func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) error {
+	_, err := q.db.ExecContext(ctx, createOrder,
+		arg.PaypalOrderID,
+		arg.Items,
+		arg.ItemTotalCents,
+		arg.ShippingCents,
+		arg.TotalCents,
+		arg.Currency,
+		arg.CreatedAt,
+	)
+	return err
+}
+
 const deleteEventByID = `-- name: DeleteEventByID :exec
 DELETE FROM events
 WHERE id = ?
@@ -246,6 +281,35 @@ func (q *Queries) GetEventByID(ctx context.Context, id int64) (GetEventByIDRow, 
 	return i, err
 }
 
+const getEventFull = `-- name: GetEventFull :one
+SELECT id, name, date, begin, place, city, link FROM events WHERE id = ?
+`
+
+type GetEventFullRow struct {
+	ID    int64
+	Name  string
+	Date  time.Time
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+}
+
+func (q *Queries) GetEventFull(ctx context.Context, id int64) (GetEventFullRow, error) {
+	row := q.db.QueryRowContext(ctx, getEventFull, id)
+	var i GetEventFullRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Date,
+		&i.Begin,
+		&i.Place,
+		&i.City,
+		&i.Link,
+	)
+	return i, err
+}
+
 const getIDsFromEvent = `-- name: GetIDsFromEvent :many
 SELECT id FROM events WHERE name = ? AND date = ? AND city = ? AND place = ? ORDER by id DESC
 `
@@ -286,6 +350,33 @@ func (q *Queries) GetIDsFromEvent(ctx context.Context, arg GetIDsFromEventParams
 	return items, nil
 }
 
+const getOrderByPayPalID = `-- name: GetOrderByPayPalID :one
+SELECT id, paypal_order_id, status, items, item_total_cents, shipping_cents, total_cents, currency, payer_name, payer_email, shipping_address, capture_id, created_at, paid_at, shipped_at FROM orders WHERE paypal_order_id = ?
+`
+
+func (q *Queries) GetOrderByPayPalID(ctx context.Context, paypalOrderID string) (Order, error) {
+	row := q.db.QueryRowContext(ctx, getOrderByPayPalID, paypalOrderID)
+	var i Order
+	err := row.Scan(
+		&i.ID,
+		&i.PaypalOrderID,
+		&i.Status,
+		&i.Items,
+		&i.ItemTotalCents,
+		&i.ShippingCents,
+		&i.TotalCents,
+		&i.Currency,
+		&i.PayerName,
+		&i.PayerEmail,
+		&i.ShippingAddress,
+		&i.CaptureID,
+		&i.CreatedAt,
+		&i.PaidAt,
+		&i.ShippedAt,
+	)
+	return i, err
+}
+
 const getUnreadMailboxItems = `-- name: GetUnreadMailboxItems :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox WHERE IsRead IS NULL ORDER BY date ASC
 `
@@ -307,6 +398,139 @@ func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]Mailbox, error) 
 			&i.Date,
 			&i.Approval,
 			&i.Isread,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listEventsPast = `-- name: ListEventsPast :many
+SELECT id, name, date, begin, place, city, link FROM events WHERE DATE(date) < DATE('now') ORDER BY date DESC, id DESC
+`
+
+type ListEventsPastRow struct {
+	ID    int64
+	Name  string
+	Date  time.Time
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+}
+
+func (q *Queries) ListEventsPast(ctx context.Context) ([]ListEventsPastRow, error) {
+	rows, err := q.db.QueryContext(ctx, listEventsPast)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListEventsPastRow
+	for rows.Next() {
+		var i ListEventsPastRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Date,
+			&i.Begin,
+			&i.Place,
+			&i.City,
+			&i.Link,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listEventsUpcoming = `-- name: ListEventsUpcoming :many
+SELECT id, name, date, begin, place, city, link FROM events WHERE DATE(date) >= DATE('now') ORDER BY date ASC, id ASC
+`
+
+type ListEventsUpcomingRow struct {
+	ID    int64
+	Name  string
+	Date  time.Time
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+}
+
+func (q *Queries) ListEventsUpcoming(ctx context.Context) ([]ListEventsUpcomingRow, error) {
+	rows, err := q.db.QueryContext(ctx, listEventsUpcoming)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListEventsUpcomingRow
+	for rows.Next() {
+		var i ListEventsUpcomingRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Date,
+			&i.Begin,
+			&i.Place,
+			&i.City,
+			&i.Link,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listOrdersByStatus = `-- name: ListOrdersByStatus :many
+SELECT id, paypal_order_id, status, items, item_total_cents, shipping_cents, total_cents, currency, payer_name, payer_email, shipping_address, capture_id, created_at, paid_at, shipped_at FROM orders WHERE status = ? ORDER BY COALESCE(paid_at, created_at) DESC
+`
+
+func (q *Queries) ListOrdersByStatus(ctx context.Context, status string) ([]Order, error) {
+	rows, err := q.db.QueryContext(ctx, listOrdersByStatus, status)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Order
+	for rows.Next() {
+		var i Order
+		if err := rows.Scan(
+			&i.ID,
+			&i.PaypalOrderID,
+			&i.Status,
+			&i.Items,
+			&i.ItemTotalCents,
+			&i.ShippingCents,
+			&i.TotalCents,
+			&i.Currency,
+			&i.PayerName,
+			&i.PayerEmail,
+			&i.ShippingAddress,
+			&i.CaptureID,
+			&i.CreatedAt,
+			&i.PaidAt,
+			&i.ShippedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -576,6 +800,59 @@ func (q *Queries) LoadEventsRandom(ctx context.Context, limit int64) ([]LoadEven
 	return items, nil
 }
 
+const markMessageRead = `-- name: MarkMessageRead :exec
+
+UPDATE mailbox SET IsRead = 1 WHERE id = ?
+`
+
+// ################################################################
+// SECTION for mailbox (Verwaltung)
+// ################################################################
+func (q *Queries) MarkMessageRead(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, markMessageRead, id)
+	return err
+}
+
+const markOrderPaid = `-- name: MarkOrderPaid :exec
+UPDATE orders SET status = 'paid', payer_name = ?, payer_email = ?, shipping_address = ?, capture_id = ?, paid_at = ?
+WHERE paypal_order_id = ? AND status = 'created'
+`
+
+type MarkOrderPaidParams struct {
+	PayerName       string
+	PayerEmail      string
+	ShippingAddress string
+	CaptureID       string
+	PaidAt          sql.NullTime
+	PaypalOrderID   string
+}
+
+func (q *Queries) MarkOrderPaid(ctx context.Context, arg MarkOrderPaidParams) error {
+	_, err := q.db.ExecContext(ctx, markOrderPaid,
+		arg.PayerName,
+		arg.PayerEmail,
+		arg.ShippingAddress,
+		arg.CaptureID,
+		arg.PaidAt,
+		arg.PaypalOrderID,
+	)
+	return err
+}
+
+const markOrderShipped = `-- name: MarkOrderShipped :exec
+UPDATE orders SET status = 'shipped', shipped_at = ? WHERE id = ? AND status = 'paid'
+`
+
+type MarkOrderShippedParams struct {
+	ShippedAt sql.NullTime
+	ID        int64
+}
+
+func (q *Queries) MarkOrderShipped(ctx context.Context, arg MarkOrderShippedParams) error {
+	_, err := q.db.ExecContext(ctx, markOrderShipped, arg.ShippedAt, arg.ID)
+	return err
+}
+
 const updateBeginByID = `-- name: UpdateBeginByID :exec
 UPDATE events SET begin = ? WHERE id = ?
 `
@@ -643,6 +920,35 @@ type UpdateDoorsByIDParams struct {
 
 func (q *Queries) UpdateDoorsByID(ctx context.Context, arg UpdateDoorsByIDParams) error {
 	_, err := q.db.ExecContext(ctx, updateDoorsByID, arg.Doors, arg.ID)
+	return err
+}
+
+const updateEvent = `-- name: UpdateEvent :exec
+UPDATE events SET name = ?, date = ?, doors = ?, begin = ?, place = ?, city = ?, link = ? WHERE id = ?
+`
+
+type UpdateEventParams struct {
+	Name  string
+	Date  time.Time
+	Doors sql.NullTime
+	Begin sql.NullTime
+	Place string
+	City  string
+	Link  sql.NullString
+	ID    int64
+}
+
+func (q *Queries) UpdateEvent(ctx context.Context, arg UpdateEventParams) error {
+	_, err := q.db.ExecContext(ctx, updateEvent,
+		arg.Name,
+		arg.Date,
+		arg.Doors,
+		arg.Begin,
+		arg.Place,
+		arg.City,
+		arg.Link,
+		arg.ID,
+	)
 	return err
 }
 

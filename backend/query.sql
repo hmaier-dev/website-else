@@ -91,3 +91,46 @@ UPDATE events SET pic = ? WHERE id = ?;
 UPDATE events SET hash = ? WHERE id = ?;
 
  
+
+-- name: GetEventFull :one
+SELECT id, name, date, begin, place, city, link FROM events WHERE id = ?;
+
+-- name: ListEventsUpcoming :many
+SELECT id, name, date, begin, place, city, link FROM events WHERE DATE(date) >= DATE('now') ORDER BY date ASC, id ASC;
+
+-- name: ListEventsPast :many
+SELECT id, name, date, begin, place, city, link FROM events WHERE DATE(date) < DATE('now') ORDER BY date DESC, id DESC;
+
+-- name: UpdateEvent :exec
+UPDATE events SET name = ?, date = ?, doors = ?, begin = ?, place = ?, city = ?, link = ? WHERE id = ?;
+
+-- ################################################################
+-- SECTION for mailbox (Verwaltung)
+-- ################################################################
+
+-- name: MarkMessageRead :exec
+UPDATE mailbox SET IsRead = 1 WHERE id = ?;
+
+-- ################################################################
+-- SECTION for orders
+-- ################################################################
+
+-- name: CreateOrder :exec
+INSERT INTO orders (
+  paypal_order_id, status, items, item_total_cents, shipping_cents, total_cents, currency, created_at
+) VALUES (
+  ?, 'created', ?, ?, ?, ?, ?, ?
+);
+
+-- name: GetOrderByPayPalID :one
+SELECT * FROM orders WHERE paypal_order_id = ?;
+
+-- name: MarkOrderPaid :exec
+UPDATE orders SET status = 'paid', payer_name = ?, payer_email = ?, shipping_address = ?, capture_id = ?, paid_at = ?
+WHERE paypal_order_id = ? AND status = 'created';
+
+-- name: MarkOrderShipped :exec
+UPDATE orders SET status = 'shipped', shipped_at = ? WHERE id = ? AND status = 'paid';
+
+-- name: ListOrdersByStatus :many
+SELECT * FROM orders WHERE status = ? ORDER BY COALESCE(paid_at, created_at) DESC;

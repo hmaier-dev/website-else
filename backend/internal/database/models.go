@@ -32,3 +32,21 @@ type Mailbox struct {
 	Approval sql.NullInt64
 	Isread   sql.NullInt64
 }
+
+type Order struct {
+	ID              int64
+	PaypalOrderID   string
+	Status          string
+	Items           string
+	ItemTotalCents  int64
+	ShippingCents   int64
+	TotalCents      int64
+	Currency        string
+	PayerName       string
+	PayerEmail      string
+	ShippingAddress string
+	CaptureID       string
+	CreatedAt       time.Time
+	PaidAt          sql.NullTime
+	ShippedAt       sql.NullTime
+}
