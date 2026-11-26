@@ -34,10 +34,16 @@ disablePathToLower = true
   [menus.main.params]
     icon = "user"
   [[menus.main]]
+    name = 'Events'
+    pageRef = '/events/overview'
+    weight = 30
+  [menus.main.params]
+    icon = "kalendar"
+  [[menus.main]]
     name = 'Angebote'
     identifier = 'angebote'
     pageRef = '/angebote'
-    weight = 30
+    weight = 40
   [menus.main.params]
     icon = "tools"
   [[menus.main]]
@@ -69,9 +75,3 @@ disablePathToLower = true
     url = "/angebote/#kinderanimation--unterhaltung-für-geburtstage-feste--festivals"
     weight = 5
 
-  [[menus.main]]
-    name = 'Events'
-    pageRef = '/events/overview'
-    weight = 40
-  [menus.main.params]
-    icon = "kalendar"
