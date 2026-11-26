@@ -1,0 +1,13 @@
+{{- /* Produktkatalog für das Backend (Preise in Cent). Wird unter /shop/index.json ausgeliefert. */ -}}
+{{- $c := partial "shop/catalog.html" . -}}
+{{- $products := slice -}}
+{{- range $c.products -}}
+  {{- $products = $products | append (dict "id" .id "name" .name "price_cents" .price_cents "available" .available) -}}
+{{- end -}}
+{{- dict
+      "currency" $c.currency
+      "shipping_cents" $c.shipping_cents
+      "free_shipping_from_cents" $c.free_shipping_from_cents
+      "shipping_countries" $c.shipping_countries
+      "products" $products
+    | jsonify (dict "indent" "  ") -}}

@@ -1,0 +1,83 @@
+{{ define "main" }}
+{{/*
+  Verwaltungsseite. Die Inhalte kommen per htmx vom Backend (/manage/api/...).
+  Traefik + Authentik schützen /manage und /manage/api.
+*/}}
+<section class="border-b-2 border-ink bg-lilac-300">
+	<div class="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4 py-10 sm:px-6">
+		<div>
+			<span class="sticker -rotate-2 bg-white">{{ .Params.kicker }}</span>
+			<h1 class="mt-4 text-5xl font-extrabold tracking-tight sm:text-6xl">{{ .Title }}</h1>
+		</div>
+		<nav class="flex flex-wrap gap-2" role="tablist" aria-label="Bereiche">
+			{{ range slice (slice "termine" "Termine") (slice "bestellungen" "Bestellungen") (slice "nachrichten" "Nachrichten") }}
+			<a href="{{ $.RelPermalink }}#{{ index . 0 }}" role="tab" data-tab="{{ index . 0 }}"
+			   class="manage-tab rounded-full border-2 border-ink bg-white px-5 py-2.5 font-headline font-bold shadow-pop-sm hover:bg-lime aria-selected:bg-ink aria-selected:text-paper">{{ index . 1 }}</a>
+			{{ end }}
+		</nav>
+	</div>
+</section>
+
+<div class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+	<p id="manage-error" hidden class="mb-8 rounded-2xl border-2 border-ink bg-lime px-5 py-4 font-semibold" role="alert"></p>
+
+	<section id="panel-termine" data-panel="termine">
+		<div hx-get="/manage/api/events" hx-trigger="load" hx-swap="outerHTML">
+			<p class="text-ink/60">Termine werden geladen …</p>
+		</div>
+
+		<details class="mt-12 rounded-3xl border-2 border-ink/20 p-6">
+			<summary class="cursor-pointer font-headline font-bold">Mehrere Termine auf einmal importieren (YAML)</summary>
+			<form action="/manage/api/events/bulk" method="post" enctype="multipart/form-data" class="mt-4 space-y-4">
+				<pre class="overflow-x-auto rounded-2xl bg-ink p-4 text-sm text-paper">- datum: 05.12.2026
+  event: Einfach Elses Late Night Show
+  ort: Moritzbastei
+  stadt: Leipzig
+  link: https://…</pre>
+				<input type="file" name="yaml" accept=".yml,.yaml" required class="field">
+				<button type="submit" class="btn-lilac">Importieren</button>
+			</form>
+		</details>
+	</section>
+
+	<section id="panel-bestellungen" data-panel="bestellungen" hidden>
+		<div hx-get="/manage/api/orders" hx-trigger="load" hx-swap="outerHTML">
+			<p class="text-ink/60">Bestellungen werden geladen …</p>
+		</div>
+	</section>
+
+	<section id="panel-nachrichten" data-panel="nachrichten" hidden>
+		<div hx-get="/manage/api/messages" hx-trigger="load" hx-swap="outerHTML">
+			<p class="text-ink/60">Nachrichten werden geladen …</p>
+		</div>
+	</section>
+</div>
+
+<script>
+	(() => {
+		// Reiter über die Adresse (#termine, #bestellungen, #nachrichten), damit Neuladen den Reiter behält
+		const show = () => {
+			const name = location.hash.slice(1) || "termine"
+			document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== name)
+			document.querySelectorAll("[data-tab]").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === name)))
+		}
+		window.addEventListener("hashchange", show)
+		show()
+
+		// Fehler vom Backend sichtbar machen (z. B. abgelaufene Anmeldung)
+		document.body.addEventListener("htmx:responseError", e => {
+			const el = document.getElementById("manage-error")
+			const status = e.detail.xhr.status
+			el.textContent = status === 401
+				? "Du bist nicht (mehr) angemeldet. Bitte lade die Seite neu."
+				: "Da ist etwas schiefgelaufen (" + status + "): " + (e.detail.xhr.responseText || "").slice(0, 200)
+			el.hidden = false
+		})
+		document.body.addEventListener("htmx:sendError", () => {
+			const el = document.getElementById("manage-error")
+			el.textContent = "Der Server ist gerade nicht erreichbar."
+			el.hidden = false
+		})
+	})()
+</script>
+{{ end }}
