@@ -40,10 +40,11 @@ services:
       - "traefik.http.routers.website.priority=10"
       - "traefik.http.routers.website.rule=Host(`localhost`) && PathPrefix(`/`)"
       - "traefik.http.routers.website.entrypoints=web"
-      ## Put the site behind auth
-      - "traefik.http.routers.events-manage-page.priority=25"
-      - "traefik.http.routers.events-manage-page.rule=Host(`localhost`) && PathPrefix(`/events/manage`)"
-      - "traefik.http.routers.events-manage-page.entrypoints=web"
+      ## Verwaltungsseite (/manage, inkl. alter Adresse /events/manage) hinter Authentik
+      - "traefik.http.routers.manage-page.priority=25"
+      - "traefik.http.routers.manage-page.rule=Host(`localhost`) && (PathPrefix(`/manage`) || PathPrefix(`/events/manage`))"
+      - "traefik.http.routers.manage-page.entrypoints=web"
+      # - "traefik.http.routers.manage-page.middlewares=authentik@docker"
       # - "traefik.http.routers.website.entrypoints=websecure"
       # - "traefik.http.routers.website.tls=true"
   backend:
@@ -55,6 +56,14 @@ services:
     environment:
       - API_USERNAME=highlyVerifiedUserToAdministrate
       - API_PASSWORD=supersecretkey
+      ## Shop: Zugangsdaten aus developer.paypal.com (erst Sandbox, dann live)
+      - PAYPAL_MODE=sandbox
+      - PAYPAL_CLIENT_ID=
+      - PAYPAL_CLIENT_SECRET=
+      ## Produktkatalog, den Hugo aus content/shop.md erzeugt
+      - SHOP_CATALOG_URL=http://website/shop/index.json
+      ## Header, den Authentik nach dem Login setzt. Nur lokal ohne Authentik leer lassen!
+      # - MANAGE_AUTH_HEADER=
     volumes:
       ## This needs be called sqlite.db, its hardcoded
       - ./sqlite.db:/root/sqlite.db
@@ -71,10 +80,19 @@ services:
       - "traefik.http.routers.events-load.entrypoints=web"
       # - "traefik.http.routers.contact.entrypoints=websecure"
       # - "traefik.http.routers.contact.tls=true"
-      ## Put the endpoints behind auth
-      - "traefik.http.routers.events-manage-api.priority=30"
-      - "traefik.http.routers.events-manage-api.rule=Host(`localhost`) && PathPrefix(`/events/manage/api`)"
-      - "traefik.http.routers.events-manage-api.entrypoints=web"
+      ## Shop (öffentlich)
+      - "traefik.http.routers.shop-api.priority=20"
+      - "traefik.http.routers.shop-api.rule=Host(`localhost`) && PathPrefix(`/shop/api`)"
+      - "traefik.http.routers.shop-api.entrypoints=web"
+      ## Verwaltungs-API hinter Authentik
+      - "traefik.http.routers.manage-api.priority=30"
+      - "traefik.http.routers.manage-api.rule=Host(`localhost`) && PathPrefix(`/manage/api`)"
+      - "traefik.http.routers.manage-api.entrypoints=web"
+      # - "traefik.http.routers.manage-api.middlewares=authentik@docker"
+      ## Authentik-Middleware (Beispiel, Adresse an euren Outpost anpassen):
+      # - "traefik.http.middlewares.authentik.forwardauth.address=http://authentik-server:9000/outpost.goauthentik.io/auth/traefik"
+      # - "traefik.http.middlewares.authentik.forwardauth.trustForwardHeader=true"
+      # - "traefik.http.middlewares.authentik.forwardauth.authResponseHeaders=X-authentik-username,X-authentik-groups,X-authentik-email"
 
 
 networks:
