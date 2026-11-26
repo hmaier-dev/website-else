@@ -36,6 +36,8 @@ shop:
 #   id:           eindeutig, nur a-z, 0-9 und Bindestrich. Nach dem ersten Verkauf nicht mehr ändern!
 #   name:         wird im Shop, bei PayPal und in der Bestellübersicht angezeigt
 #   preis:        in Euro, mit Punkt: 14.00
+#   preis_min /   Preis frei wählbar zwischen preis_min und preis_max (z. B. Soli-Preis).
+#   preis_max:    "preis" ist dann der Vorschlag, mit dem das Feld startet (optional).
 #   bild:         Pfad unter assets/
 #   verfuegbar:   false → "Ausverkauft", kann nicht bestellt werden
 #   beschreibung: Markdown erlaubt
@@ -52,11 +54,14 @@ produkte:
 
   - id: postkarten-set
     name: "Postkarten-Set (5 Stück)"
+    preis_min: 5
+    preis_max: 20
     preis: 8.50
     bild: media/lachen1.webp
     verfuegbar: true
     beschreibung: |
-      **Beispielprodukt** – fünf Postkarten mit Zitaten aus Elses Texten.
+      **Beispielprodukt mit frei wählbarem Preis** – fünf Postkarten mit Zitaten aus Elses Texten.
+      Zahl, was es dir wert ist.
 
   - id: jutebeutel
     name: "Jutebeutel „Einfach Else“"

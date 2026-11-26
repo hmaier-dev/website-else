@@ -23,9 +23,14 @@ type Catalog struct {
 type Product struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
-	PriceCents int64  `json:"price_cents"`
+	PriceCents int64  `json:"price_cents"` // fester Preis bzw. Vorschlag
+	MinCents   int64  `json:"min_cents"`   // > 0: Preis frei wählbar ab hier …
+	MaxCents   int64  `json:"max_cents"`   // … bis hier
 	Available  bool   `json:"available"`
 }
+
+// Flexible: Kund:innen wählen den Preis selbst innerhalb von MinCents–MaxCents.
+func (p Product) Flexible() bool { return p.MinCents > 0 && p.MaxCents > 0 }
 
 func (c *Catalog) Product(id string) (Product, bool) {
 	for _, p := range c.Products {
@@ -67,6 +72,9 @@ func (c *Catalog) validate() error {
 		}
 		if p.PriceCents <= 0 {
 			return fmt.Errorf("katalog: Produkt %q hat keinen gültigen Preis", p.ID)
+		}
+		if (p.MinCents > 0) != (p.MaxCents > 0) || p.MaxCents < p.MinCents {
+			return fmt.Errorf("katalog: Produkt %q hat eine ungültige Preisspanne", p.ID)
 		}
 		if seen[p.ID] {
 			return fmt.Errorf("katalog: Produkt-ID %q doppelt", p.ID)

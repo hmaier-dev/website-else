@@ -2,7 +2,7 @@
 {{- $c := partial "shop/catalog.html" . -}}
 {{- $products := slice -}}
 {{- range $c.products -}}
-  {{- $products = $products | append (dict "id" .id "name" .name "price_cents" .price_cents "available" .available) -}}
+  {{- $products = $products | append (dict "id" .id "name" .name "price_cents" .price_cents "min_cents" .min_cents "max_cents" .max_cents "available" .available) -}}
 {{- end -}}
 {{- dict
       "currency" $c.currency
