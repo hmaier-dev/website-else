@@ -23,13 +23,6 @@ Ihr einzigartiger Stil lässt sie auf Bühnen im ganzen Land glänzen – frech,
 Das ist **Einfach Else**.
 {{< /talent >}}
 
-{{< talent title="Illustratorin" img="media/buch-an-kasten1.webp" >}}
-In der Schule hat niemand an ihr malerisches Talent geglaubt.
-Heute zaubert **Einfach Else** mit ihrem psychedelischen, einfallsreichen Stil Bilder, die begeistern.
-Ihre Werke sind nicht nur einzigartig, sondern auch eine wahre Augenweide.
-Schau doch mal in der Galerie vorbei – ein Druck kann jederzeit bestellt werden.
-{{< /talent >}}
-
 {{< talent title="Organisatorin" img="media/hiphop-in-crowd.webp" >}}
 Trotz allem, was sie noch tut, ist Einfach Else auch als Organisatorin von Events in und um Leipzig aktiv.
 Ob Hip-Hop-Konzerte, Soli-Veranstaltungen oder farbenfrohe Bühnenprogramme – sie weiß, wie man die richtigen Menschen zusammenbringt und unvergessliche Events kreiert.
