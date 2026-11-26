@@ -3,12 +3,12 @@
 	<div class="mb-6 flex flex-wrap items-center gap-2" role="tablist">
 		<button type="button" role="tab" aria-selected="{{ eq .Status "paid" }}"
 		        hx-get="/manage/api/orders?status=paid" hx-target="#orders-panel" hx-swap="outerHTML"
-		        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Status "paid" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
+		        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Status "paid" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
 			Zu versenden <span class="ml-1 opacity-70">{{ .Open }}</span>
 		</button>
 		<button type="button" role="tab" aria-selected="{{ eq .Status "shipped" }}"
 		        hx-get="/manage/api/orders?status=shipped" hx-target="#orders-panel" hx-swap="outerHTML"
-		        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Status "shipped" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
+		        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Status "shipped" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
 			Versendet
 		</button>
 	</div>
@@ -39,7 +39,7 @@
 				</div>
 				<div>
 					<p class="mb-1 text-xs font-bold uppercase tracking-widest text-ink/50">Kontakt</p>
-					<a href="mailto:{{ .PayerEmail }}?subject=Deine Bestellung {{ orderNumber .ID }}" class="break-all font-semibold underline">{{ .PayerEmail }}</a>
+					<a href="mailto:{{ .PayerEmail }}?subject=Deine Bestellung {{ orderNumber .ID }}" class="inline-block break-all py-1 font-semibold underline">{{ .PayerEmail }}</a>
 					<p class="mt-2 text-xs text-ink/50">PayPal: {{ .CaptureID }}</p>
 				</div>
 			</div>
