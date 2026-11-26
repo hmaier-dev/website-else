@@ -14,6 +14,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 
 	db "codeberg.org/schnelles_geraet/website-else/backend/internal/database"
+	"codeberg.org/schnelles_geraet/website-else/backend/internal/notify"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/shop/paypalfake"
 )
 
@@ -202,5 +203,26 @@ func TestCents(t *testing.T) {
 	}
 	if FormatCents(1490) != "14.90" || FormatEuro(505) != "5,05 €" {
 		t.Error("FormatCents/FormatEuro falsch")
+	}
+}
+
+type orderRecorder struct{ orders []notify.Order }
+
+func (o *orderRecorder) NewOrder(n notify.Order) { o.orders = append(o.orders, n) }
+
+func TestOrderNotification(t *testing.T) {
+	e := setup(t)
+	rec := &orderRecorder{}
+	e.h.Notify = rec
+	_, res := e.call(t, "POST", "/shop/api/orders", `{"items":[{"id":"buch","quantity":2}]}`)
+	e.call(t, "POST", "/shop/api/orders/"+res["id"]+"/capture", "")
+	e.call(t, "POST", "/shop/api/orders/"+res["id"]+"/capture", "") // Doppelklick: keine zweite Mail
+
+	if len(rec.orders) != 1 {
+		t.Fatalf("%d Benachrichtigungen, erwartet 1", len(rec.orders))
+	}
+	o := rec.orders[0]
+	if o.Number != "EE-00001" || o.Total != "32,90 €" || !strings.Contains(o.Address, "Musterstraße 1") || o.Lines[0] != "2× Schlicht und Dicht Kunst (28,00 €)" {
+		t.Errorf("Inhalt falsch: %+v", o)
 	}
 }

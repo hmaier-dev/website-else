@@ -23,6 +23,7 @@ import (
 	"github.com/gorilla/mux"
 
 	db "codeberg.org/schnelles_geraet/website-else/backend/internal/database"
+	"codeberg.org/schnelles_geraet/website-else/backend/internal/notify"
 )
 
 const (
@@ -36,6 +37,12 @@ type Handler struct {
 	PayPal   *PayPal // nil → Shop deaktiviert
 	ClientID string  // öffentliche PayPal-Client-ID für das JS-SDK
 	Now      func() time.Time
+	Notify   OrderNotifier // optional: E-Mail bei neuer Bestellung
+}
+
+// OrderNotifier wird nach jeder bezahlten Bestellung aufgerufen.
+type OrderNotifier interface {
+	NewOrder(notify.Order)
 }
 
 func (h *Handler) now() time.Time {
@@ -337,6 +344,22 @@ func (h *Handler) CaptureOrder(w http.ResponseWriter, r *http.Request) {
 		log.Printf("shop: ACHTUNG Bestellung %s bezahlt (Capture %s), aber Speichern fehlgeschlagen: %v", id, capt.ID, err)
 	}
 	log.Printf("shop: Bestellung %s (%s) bezahlt: %s", OrderNumber(order.ID), id, FormatEuro(order.TotalCents))
+	if h.Notify != nil {
+		var lines []OrderLine
+		json.Unmarshal([]byte(order.Items), &lines)
+		n := notify.Order{
+			Number:  OrderNumber(order.ID),
+			Total:   FormatEuro(order.TotalCents),
+			Address: formatAddress(name, pu.Shipping.Address),
+			Email:   captured.Payer.EmailAddress,
+			Name:    name,
+		}
+		for _, l := range lines {
+			n.Lines = append(n.Lines, fmt.Sprintf("%d× %s (%s)", l.Quantity, l.Name, FormatEuro(l.PriceCents*l.Quantity)))
+		}
+		n.Lines = append(n.Lines, "Versand "+FormatEuro(order.ShippingCents))
+		h.Notify.NewOrder(n)
+	}
 	writeJSON(w, http.StatusOK, map[string]string{"orderNumber": OrderNumber(order.ID), "status": "paid"})
 }
 

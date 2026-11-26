@@ -62,6 +62,12 @@ services:
       - PAYPAL_CLIENT_SECRET=
       ## Produktkatalog, den Hugo aus content/shop.md erzeugt
       - SHOP_CATALOG_URL=http://website/shop/index.json
+      ## Optional: E-Mail bei neuer Anfrage/Bestellung (siehe backend/README.md)
+      # - SMTP_HOST=smtp.example.org
+      # - SMTP_PORT=587
+      # - SMTP_USERNAME=website@elisa-adam.com
+      # - SMTP_PASSWORD=
+      # - NOTIFY_EMAIL=else@example.org
       ## Header, den Authentik nach dem Login setzt. Nur lokal ohne Authentik leer lassen!
       # - MANAGE_AUTH_HEADER=
     volumes:
