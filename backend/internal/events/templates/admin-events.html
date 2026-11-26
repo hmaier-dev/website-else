@@ -46,7 +46,8 @@
 	</form>
 
 	<section>
-		<div class="mb-6 flex flex-wrap items-center gap-2" role="tablist">
+		<!-- Reiter bleibt beim Scrollen unter der Kopfzeile stehen -->
+		<div class="sticky top-[4.5rem] z-10 -mx-1 mb-4 flex flex-wrap items-center gap-2 bg-paper/95 px-1 py-2 backdrop-blur" role="tablist">
 			<button type="button" role="tab" aria-selected="{{ eq .Scope "upcoming" }}"
 			        hx-get="/manage/api/events?scope=upcoming" hx-target="#events-panel" hx-swap="outerHTML"
 			        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Scope "upcoming" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
@@ -59,7 +60,7 @@
 			</button>
 		</div>
 
-		<div class="space-y-4">
+		<div class="scroll-else max-h-[65vh] space-y-4 pb-2 pr-3 lg:max-h-[calc(100vh-14rem)]">
 			{{ range .Events }}
 				{{ template "event-row" . }}
 			{{ else }}

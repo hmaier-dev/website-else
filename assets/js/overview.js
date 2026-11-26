@@ -1,26 +1,40 @@
-document.addEventListener('DOMContentLoaded', () => {
-	const nextEvent = '/events/load?out=json&sort=next&head=4'
-	const prevEvent = '/events/load?out=json&sort=prev&head=3'
+// Texte aus content/events/overview.md (Front Matter)
+const texts = Object.assign(
+	{ noLink: 'Infos folgen bald', last: 'Zuletzt auf der Bühne' },
+	JSON.parse(document.getElementById('overview-texts')?.textContent || '{}'),
+)
 
-	fetch(nextEvent)
-		.then(response => response.json())
-		.then(data => {
-			if (!Array.isArray(data) || data.length === 0) {
-				generateEmptyState()
-				return
-			}
-			generateHero(data[0])
-			generateUpcommingEvents(data)
-		})
-		.catch(error => {
-			console.error('Error:', error)
-			generateEmptyState()
-		})
+const loadJSON = url => fetch(url).then(r => {
+	if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`)
+	return r.json()
+}).then(d => (Array.isArray(d) ? d : []))
 
-	fetch(prevEvent)
-		.then(response => response.json())
-		.then(data => generatePreviousEvents(Array.isArray(data) ? data : []))
-		.catch(error => console.error('Error:', error))
+document.addEventListener('DOMContentLoaded', async () => {
+	const [next, prev] = await Promise.allSettled([
+		loadJSON('/events/load?out=json&sort=next&head=4'),
+		loadJSON('/events/load?out=json&sort=prev&head=3'),
+	])
+	if (next.status === 'rejected') {
+		console.error(next.reason)
+		generateError()
+		return
+	}
+	const upcoming = next.value
+	const past = prev.status === 'fulfilled' ? prev.value : []
+
+	if (upcoming.length > 0) {
+		generateHero(upcoming[0])
+		generateUpcommingEvents(upcoming)
+	} else if (past.length > 0) {
+		// Kein Termin in Sicht: den letzten Termin oben zeigen statt einer leeren Seite
+		document.getElementById('hero-kicker').textContent = texts.last
+		generateHero(past[0])
+		generateEmptyUpcoming()
+	} else {
+		generateEmptyUpcoming()
+		document.getElementById('event-name-hero').textContent = 'Neue Termine folgen bald!'
+	}
+	generatePreviousEvents(past)
 })
 
 // Werte aus der Datenbank nie ungeprüft als HTML einsetzen
@@ -28,23 +42,42 @@ function esc(value) {
 	return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
 }
 
-function generateEmptyState() {
-	document.getElementById('event-name-hero').textContent = 'Bald geht’s weiter!'
+// Nur echte http(s)-Links verwenden; null, "" oder "null" gelten als "kein Link"
+function validLink(link) {
+	if (!link || link === 'null') return null
+	try {
+		const u = new URL(link, location.href)
+		return u.protocol === 'http:' || u.protocol === 'https:' ? u.href : null
+	} catch (_) {
+		return null
+	}
+}
+
+function generateError() {
+	document.getElementById('event-name-hero').textContent = 'Termine konnten gerade nicht geladen werden.'
 	document.getElementById('next-events-cards-wrapper').innerHTML = `
-		<p class="card-pop col-span-full p-8 text-lg">Gerade sind keine Termine eingetragen. Schau bald wieder vorbei oder folge mir auf
+		<p class="card-pop col-span-full p-8 text-lg">Bitte versuch es gleich nochmal oder schau auf
+		<a class="font-semibold underline" href="https://www.instagram.com/einfach_else/">Instagram</a> vorbei.</p>`
+}
+
+function generateEmptyUpcoming() {
+	document.getElementById('next-events-cards-wrapper').innerHTML = `
+		<p class="card-pop col-span-full p-8 text-lg">Gerade sind keine weiteren Termine eingetragen. Schau bald wieder vorbei oder folge mir auf
 		<a class="font-semibold underline" href="https://www.instagram.com/einfach_else/">Instagram</a>.</p>`
 }
 
-function generateHero(next) {
-	document.getElementById('event-name-hero').textContent = next['Name']
-	document.getElementById('hero-date').textContent = next['FDate']
-	document.getElementById('hero-place').textContent = next['Place']
-	document.getElementById('hero-city').textContent = next['City']
-	const link = document.getElementById('hero-link')
-	if (next['Link']) {
-		link.href = next['Link']
+function generateHero(event) {
+	document.getElementById('event-name-hero').textContent = event['Name']
+	document.getElementById('hero-date').textContent = event['FDate']
+	document.getElementById('hero-place').textContent = event['Place']
+	document.getElementById('hero-city').textContent = event['City']
+	const link = validLink(event['Link'])
+	const a = document.getElementById('hero-link')
+	if (link) {
+		a.href = link
+		a.hidden = false
 	} else {
-		link.remove()
+		document.getElementById('hero-nolink').hidden = false
 	}
 	const details = document.getElementById('hero-details')
 	details.classList.remove('hidden')
@@ -58,7 +91,7 @@ function generateUpcommingEvents(next) {
 		const date = new Date(event['Date'])
 		const abbr = date.toLocaleString('de-DE', { month: 'short' }).replace('.', '')
 		const day = date.getDate().toString().padStart(2, '0')
-		const link = event['Link']
+		const link = validLink(event['Link'])
 		html += `
 			<article class="card-pop group flex flex-col p-6 hover:-translate-y-1 hover:shadow-pop-lg">
 				<div class="mb-8 flex items-start justify-between">
@@ -70,7 +103,9 @@ function generateUpcommingEvents(next) {
 				</div>
 				<h3 class="font-headline text-2xl font-extrabold leading-tight">${esc(event['Name'])}</h3>
 				<p class="mt-3 flex-1 text-ink/70">${esc(event['Place'])}, ${esc(event['City'])}</p>
-				${link ? `<a href="${esc(link)}" class="btn-lilac mt-6 w-full">Details →</a>` : ''}
+				${link
+					? `<a href="${esc(link)}" class="btn-lilac mt-6 w-full">Mehr Infos →</a>`
+					: `<p class="mt-6 rounded-full border-2 border-dashed border-ink/40 py-2.5 text-center font-headline font-bold text-ink/60">${esc(texts.noLink)}</p>`}
 			</article>`
 	})
 	document.getElementById('next-events-cards-wrapper').innerHTML = html

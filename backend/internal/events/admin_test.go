@@ -27,8 +27,9 @@ func adminRouter(t *testing.T) *mux.Router {
 	if _, err := sqlite.Exec(string(ddl)); err != nil {
 		t.Fatal(err)
 	}
-	h := &Handler{DB: sqlite}
+	h := &Handler{DB: sqlite, InternalFS: os.DirFS("../..")}
 	r := mux.NewRouter()
+	r.HandleFunc("/events/load", h.PublicLoad).Methods("GET").Name("public")
 	m := r.PathPrefix("/manage/api").Subrouter()
 	m.Use(auth.Require)
 	m.HandleFunc("/events", h.AdminPanel).Methods("GET")
