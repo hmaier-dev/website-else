@@ -216,6 +216,15 @@ type Event struct {
 	Upcomming *bool
 }
 
+// formatEventDate gibt z. B. "05.12.2026, 20:00 Uhr" zurück, ohne Uhrzeit nur das Datum.
+func formatEventDate(date, begin time.Time) string {
+	d := date.Format("02.01.2006")
+	if !begin.IsZero() && (begin.Hour() != 0 || begin.Minute() != 0) {
+		d += ", " + begin.Format("15:04") + " Uhr"
+	}
+	return d
+}
+
 // Exposes different value to the API
 func constructEvents(rows []EventRow) []Event {
 	var events = make([]Event, len(rows))
@@ -223,7 +232,7 @@ func constructEvents(rows []EventRow) []Event {
 		events[i] = Event{
 			Name:  r.GetName(),
 			Date:  r.GetDate(),
-			FDate: r.GetDate().Format("02.01.2006"),
+			FDate: formatEventDate(r.GetDate(), r.GetBegin()),
 			// Doors:       r.GetDoors(),
 			// Begin:       r.GetBegin(),
 			Place: r.GetPlace(),
@@ -435,69 +444,6 @@ func makeHash(datum string, event string, ort string, stadt string) string {
 	return hash
 }
 
-// Create a single new Event
-func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	q := db.New(h.DB)
-
-	err := r.ParseForm()
-	if err != nil {
-		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
-		return
-	}
-
-	datum := r.FormValue("datum")
-	event := r.FormValue("event")
-	ort := r.FormValue("ort")
-	stadt := r.FormValue("stadt")
-	link := r.FormValue("link")
-
-	date, err := time.Parse("2006-01-02", datum)
-	if err != nil {
-		http.Error(w, "Invalid date format", http.StatusBadRequest)
-		return
-	}
-	doorsTime := sql.NullTime{Time: date, Valid: true}
-	beginTime := sql.NullTime{Time: date, Valid: true}
-	linkString := sql.NullString{String: link, Valid: link != ""}
-
-	hash := makeHash(datum, event, ort, stadt)
-
-	err = q.AddSingleEvent(ctx, db.AddSingleEventParams{
-		Name:  event,
-		Date:  date,
-		Doors: doorsTime,
-		Begin: beginTime,
-		Place: ort,
-		City:  stadt,
-		Link:  linkString,
-		Pic:   nil,
-		Hash:  hash,
-	})
-	if err != nil {
-		log.Printf("Failed to add event: %v", err)
-		http.Error(w, "Failed to add event", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
-	args := urlArgs{
-		Sort: "desc",
-		Out:  "html",
-	}
-	events := h.eventsByArgs(ctx, args)
-	// this can be done prettier => see checklist-tool
-	tmpl := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
-		"formatTime": formatTime,
-	}).ParseFS(h.InternalFS, "internal/events/templates/events-mutable.html"))
-	err = tmpl.Execute(w, map[string]any{
-		"Events": events,
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
 // Takes a yaml file with multiple new events
 func (h *Handler) BulkCreate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -570,214 +516,7 @@ func (h *Handler) BulkCreate(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 	}
-	http.Redirect(w, r, "/events/manage", http.StatusSeeOther)
-}
-
-type EventSmooth struct {
-	ID    int64
-	Name  string
-	Date  string
-	Place string
-	City  string
-	Link  *string
-}
-
-// Loads all events descending, with all fields to alter events
-func (h *Handler) PrivateLoad(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	q := db.New(h.DB)
-
-	all, err := q.GetAllEventsDesc(ctx)
-	if err != nil {
-		logErr(w, "Load all events desc", err, http.StatusInternalServerError)
-		return
-	}
-	// Transform the data, so the frontend can work with the values as they are
-	resp := make([]EventSmooth, len(all))
-	for i, e := range all {
-		// Just giving out the pure link if it is there
-		var link *string
-		if e.Link.Valid {
-			link = &e.Link.String
-		}
-		// Format the Date to German style
-		var date string
-		date = e.Date.Format("02.01.2006")
-		resp[i] = EventSmooth{
-			ID:    e.ID,
-			Name:  e.Name,
-			Date:  date,
-			Place: e.Place,
-			City:  e.City,
-			Link:  link,
-		}
-	}
-	bytes, err := json.Marshal(resp)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	w.Write(bytes)
-}
-
-// Handles changes to a single cell of an event
-// Idea: Instead of receiving just one value at the time, we could
-// insert the complete row and skip a lot of the logic down below
-func (h *Handler) Change(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	q := db.New(h.DB)
-
-	err := r.ParseForm()
-	if err != nil {
-		logErr(w, "Couldn't parse the form.", err, http.StatusBadRequest)
-		return
-	}
-
-	idStr := r.FormValue("id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		msg := fmt.Sprintf("The id: '%s' is invalid.", idStr)
-		logErr(w, msg, err, http.StatusBadRequest)
-		return
-	}
-	field := r.FormValue("field")
-	value := r.FormValue("value")
-
-	// This humongous switch-case-statement is done, because I refuse to pass in the complete row.
-	// Because of this infantility I need to declare for each field a separate SQL-Query
-	switch field {
-	case "Name":
-		args := db.UpdateNameByIDParams{Name: value, ID: id}
-		q.UpdateNameByID(ctx, args)
-	case "Date":
-		date, err := time.Parse("02.01.2006", value)
-		args := db.UpdateDateByIDParams{Date: date, ID: id}
-		if err != nil {
-			logErr(w, "Wrong time-data format. We want 'dd.mm.yyyy'/'02.01.2006'", err, http.StatusBadRequest)
-			return
-		}
-		q.UpdateDateByID(ctx, args)
-	case "Doors":
-		if value == "" {
-			return
-		}
-		// 15:04 is hh:mm
-		t, err := time.Parse("15:04", value)
-		if err != nil {
-			logErr(w, "Wrong time-data format. We want 'hh:mm'/'15:04'", err, http.StatusBadRequest)
-			return
-		}
-		doors := sql.NullTime{Time: t, Valid: true}
-		args := db.UpdateDoorsByIDParams{Doors: doors, ID: id}
-		q.UpdateDoorsByID(ctx, args)
-	case "Begin":
-		if value == "" {
-			return
-		}
-		// 15:04 is hh:mm
-		t, err := time.Parse("15:04", value)
-		if err != nil {
-			logErr(w, "Wrong time-data format. We want 'hh:mm'/'15:04'", err, http.StatusBadRequest)
-			return
-		}
-		begin := sql.NullTime{Time: t, Valid: true}
-		args := db.UpdateBeginByIDParams{Begin: begin, ID: id}
-		q.UpdateBeginByID(ctx, args)
-	case "Place":
-		args := db.UpdatePlaceByIDParams{Place: value, ID: id}
-		q.UpdatePlaceByID(ctx, args)
-	case "City":
-		args := db.UpdateCityByIDParams{City: value, ID: id}
-		q.UpdateCityByID(ctx, args)
-	case "Coordinates":
-		if value == "" {
-			return
-		}
-		coords := sql.NullString{String: value, Valid: true}
-		args := db.UpdateCoordinatesByIDParams{Coordinates: coords, ID: id}
-		q.UpdateCoordinatesByID(ctx, args)
-	case "Link":
-		if value == "" {
-			return
-		}
-		link := sql.NullString{String: value, Valid: true}
-		args := db.UpdateLinkByIDParams{Link: link, ID: id}
-		q.UpdateLinkByID(ctx, args)
-	case "Hash":
-		args := db.UpdateHashByIDParams{Hash: value, ID: id}
-		q.UpdateHashByID(ctx, args)
-	}
-}
-
-func (h *Handler) BulkDelete(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	q := db.New(h.DB)
-
-	err := r.ParseForm()
-	if err != nil {
-		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
-		return
-	}
-	datum, err := time.Parse("02.01.2006", r.FormValue("date"))
-	if err != nil {
-		msg := "Wrong time date format."
-		intern := msg + fmt.Sprintf(" Error happend: %v \n", err.Error())
-		log.Println(intern)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
-	}
-	event := r.FormValue("name")
-	ort := r.FormValue("place")
-	stadt := r.FormValue("city")
-
-	argsID := db.GetIDsFromEventParams{
-		Name:  event,
-		Date:  datum,
-		Place: ort,
-		City:  stadt,
-	}
-	// There could be event duplicates, so fetch all ids
-	ids, err := q.GetIDsFromEvent(ctx, argsID)
-	if err != nil {
-		http.Error(w, "Database error.", http.StatusBadRequest)
-		return
-	}
-	if len(ids) <= 0 {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No ids found."))
-		return
-	}
-	// This logging is ugly and needs to be redone...
-	row, err := q.GetEventByID(ctx, ids[0])
-	msg := `The event will get deleted:
-	Event:	%s 
-	Datum:	%s
-	Ort:  %s
-	Stadt:	%s
-	Link:		%s
-	`
-	log.Printf(msg, event, datum, ort, stadt, row.Link.String)
-
-	// If there was an unique id for an entry, we could delete more precise.
-	// This way we ONLY match form-data which also could come from a different event, which holds the same data.
-	// Indeed this is dirty, but user shouldn't detect it.... (maybe)
-	err = q.DeleteEventByID(ctx, ids[0])
-	if err != nil {
-		http.Error(w, "Couldn't delete.", http.StatusNotModified)
-		return
-	}
-	args := urlArgs{
-		Sort: "desc",
-	}
-	events := h.eventsByArgs(ctx, args)
-	tmpl := template.Must(template.New("events-mutable.html").Funcs(template.FuncMap{
-		"formatTime": formatTime,
-	}).ParseFS(h.InternalFS, "internal/events/templates/events-mutable.html"))
-	err = tmpl.Execute(w, map[string]any{
-		"Events": events,
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	http.Redirect(w, r, "/manage/", http.StatusSeeOther)
 }
 
 func (h *Handler) ProvideICSFile(w http.ResponseWriter, r *http.Request) {
