@@ -129,10 +129,9 @@ func eventID(r *http.Request) (int64, bool) {
 }
 
 type panelData struct {
-	Scope     string
-	Events    []AdminEvent
-	Upcoming  int
-	Past      int
+	Scope     string // welche Liste zuerst sichtbar ist
+	Upcoming  []AdminEvent
+	Past      []AdminEvent
 	Form      formValues
 	Error     string
 	Flash     string
@@ -150,16 +149,15 @@ func (h *Handler) panel(r *http.Request, scope string) (panelData, error) {
 	if err != nil {
 		return panelData{}, err
 	}
-	d := panelData{Scope: scope, Upcoming: len(up), Past: len(past)}
-	if scope == "past" {
-		for _, e := range past {
-			d.Events = append(d.Events, toAdminEvent(e.ID, e.Name, e.Date, e.Begin, e.Place, e.City, e.Link))
-		}
-	} else {
+	d := panelData{Scope: scope}
+	if d.Scope != "past" {
 		d.Scope = "upcoming"
-		for _, e := range up {
-			d.Events = append(d.Events, toAdminEvent(e.ID, e.Name, e.Date, e.Begin, e.Place, e.City, e.Link))
-		}
+	}
+	for _, e := range up {
+		d.Upcoming = append(d.Upcoming, toAdminEvent(e.ID, e.Name, e.Date, e.Begin, e.Place, e.City, e.Link))
+	}
+	for _, e := range past {
+		d.Past = append(d.Past, toAdminEvent(e.ID, e.Name, e.Date, e.Begin, e.Place, e.City, e.Link))
 	}
 	return d, nil
 }

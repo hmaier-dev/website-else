@@ -34,47 +34,63 @@
 {{ end }}
 
 {{ define "events-panel" }}
-<div id="events-panel" class="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
+{{/*
+  Aufbau: Eine Reiterleiste (Kommende/Vergangene) über dem ganzen Terminbereich.
+  Sie klebt unter der Kopfzeile, solange man irgendwo in der Liste ist.
+  Beide Listen kommen mit; das Umschalten passiert ohne Nachladen (layouts/manage.html)
+  und jede Liste merkt sich ihre Scrollposition.
+*/}}
+<div id="events-panel" class="events-lists" data-scope="{{ .Scope }}">
 
-	<form hx-post="/manage/api/events" hx-target="#events-panel" hx-swap="outerHTML"
-	      class="card-pop space-y-5 p-6 sm:p-8 lg:sticky lg:top-24">
-		<h2 class="text-2xl font-extrabold tracking-tight">Neuer Termin</h2>
-		{{ with .Error }}<p class="rounded-2xl border-2 border-ink bg-lilac-200 px-4 py-3 font-semibold" role="alert">{{ . }}</p>{{ end }}
-		{{ with .Flash }}<p class="rounded-2xl border-2 border-ink bg-lime px-4 py-3 font-semibold" role="status">✓ {{ . }}</p>{{ end }}
-		{{ template "event-fields" .Form }}
-		<button type="submit" class="btn-ink w-full !py-4">Termin speichern</button>
-	</form>
+	<div role="tablist" aria-label="Termine filtern"
+	     class="sticky top-[4.25rem] z-30 -mx-4 flex items-center gap-2 border-b-2 border-ink bg-paper/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+		<button type="button" role="tab" data-scope-tab="upcoming" aria-controls="list-upcoming" aria-selected="{{ eq .Scope "upcoming" }}"
+		        class="whitespace-nowrap rounded-full border-2 border-ink bg-white px-3 py-1.5 text-sm font-headline font-bold transition-colors hover:bg-lilac-200 aria-selected:bg-ink aria-selected:text-paper sm:px-5 sm:py-2 sm:text-base">
+			Kommende <span class="ml-1 opacity-70">{{ len .Upcoming }}</span>
+		</button>
+		<button type="button" role="tab" data-scope-tab="past" aria-controls="list-past" aria-selected="{{ eq .Scope "past" }}"
+		        class="whitespace-nowrap rounded-full border-2 border-ink bg-white px-3 py-1.5 text-sm font-headline font-bold transition-colors hover:bg-lilac-200 aria-selected:bg-ink aria-selected:text-paper sm:px-5 sm:py-2 sm:text-base">
+			Vergangene <span class="ml-1 opacity-70">{{ len .Past }}</span>
+		</button>
+		<button type="button" data-scroll-to="neuer-termin"
+		        class="ml-auto whitespace-nowrap rounded-full border-2 border-ink bg-lime px-3 py-1.5 text-sm font-headline font-bold sm:px-4 sm:py-2 sm:text-base lg:hidden">+ Neu</button>
+	</div>
 
-	<section>
-		<!-- Reiter bleibt beim Scrollen unter der Kopfzeile stehen -->
-		<div class="sticky top-[4.5rem] z-10 -mx-1 mb-4 flex flex-wrap items-center gap-2 bg-paper/95 px-1 py-2 backdrop-blur" role="tablist">
-			<button type="button" role="tab" aria-selected="{{ eq .Scope "upcoming" }}"
-			        hx-get="/manage/api/events?scope=upcoming" hx-target="#events-panel" hx-swap="outerHTML"
-			        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Scope "upcoming" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
-				Kommende <span class="ml-1 opacity-70">{{ .Upcoming }}</span>
-			</button>
-			<button type="button" role="tab" aria-selected="{{ eq .Scope "past" }}"
-			        hx-get="/manage/api/events?scope=past" hx-target="#events-panel" hx-swap="outerHTML"
-			        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq .Scope "past" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
-				Vergangene <span class="ml-1 opacity-70">{{ .Past }}</span>
-			</button>
-		</div>
+	<div class="mt-6 grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
 
-		<div class="scroll-else max-h-[65vh] space-y-4 pb-2 pr-3 lg:max-h-[calc(100vh-14rem)]">
-			{{ range .Events }}
-				{{ template "event-row" . }}
-			{{ else }}
-				<p class="rounded-3xl border-2 border-dashed border-ink/30 p-8 text-center text-ink/60">
-					{{ if eq .Scope "past" }}Noch keine vergangenen Termine.{{ else }}Keine kommenden Termine. Leg links einen neuen an!{{ end }}
-				</p>
-			{{ end }}
-		</div>
-	</section>
+		<!-- Listen: auf dem Handy zuerst, auf dem Desktop rechts -->
+		<section class="lg:order-2">
+			{{ with .Flash }}<p class="mb-4 rounded-2xl border-2 border-ink bg-lime px-4 py-3 font-semibold" role="status">✓ {{ . }}</p>{{ end }}
+			<div id="list-upcoming" role="tabpanel" data-scope-list="upcoming" {{ if ne .Scope "upcoming" }}hidden{{ end }} class="space-y-4">
+				{{ range .Upcoming }}
+					{{ template "event-row" . }}
+				{{ else }}
+					<p class="rounded-3xl border-2 border-dashed border-ink/30 p-8 text-center text-ink/60">Keine kommenden Termine. Leg einen neuen an!</p>
+				{{ end }}
+			</div>
+			<div id="list-past" role="tabpanel" data-scope-list="past" {{ if ne .Scope "past" }}hidden{{ end }} class="space-y-4">
+				{{ range .Past }}
+					{{ template "event-row" . }}
+				{{ else }}
+					<p class="rounded-3xl border-2 border-dashed border-ink/30 p-8 text-center text-ink/60">Noch keine vergangenen Termine.</p>
+				{{ end }}
+			</div>
+		</section>
+
+		<!-- Formular: auf dem Desktop links, bleibt unter der Reiterleiste stehen -->
+		<form id="neuer-termin" hx-post="/manage/api/events" hx-target="#events-panel" hx-swap="outerHTML"
+		      class="card-pop scroll-mt-36 space-y-5 p-6 sm:p-8 lg:order-1 lg:sticky lg:top-[9.5rem]">
+			<h2 class="text-2xl font-extrabold tracking-tight">Neuer Termin</h2>
+			{{ with .Error }}<p class="rounded-2xl border-2 border-ink bg-lilac-200 px-4 py-3 font-semibold" role="alert">{{ . }}</p>{{ end }}
+			{{ template "event-fields" .Form }}
+			<button type="submit" class="btn-ink w-full !py-4">Termin speichern</button>
+		</form>
+	</div>
 </div>
 {{ end }}
 
 {{ define "event-row" }}
-<article id="event-{{ .ID }}" class="flex items-start gap-4 rounded-3xl border-2 border-ink bg-white p-4 sm:p-5">
+<article id="event-{{ .ID }}" class="flex flex-wrap items-start gap-x-4 gap-y-3 rounded-3xl border-2 border-ink bg-white p-4 sm:flex-nowrap sm:p-5">
 	<div class="w-20 shrink-0 rounded-2xl border-2 border-ink bg-lilac-200 py-2 text-center">
 		<p class="text-xs font-bold uppercase">{{ weekday .Date }}</p>
 		<p class="font-headline text-2xl font-extrabold leading-none">{{ day .Date }}</p>
@@ -85,7 +101,7 @@
 		<p class="mt-1 text-ink/70">{{ .Place }}, {{ .City }}{{ with .Time }} · {{ . }} Uhr{{ end }}</p>
 		{{ with .Link }}<a href="{{ . }}" target="_blank" rel="noopener" class="mt-1 block truncate text-sm font-semibold text-lilac-700 underline">{{ . }}</a>{{ end }}
 	</div>
-	<div class="flex shrink-0 flex-col gap-2 sm:flex-row">
+	<div class="flex w-full gap-2 sm:w-auto sm:shrink-0 [&>button]:flex-1 sm:[&>button]:flex-none">
 		<button type="button" hx-get="/manage/api/events/{{ .ID }}/edit" hx-target="#event-{{ .ID }}" hx-swap="outerHTML"
 		        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 text-sm font-bold hover:bg-lime">Bearbeiten</button>
 		<button type="button" hx-delete="/manage/api/events/{{ .ID }}" hx-target="#event-{{ .ID }}" hx-swap="outerHTML"
