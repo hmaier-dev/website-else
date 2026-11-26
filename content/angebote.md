@@ -38,7 +38,7 @@ In diesem Workshop lernst du mit drei Bällen die Grundlagen der Jonglage und 
 
 ## Poetry Slam-Workshop – Freies Schreiben & Performen lernen
 
-{{< text-mit-bild-auf-linker-seite src="./media/rainbow-talking-to-crowd.webp" alt="" >}}
+{{< text-mit-bild-auf-linker-seite src="./media/IMG_0913.webp" alt="" >}}
 Poetry Slam ist die ideale Kunstform für Schreibanfänger:innen: Hier gibt es kaum Vorgaben – ob gereimt oder frei, Prosa oder Lyrik, humorvoll oder emotional. Die Kreativität kennt keine Grenzen! Ob Perspektivwechsel („Wie lebt es sich als Couch?“) oder Alltagssituationen mit neuem Blickwinkel: im Poetry Slam ist alles möglich.
 
 In diesem Workshop erarbeitest du die Grundlagen des Schreibens und analysierst an Beispielen (Videos & Texte) stilistische Mittel sowie elementare Elemente von Poetry-Slam-Texten. Themenfindung, Ausarbeitung und Pointensetzung stehen dabei im Fokus.
@@ -75,7 +75,7 @@ Am Ende des Workshops entscheidest du selbst, in welcher Form du schreiben möch
 
 ## Moderationsworkshop – Dein Auftritt auf der Bühne
 
-{{< text-mit-bild-auf-linker-seite src="./media/talk-on-stage1.webp" alt="" >}}
+{{< text-mit-bild-auf-linker-seite src="./media/IMG_9981.webp" alt="" >}}
 Du hast noch keine Bühnenerfahrung, möchtest dich aber als Moderator:in ausprobieren?
 
 Dir juckt es in den Fingern, endlich ein Mikrofon in der Hand zu halten? Egal, ob mit oder ohne Vorerfahrung: bei mir bist du genau richtig!
