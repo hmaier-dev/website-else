@@ -6,7 +6,7 @@ Text in **Markdown**
 {{- $title := .Get "title" -}}
 <article class="card-pop group flex flex-col overflow-hidden hover:-translate-y-1 hover:shadow-pop-lg md:even:translate-y-12 md:even:hover:translate-y-11 [counter-increment:talent]">
 	<div class="relative aspect-[4/3] overflow-hidden border-b-2 border-ink bg-lilac-200">
-		{{ partial "img.html" (dict "src" (.Get "img") "alt" $title "class" "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" "sizes" "(min-width: 768px) 600px, 100vw") }}
+		{{ partial "img.html" (dict "src" (.Get "img") "alt" $title "class" "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" "width" 600 "box" 1.3334) }}
 		<span class="absolute left-4 top-4 grid h-12 w-12 place-items-center rounded-full border-2 border-ink bg-lime font-headline text-lg font-extrabold before:content-[counter(talent,decimal-leading-zero)]"></span>
 	</div>
 	<div class="flex flex-1 flex-col p-6 sm:p-8">

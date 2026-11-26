@@ -13,7 +13,7 @@
 			<article class="card-pop group flex flex-col overflow-hidden {{ if .available }}hover:-translate-y-1 hover:shadow-pop-lg{{ end }}">
 				<div class="relative aspect-square overflow-hidden border-b-2 border-ink bg-lilac-200">
 					{{ with .image }}
-					{{ partial "img.html" (dict "src" . "alt" "" "class" "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" "sizes" "(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw") }}
+					{{ partial "img.html" (dict "src" . "alt" "" "class" "h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" "width" 400 "bp" 1024 "box" 1.0) }}
 					{{ end }}
 					{{ if not .available }}
 					<span class="sticker absolute left-4 top-4 -rotate-3 bg-white">Ausverkauft</span>
