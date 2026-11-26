@@ -13,6 +13,13 @@
 //	NOTIFY_EMAIL    Empfänger, mehrere mit Komma getrennt
 //	SITE_URL        für Links in der Mail (Standard https://elisa-adam.com)
 //	SMTP_INSECURE   "true" erlaubt Versand ohne Verschlüsselung (nur lokal zum Testen!)
+//
+// Für Proton Mail Bridge (selbstsigniertes Zertifikat):
+//
+//	SMTP_TLS_CA_FILE      Pfad zum exportierten Bridge-Zertifikat (cert.pem) – empfohlen
+//	SMTP_TLS_SERVER_NAME  Name im Zertifikat, falls er vom Hostnamen abweicht (Bridge: meist 127.0.0.1)
+//	SMTP_TLS_SKIP_VERIFY  "true" prüft das Zertifikat gar nicht – nur, wenn Bridge im selben
+//	                      internen Docker-Netz läuft und kein Zertifikat exportiert werden kann
 package notify
 
 import (
@@ -20,6 +27,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -29,6 +37,7 @@ import (
 	"net"
 	"net/mail"
 	"net/smtp"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -44,6 +53,24 @@ type Mailer struct {
 	SiteURL  string
 	Insecure bool
 	Timeout  time.Duration
+
+	// TLS-Einstellungen (für Proton Mail Bridge o. ä.)
+	RootCAs       *x509.CertPool // nil = System-Zertifikate
+	TLSServerName string         // leer = Host
+	SkipVerify    bool
+}
+
+func (m *Mailer) tlsConfig() *tls.Config {
+	name := m.TLSServerName
+	if name == "" {
+		name = m.Host
+	}
+	return &tls.Config{
+		ServerName:         name,
+		RootCAs:            m.RootCAs,
+		InsecureSkipVerify: m.SkipVerify, //nolint:gosec // bewusst per SMTP_TLS_SKIP_VERIFY
+		MinVersion:         tls.VersionTLS12,
+	}
 }
 
 // FromEnv liefert nil, wenn keine Benachrichtigung konfiguriert ist.
@@ -72,6 +99,22 @@ func FromEnv(getenv func(string) string) (*Mailer, error) {
 	}
 	if m.SiteURL == "" {
 		m.SiteURL = "https://elisa-adam.com"
+	}
+	m.TLSServerName = strings.TrimSpace(getenv("SMTP_TLS_SERVER_NAME"))
+	m.SkipVerify = getenv("SMTP_TLS_SKIP_VERIFY") == "true"
+	if f := strings.TrimSpace(getenv("SMTP_TLS_CA_FILE")); f != "" {
+		pem, err := os.ReadFile(f)
+		if err != nil {
+			return nil, fmt.Errorf("notify: SMTP_TLS_CA_FILE: %w", err)
+		}
+		pool := x509.NewCertPool()
+		if !pool.AppendCertsFromPEM(pem) {
+			return nil, fmt.Errorf("notify: SMTP_TLS_CA_FILE %s enthält kein gültiges Zertifikat", f)
+		}
+		m.RootCAs = pool
+	}
+	if m.SkipVerify {
+		log.Println("notify: WARNUNG – SMTP_TLS_SKIP_VERIFY=true, das Zertifikat des Mailservers wird nicht geprüft.")
 	}
 	for _, to := range strings.Split(getenv("NOTIFY_EMAIL"), ",") {
 		if to = strings.TrimSpace(to); to != "" {
@@ -137,7 +180,7 @@ func (m *Mailer) Send(ctx context.Context, subject, body, replyTo, replyName str
 	}
 	addr := net.JoinHostPort(m.Host, strconv.Itoa(m.Port))
 	dialer := &net.Dialer{Timeout: m.Timeout}
-	tlsConf := &tls.Config{ServerName: m.Host, MinVersion: tls.VersionTLS12}
+	tlsConf := m.tlsConfig()
 
 	var conn net.Conn
 	if m.Port == 465 {

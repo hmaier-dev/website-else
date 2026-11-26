@@ -3,11 +3,22 @@ package notify
 import (
 	"bufio"
 	"context"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/tls"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
 	"io"
+	"math/big"
 	"mime"
 	"mime/quotedprintable"
 	"net"
 	"net/mail"
+	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -17,6 +28,7 @@ import (
 // fakeSMTP ist ein minimaler SMTP-Server ohne TLS, der die empfangene Mail speichert.
 type fakeSMTP struct {
 	ln       net.Listener
+	tlsConf  *tls.Config // gesetzt → STARTTLS wird angeboten
 	mu       sync.Mutex
 	data     string
 	rcpt     []string
@@ -45,10 +57,12 @@ func startFake(t *testing.T) *fakeSMTP {
 
 func (f *fakeSMTP) port() int { return f.ln.Addr().(*net.TCPAddr).Port }
 
-func (f *fakeSMTP) handle(c net.Conn) {
-	defer c.Close()
+func (f *fakeSMTP) handle(conn net.Conn) {
+	var c net.Conn = conn
+	defer func() { c.Close() }()
 	r := bufio.NewReader(c)
 	say := func(s string) { io.WriteString(c, s+"\r\n") }
+	secure := false
 	say("220 fake ESMTP")
 	for {
 		line, err := r.ReadString('\n')
@@ -59,7 +73,17 @@ func (f *fakeSMTP) handle(c net.Conn) {
 		switch {
 		case strings.HasPrefix(cmd, "EHLO"):
 			say("250-fake")
+			if f.tlsConf != nil && !secure {
+				say("250-STARTTLS")
+			}
 			say("250 AUTH PLAIN")
+		case cmd == "STARTTLS":
+			say("220 go ahead")
+			tc := tls.Server(c, f.tlsConf)
+			if err := tc.Handshake(); err != nil {
+				return
+			}
+			c, r, secure = tc, bufio.NewReader(tc), true
 		case strings.HasPrefix(cmd, "AUTH"):
 			f.mu.Lock()
 			f.authUsed = true
@@ -204,5 +228,84 @@ func TestFromEnv(t *testing.T) {
 	}))
 	if err != nil || m.Port != 465 || len(m.To) != 2 || m.From != "website@example.org" || m.SiteURL != "https://elisa-adam.com" {
 		t.Errorf("FromEnv: %+v %v", m, err)
+	}
+}
+
+// bridgeCert erzeugt ein selbstsigniertes Zertifikat für 127.0.0.1 – wie es Proton Mail Bridge mitbringt.
+func bridgeCert(t *testing.T) (tls.Certificate, string) {
+	t.Helper()
+	key, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	tmpl := &x509.Certificate{
+		SerialNumber:          big.NewInt(1),
+		Subject:               pkix.Name{CommonName: "127.0.0.1", Organization: []string{"Proton AG (Test)"}},
+		IPAddresses:           []net.IP{net.ParseIP("127.0.0.1")},
+		NotBefore:             time.Now().Add(-time.Hour),
+		NotAfter:              time.Now().Add(time.Hour),
+		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		BasicConstraintsValid: true,
+		IsCA:                  true,
+	}
+	der, err := x509.CreateCertificate(rand.Reader, tmpl, tmpl, &key.PublicKey, key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der})
+	keyDER, _ := x509.MarshalECPrivateKey(key)
+	pair, err := tls.X509KeyPair(certPEM, pem.EncodeToMemory(&pem.Block{Type: "EC PRIVATE KEY", Bytes: keyDER}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	file := filepath.Join(t.TempDir(), "bridge-cert.pem")
+	os.WriteFile(file, certPEM, 0o600)
+	return pair, file
+}
+
+func TestProtonBridgeTLS(t *testing.T) {
+	pair, certFile := bridgeCert(t)
+	f := startFake(t)
+	f.tlsConf = &tls.Config{Certificates: []tls.Certificate{pair}}
+
+	base := func(extra map[string]string) *Mailer {
+		env := map[string]string{
+			"SMTP_HOST": "127.0.0.1", "SMTP_PORT": strconv.Itoa(f.port()),
+			"SMTP_USERNAME": "website@example.org", "SMTP_PASSWORD": "bridge-passwort",
+			"NOTIFY_EMAIL": "else@example.org",
+		}
+		for k, v := range extra {
+			env[k] = v
+		}
+		m, err := FromEnv(func(k string) string { return env[k] })
+		if err != nil {
+			t.Fatal(err)
+		}
+		m.Timeout = 5 * time.Second
+		return m
+	}
+	send := func(m *Mailer) error { return m.Send(context.Background(), "Test", "Hallo", "", "") }
+
+	// Ohne hinterlegtes Zertifikat: abgelehnt (selbstsigniert)
+	if err := send(base(nil)); err == nil || !strings.Contains(err.Error(), "STARTTLS") {
+		t.Errorf("selbstsigniertes Zertifikat ohne CA-Datei akzeptiert? err = %v", err)
+	}
+	// Mit exportiertem Bridge-Zertifikat: klappt
+	if err := send(base(map[string]string{"SMTP_TLS_CA_FILE": certFile})); err != nil {
+		t.Errorf("mit SMTP_TLS_CA_FILE: %v", err)
+	} else {
+		f.wait(t)
+	}
+	// Bridge in anderem Container: Hostname weicht ab → SMTP_TLS_SERVER_NAME
+	m := base(map[string]string{"SMTP_TLS_CA_FILE": certFile, "SMTP_TLS_SERVER_NAME": "127.0.0.1"})
+	m.Host = "localhost" // verbindet über anderen Namen als im Zertifikat
+	if err := send(m); err != nil {
+		t.Errorf("mit SMTP_TLS_SERVER_NAME: %v", err)
+	} else {
+		f.wait(t)
+	}
+	// Notlösung ohne Prüfung
+	if err := send(base(map[string]string{"SMTP_TLS_SKIP_VERIFY": "true"})); err != nil {
+		t.Errorf("mit SMTP_TLS_SKIP_VERIFY: %v", err)
+	} else {
+		f.wait(t)
 	}
 }
