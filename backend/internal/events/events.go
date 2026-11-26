@@ -3,14 +3,13 @@ package events
 import (
 	"context"
 	"database/sql"
-	"embed"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
+	"io/fs"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -30,7 +29,7 @@ import (
 
 type Handler struct {
 	DB         *sql.DB
-	InternalFS embed.FS
+	InternalFS fs.FS // in Produktion das eingebettete embed.FS aus main.go
 }
 
 func formatTime(s time.Time) template.HTML {
@@ -348,36 +347,47 @@ func (h *Handler) eventsByArgs(ctx context.Context, args urlArgs) []Event {
 	}
 
 	if args.Upcomming == "true" {
-		for i := range events {
-			curr := events[i].Date
-			// If the event is today, still highlight it!
-			yesterday := time.Now().AddDate(0, 0, -1)
-			val := true
-			if i == len(events) {
-				events[i].Upcomming = &val
-				break
-			}
-			// This can produce a runtime error.... if the if-condition above didnt existed...
-			next := events[i+1].Date
-			// Just set the next one as highlighted.
-			if sortBy == "next" && i == 0 {
-				events[i].Upcomming = &val
-				break
-			}
-			if sortBy == "desc" && curr.Unix() > yesterday.Unix() && next.Unix() < yesterday.Unix() && i != len(events)-1 {
-				events[i].Upcomming = &val
-				break
-			}
-			if sortBy == "asc" && curr.Unix() > yesterday.Unix() && next.Unix() > yesterday.Unix() && i != len(events)-1 {
-				events[i].Upcomming = &val
-				break
-			}
-
-		}
+		markUpcoming(events, sortBy, time.Now())
 	}
 
 	return events
 
+}
+
+// markUpcoming hebt den nächsten anstehenden Termin hervor ("Als nächstes").
+// Termine von heute zählen noch als anstehend.
+// (Die alte Version griff auf events[i+1] zu und stürzte bei nur einem Termin ab.)
+func markUpcoming(events []Event, sortBy string, now time.Time) {
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	isUpcoming := func(e Event) bool { return !e.Date.Before(today) }
+	idx := -1
+	switch sortBy {
+	case "next":
+		if len(events) > 0 {
+			idx = 0
+		}
+	case "asc":
+		// aufsteigend: der erste Termin ab heute
+		for i, e := range events {
+			if isUpcoming(e) {
+				idx = i
+				break
+			}
+		}
+	case "desc":
+		// absteigend: der letzte Termin ab heute (direkt vor dem ersten vergangenen)
+		for i, e := range events {
+			if isUpcoming(e) {
+				idx = i
+			} else {
+				break
+			}
+		}
+	}
+	if idx >= 0 {
+		val := true
+		events[idx].Upcomming = &val
+	}
 }
 
 func (h *Handler) PublicLoad(w http.ResponseWriter, r *http.Request) {
@@ -550,43 +560,6 @@ func (h *Handler) ProvideICSFile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Write([]byte("unfortunatly no ics for you :( server problem..."))
 	}
-}
-
-type Coordinates struct {
-	Lat string `json:"lat"`
-	Lon string `json:"lon"`
-}
-
-// Uses the Openstreetmap API
-func FetchCoordinates(ort string, stadt string) (*Coordinates, error) {
-
-	base := "https://nominatim.openstreetmap.org/search"
-	params := url.Values{}
-	params.Add("q", fmt.Sprintf("%s,+%s", ort, stadt))
-	params.Add("format", "json")
-	req, err := http.NewRequest("GET", base+"?"+params.Encode(), nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("User-Agent", "elses-website-backend/1.0 (hendrik_maier@protonmail.com)")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	decoder := json.NewDecoder(resp.Body)
-	var coords []Coordinates
-	decoder.Decode(&coords)
-	if err != nil {
-		return nil, err
-	}
-	if len(coords) > 0 {
-		return &coords[0], nil
-	}
-	return nil, fmt.Errorf("no results found")
 }
 
 func logErr(w http.ResponseWriter, msg string, err error, code int) {
