@@ -108,8 +108,27 @@ UPDATE events SET name = ?, date = ?, doors = ?, begin = ?, place = ?, city = ?,
 -- SECTION for mailbox (Verwaltung)
 -- ################################################################
 
--- name: MarkMessageRead :exec
-UPDATE mailbox SET IsRead = 1 WHERE id = ?;
+-- name: ListMessagesInbox :many
+SELECT id, name, email, message, date, IsRead, archived FROM mailbox WHERE archived = 0 ORDER BY date DESC, id DESC;
+
+-- name: ListMessagesArchived :many
+SELECT id, name, email, message, date, IsRead, archived FROM mailbox WHERE archived = 1 ORDER BY date DESC, id DESC;
+
+-- name: CountMessages :one
+SELECT
+  CAST(COALESCE(SUM(CASE WHEN archived = 0 AND COALESCE(IsRead, 0) = 0 THEN 1 ELSE 0 END), 0) AS INTEGER) AS unread,
+  CAST(COALESCE(SUM(CASE WHEN archived = 0 THEN 1 ELSE 0 END), 0) AS INTEGER) AS inbox,
+  CAST(COALESCE(SUM(CASE WHEN archived = 1 THEN 1 ELSE 0 END), 0) AS INTEGER) AS archived
+FROM mailbox;
+
+-- name: SetMessageRead :exec
+UPDATE mailbox SET IsRead = ? WHERE id = ?;
+
+-- name: SetMessageArchived :exec
+UPDATE mailbox SET archived = ?, IsRead = 1 WHERE id = ?;
+
+-- name: DeleteMessage :exec
+DELETE FROM mailbox WHERE id = ?;
 
 -- ################################################################
 -- SECTION for orders

@@ -1,27 +1,71 @@
+{{ define "messages-badge" }}<span class="ml-1 inline-grid h-6 min-w-6 place-items-center rounded-full bg-lime px-1.5 text-sm text-ink">{{ . }}</span>{{ end }}
+
 {{ define "messages-panel" }}
-<div id="messages-panel" class="space-y-4">
-	<p class="text-ink/70">{{ if .Unread }}<b>{{ .Unread }}</b> ungelesen{{ else }}Alles gelesen ✓{{ end }}</p>
+{{ $view := .View }}
+<div id="messages-panel">
+	<div class="mb-6 flex flex-wrap items-center gap-2" role="tablist">
+		<button type="button" role="tab" aria-selected="{{ eq $view "inbox" }}"
+		        hx-get="/manage/api/messages?view=inbox" hx-target="#messages-panel" hx-swap="outerHTML"
+		        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq $view "inbox" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
+			Posteingang <span class="ml-1 opacity-70">{{ .Counts.Inbox }}</span>
+		</button>
+		<button type="button" role="tab" aria-selected="{{ eq $view "archived" }}"
+		        hx-get="/manage/api/messages?view=archived" hx-target="#messages-panel" hx-swap="outerHTML"
+		        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq $view "archived" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
+			Erledigt <span class="ml-1 opacity-70">{{ .Counts.Archived }}</span>
+		</button>
+		{{ if and (eq $view "inbox") .Counts.Unread }}
+		<span class="sticker ml-auto">{{ .Counts.Unread }} neu</span>
+		{{ end }}
+	</div>
+
+	<div class="space-y-4">
 	{{ range .Messages }}
-	<article class="rounded-3xl border-2 border-ink p-5 sm:p-6 {{ if eq .Isread.Int64 0 }}bg-white shadow-pop-sm{{ else }}bg-paper opacity-70{{ end }}">
-		<div class="flex flex-wrap items-start justify-between gap-3">
-			<div>
-				<h3 class="font-headline text-lg font-extrabold">{{ .Name }}
-					{{ if eq .Isread.Int64 0 }}<span class="sticker ml-2 !px-2 !py-0.5 !text-xs">neu</span>{{ end }}</h3>
-				<a href="mailto:{{ .Email }}" class="break-all font-semibold text-lilac-700 underline">{{ .Email }}</a>
-			</div>
-			<p class="text-sm text-ink/60">{{ date .Date }}</p>
-		</div>
-		<p class="mt-4 whitespace-pre-line">{{ .Message }}</p>
-		<div class="mt-4 flex flex-wrap gap-2">
-			<a href="mailto:{{ .Email }}?subject=Deine Nachricht an Einfach Else" class="rounded-full border-2 border-ink bg-lime px-4 py-1.5 text-sm font-bold">Antworten</a>
-			{{ if eq .Isread.Int64 0 }}
-			<button type="button" hx-post="/manage/api/messages/{{ .ID }}/read" hx-target="#messages-panel" hx-swap="outerHTML"
-			        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 text-sm font-bold hover:bg-lilac-200">Als gelesen markieren</button>
-			{{ end }}
-		</div>
-	</article>
+		<article class="rounded-3xl border-2 border-ink p-5 sm:p-6 {{ if .Unread }}bg-white shadow-pop-sm{{ else }}bg-paper{{ end }}">
+			<header class="flex flex-wrap items-start justify-between gap-3">
+				<div class="min-w-0">
+					<h3 class="font-headline text-lg font-extrabold">
+						{{ if .Unread }}<span class="mr-1 inline-block h-2.5 w-2.5 rounded-full bg-lilac-500 align-middle" title="ungelesen"></span>{{ end }}
+						{{ .Name }}
+					</h3>
+					<a href="mailto:{{ .Email }}" class="break-all font-semibold text-lilac-700 underline">{{ .Email }}</a>
+				</div>
+				<p class="text-sm text-ink/60" title="{{ date .Date }}">{{ ago .Date }}</p>
+			</header>
+
+			<p class="mt-4 whitespace-pre-line break-words {{ if not .Unread }}text-ink/80{{ end }}">{{ .Message }}</p>
+
+			<footer class="mt-5 flex flex-wrap gap-2 text-sm">
+				<a href="mailto:{{ .Email }}?subject=Re: Deine Nachricht an Einfach Else"
+				   class="rounded-full border-2 border-ink bg-lime px-4 py-1.5 font-bold">Antworten</a>
+				{{ if .Unread }}
+				<button type="button" hx-post="/manage/api/messages/{{ .ID }}/read?view={{ $view }}" hx-target="#messages-panel" hx-swap="outerHTML"
+				        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Gelesen</button>
+				{{ else }}
+				<button type="button" hx-post="/manage/api/messages/{{ .ID }}/unread?view={{ $view }}" hx-target="#messages-panel" hx-swap="outerHTML"
+				        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Als ungelesen markieren</button>
+				{{ end }}
+				{{ if eq $view "inbox" }}
+				<button type="button" hx-post="/manage/api/messages/{{ .ID }}/archive?view=inbox" hx-target="#messages-panel" hx-swap="outerHTML"
+				        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Erledigt ✓</button>
+				{{ else }}
+				<button type="button" hx-post="/manage/api/messages/{{ .ID }}/unarchive?view=archived" hx-target="#messages-panel" hx-swap="outerHTML"
+				        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Zurück in den Posteingang</button>
+				{{ end }}
+				<button type="button" hx-delete="/manage/api/messages/{{ .ID }}?view={{ $view }}" hx-target="#messages-panel" hx-swap="outerHTML"
+				        hx-confirm="Nachricht von {{ .Name }} endgültig löschen?"
+				        class="ml-auto rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-ink hover:text-paper">Löschen</button>
+			</footer>
+		</article>
 	{{ else }}
-	<p class="rounded-3xl border-2 border-dashed border-ink/30 p-8 text-center text-ink/60">Noch keine Nachrichten.</p>
+		<p class="rounded-3xl border-2 border-dashed border-ink/30 p-8 text-center text-ink/60">
+			{{ if eq $view "archived" }}Noch nichts erledigt.{{ else }}Keine offenen Nachrichten. ✓{{ end }}
+		</p>
+	{{ end }}
+	</div>
+
+	{{ if eq $view "archived" }}
+	<p class="mt-6 text-sm text-ink/60">Tipp: Laut Datenschutzerklärung werden Anfragen nach der Bearbeitung gelöscht. Erledigte Nachrichten also gern regelmäßig löschen.</p>
 	{{ end }}
 </div>
 {{ end }}

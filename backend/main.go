@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"context"
 
+	"codeberg.org/schnelles_geraet/website-else/backend/internal/migrate"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/server"
 
 	_ "codeberg.org/schnelles_geraet/website-else/backend/internal/mailbox"
@@ -40,8 +41,8 @@ func main() {
 	if _, err := sqlite.ExecContext(ctx, ddl); err != nil {
 		log.Fatal(err)
 	}
-
-	if _, err := sqlite.ExecContext(ctx, ddl); err != nil {
+	// Neue Spalten in bestehenden Tabellen ergänzen (siehe internal/migrate)
+	if err := migrate.Run(ctx, sqlite); err != nil {
 		log.Fatal(err)
 	}
 	srv := server.New(sqlite, internalFS)

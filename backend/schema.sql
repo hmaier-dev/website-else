@@ -5,7 +5,10 @@ CREATE TABLE IF NOT EXISTS mailbox (
   message TEXT NOT NULL,
   date INT NOT NULL,
   approval INT DEFAULT 0,
-  IsRead INT
+  IsRead INT,
+  -- 1 = erledigt (in der Verwaltung unter "Erledigt")
+  -- Bei bestehenden Datenbanken legt main.go die Spalte per Migration an.
+  archived INT NOT NULL DEFAULT 0
 );
 
 
