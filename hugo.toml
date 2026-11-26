@@ -55,13 +55,13 @@ disablePathToLower = true
     name = "Schreiben"
     parent = "angebote"
     url = "/angebote/#schreibworkshop--kreatives-schreiben-für-einsteigerinnen-und-fortgeschrittene"
-    weight = 2
+    weight = 3
 
   [[menus.main]]
     name = "Poetry Slam"
     parent = "angebote"
     url = "/angebote/#poetry-slam-workshop--freies-schreiben--performen-lernen"
-    weight = 3
+    weight = 2
 
   [[menus.main]]
     name = "Moderation"
