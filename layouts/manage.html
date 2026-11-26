@@ -12,7 +12,7 @@
 		<nav class="flex flex-wrap gap-2" role="tablist" aria-label="Bereiche">
 			{{ range slice (slice "termine" "Termine") (slice "bestellungen" "Bestellungen") (slice "nachrichten" "Nachrichten") }}
 			<a href="{{ $.RelPermalink }}#{{ index . 0 }}" role="tab" data-tab="{{ index . 0 }}"
-			   class="manage-tab rounded-full border-2 border-ink bg-white px-5 py-2.5 font-headline font-bold shadow-pop-sm hover:bg-lime aria-selected:bg-ink aria-selected:text-paper">{{ index . 1 }}</a>
+			   class="manage-tab rounded-full border-2 border-ink bg-white px-5 py-2.5 font-headline font-bold shadow-pop-sm hover:bg-lime aria-selected:bg-ink aria-selected:text-paper">{{ index . 1 }}{{ if eq (index . 0) "nachrichten" }}<span hx-get="/manage/api/messages/badge" hx-trigger="load, messages-changed from:body" hx-swap="innerHTML"></span>{{ end }}</a>
 			{{ end }}
 		</nav>
 	</div>

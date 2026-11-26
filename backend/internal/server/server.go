@@ -10,6 +10,7 @@ import (
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/auth"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/events"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/mailbox"
+	"codeberg.org/schnelles_geraet/website-else/backend/internal/notify"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/shop"
 
 	"github.com/gorilla/mux"
@@ -33,9 +34,19 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 
 	//----------------------------------------------------------
 	// Mailbox endpoints
+	// Optionale E-Mail-Benachrichtigungen (siehe internal/notify)
+	mailer, err := notify.FromEnv(os.Getenv)
+	if err != nil {
+		log.Printf("WARNUNG: %v – E-Mail-Benachrichtigungen sind aus.", err)
+		mailer = nil
+	}
+
 	m := &mailbox.Handler{
 		DB:  sqlite,
 		API: mailbox.API{Username: u, Password: p},
+	}
+	if mailer != nil { // nicht einfach zuweisen: ein nil-*Mailer im Interface wäre != nil
+		m.Notify = mailer
 	}
 	mbr := s.Router.PathPrefix("/mailbox").Subrouter()
 	mbr.HandleFunc("/contact", m.HandlerContactRequest).Methods("POST")
@@ -61,6 +72,9 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 	//----------------------------------------------------------
 	// Shop endpoints (öffentlich)
 	sh := shop.FromEnv(sqlite, os.Getenv)
+	if mailer != nil {
+		sh.Notify = mailer
+	}
 	shopAPI := s.Router.PathPrefix("/shop/api").Subrouter()
 	shopAPI.HandleFunc("/config", sh.Config).Methods("GET")
 	shopAPI.HandleFunc("/orders", sh.CreateOrder).Methods("POST")
@@ -93,7 +107,9 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 	manage.HandleFunc(`/orders/{id:\d+}/shipped`, sh.AdminMarkShipped).Methods("POST")
 
 	manage.HandleFunc("/messages", m.AdminMessages).Methods("GET")
-	manage.HandleFunc(`/messages/{id:\d+}/read`, m.AdminMarkRead).Methods("POST")
+	manage.HandleFunc("/messages/badge", m.AdminBadge).Methods("GET")
+	manage.HandleFunc(`/messages/{id:\d+}/{action:read|unread|archive|unarchive}`, m.AdminMessageAction).Methods("POST")
+	manage.HandleFunc(`/messages/{id:\d+}`, m.AdminDeleteMessage).Methods("DELETE")
 
 	// logs all routes when starting after they go defined
 	s.Router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {

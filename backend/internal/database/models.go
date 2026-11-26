@@ -31,6 +31,7 @@ type Mailbox struct {
 	Date     int64
 	Approval sql.NullInt64
 	Isread   sql.NullInt64
+	Archived int64
 }
 
 type Order struct {

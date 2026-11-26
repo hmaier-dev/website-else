@@ -96,6 +96,27 @@ func (q *Queries) CountEvents(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const countMessages = `-- name: CountMessages :one
+SELECT
+  CAST(COALESCE(SUM(CASE WHEN archived = 0 AND COALESCE(IsRead, 0) = 0 THEN 1 ELSE 0 END), 0) AS INTEGER) AS unread,
+  CAST(COALESCE(SUM(CASE WHEN archived = 0 THEN 1 ELSE 0 END), 0) AS INTEGER) AS inbox,
+  CAST(COALESCE(SUM(CASE WHEN archived = 1 THEN 1 ELSE 0 END), 0) AS INTEGER) AS archived
+FROM mailbox
+`
+
+type CountMessagesRow struct {
+	Unread   int64
+	Inbox    int64
+	Archived int64
+}
+
+func (q *Queries) CountMessages(ctx context.Context) (CountMessagesRow, error) {
+	row := q.db.QueryRowContext(ctx, countMessages)
+	var i CountMessagesRow
+	err := row.Scan(&i.Unread, &i.Inbox, &i.Archived)
+	return i, err
+}
+
 const createOrder = `-- name: CreateOrder :exec
 
 INSERT INTO orders (
@@ -138,6 +159,15 @@ WHERE id = ?
 
 func (q *Queries) DeleteEventByID(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteEventByID, id)
+	return err
+}
+
+const deleteMessage = `-- name: DeleteMessage :exec
+DELETE FROM mailbox WHERE id = ?
+`
+
+func (q *Queries) DeleteMessage(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteMessage, id)
 	return err
 }
 
@@ -184,15 +214,25 @@ const getCompleteMailbox = `-- name: GetCompleteMailbox :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox ORDER BY date ASC
 `
 
-func (q *Queries) GetCompleteMailbox(ctx context.Context) ([]Mailbox, error) {
+type GetCompleteMailboxRow struct {
+	ID       int64
+	Name     string
+	Email    string
+	Message  string
+	Date     int64
+	Approval sql.NullInt64
+	Isread   sql.NullInt64
+}
+
+func (q *Queries) GetCompleteMailbox(ctx context.Context) ([]GetCompleteMailboxRow, error) {
 	rows, err := q.db.QueryContext(ctx, getCompleteMailbox)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Mailbox
+	var items []GetCompleteMailboxRow
 	for rows.Next() {
-		var i Mailbox
+		var i GetCompleteMailboxRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -381,15 +421,25 @@ const getUnreadMailboxItems = `-- name: GetUnreadMailboxItems :many
 SELECT id, name, email, message, date, approval, IsRead FROM mailbox WHERE IsRead IS NULL ORDER BY date ASC
 `
 
-func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]Mailbox, error) {
+type GetUnreadMailboxItemsRow struct {
+	ID       int64
+	Name     string
+	Email    string
+	Message  string
+	Date     int64
+	Approval sql.NullInt64
+	Isread   sql.NullInt64
+}
+
+func (q *Queries) GetUnreadMailboxItems(ctx context.Context) ([]GetUnreadMailboxItemsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getUnreadMailboxItems)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Mailbox
+	var items []GetUnreadMailboxItemsRow
 	for rows.Next() {
-		var i Mailbox
+		var i GetUnreadMailboxItemsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -488,6 +538,100 @@ func (q *Queries) ListEventsUpcoming(ctx context.Context) ([]ListEventsUpcomingR
 			&i.Place,
 			&i.City,
 			&i.Link,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listMessagesArchived = `-- name: ListMessagesArchived :many
+SELECT id, name, email, message, date, IsRead, archived FROM mailbox WHERE archived = 1 ORDER BY date DESC, id DESC
+`
+
+type ListMessagesArchivedRow struct {
+	ID       int64
+	Name     string
+	Email    string
+	Message  string
+	Date     int64
+	Isread   sql.NullInt64
+	Archived int64
+}
+
+func (q *Queries) ListMessagesArchived(ctx context.Context) ([]ListMessagesArchivedRow, error) {
+	rows, err := q.db.QueryContext(ctx, listMessagesArchived)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListMessagesArchivedRow
+	for rows.Next() {
+		var i ListMessagesArchivedRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.Message,
+			&i.Date,
+			&i.Isread,
+			&i.Archived,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listMessagesInbox = `-- name: ListMessagesInbox :many
+
+SELECT id, name, email, message, date, IsRead, archived FROM mailbox WHERE archived = 0 ORDER BY date DESC, id DESC
+`
+
+type ListMessagesInboxRow struct {
+	ID       int64
+	Name     string
+	Email    string
+	Message  string
+	Date     int64
+	Isread   sql.NullInt64
+	Archived int64
+}
+
+// ################################################################
+// SECTION for mailbox (Verwaltung)
+// ################################################################
+func (q *Queries) ListMessagesInbox(ctx context.Context) ([]ListMessagesInboxRow, error) {
+	rows, err := q.db.QueryContext(ctx, listMessagesInbox)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListMessagesInboxRow
+	for rows.Next() {
+		var i ListMessagesInboxRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.Message,
+			&i.Date,
+			&i.Isread,
+			&i.Archived,
 		); err != nil {
 			return nil, err
 		}
@@ -800,19 +944,6 @@ func (q *Queries) LoadEventsRandom(ctx context.Context, limit int64) ([]LoadEven
 	return items, nil
 }
 
-const markMessageRead = `-- name: MarkMessageRead :exec
-
-UPDATE mailbox SET IsRead = 1 WHERE id = ?
-`
-
-// ################################################################
-// SECTION for mailbox (Verwaltung)
-// ################################################################
-func (q *Queries) MarkMessageRead(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, markMessageRead, id)
-	return err
-}
-
 const markOrderPaid = `-- name: MarkOrderPaid :exec
 UPDATE orders SET status = 'paid', payer_name = ?, payer_email = ?, shipping_address = ?, capture_id = ?, paid_at = ?
 WHERE paypal_order_id = ? AND status = 'created'
@@ -850,6 +981,34 @@ type MarkOrderShippedParams struct {
 
 func (q *Queries) MarkOrderShipped(ctx context.Context, arg MarkOrderShippedParams) error {
 	_, err := q.db.ExecContext(ctx, markOrderShipped, arg.ShippedAt, arg.ID)
+	return err
+}
+
+const setMessageArchived = `-- name: SetMessageArchived :exec
+UPDATE mailbox SET archived = ?, IsRead = 1 WHERE id = ?
+`
+
+type SetMessageArchivedParams struct {
+	Archived int64
+	ID       int64
+}
+
+func (q *Queries) SetMessageArchived(ctx context.Context, arg SetMessageArchivedParams) error {
+	_, err := q.db.ExecContext(ctx, setMessageArchived, arg.Archived, arg.ID)
+	return err
+}
+
+const setMessageRead = `-- name: SetMessageRead :exec
+UPDATE mailbox SET IsRead = ? WHERE id = ?
+`
+
+type SetMessageReadParams struct {
+	Isread sql.NullInt64
+	ID     int64
+}
+
+func (q *Queries) SetMessageRead(ctx context.Context, arg SetMessageReadParams) error {
+	_, err := q.db.ExecContext(ctx, setMessageRead, arg.Isread, arg.ID)
 	return err
 }
 

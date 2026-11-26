@@ -13,22 +13,28 @@ Kontaktformular (sendet an das Go-Backend unter /mailbox/contact)
 
 		<form hx-post="/mailbox/contact"
 		      hx-swap="none"
-		      hx-on::after-request="if (event.detail.successful) { this.reset(); this.querySelector('[data-ok]').hidden = false; this.querySelector('[data-err]').hidden = true } else { this.querySelector('[data-err]').hidden = false }"
-		      class="flex flex-col gap-5 bg-lilac-300 p-8 text-ink sm:p-12 lg:border-l-2 lg:border-ink">
+		      hx-on::after-request="if (event.detail.successful) { this.reset(); this.querySelector('[data-ok]').hidden = false; this.querySelector('[data-err]').hidden = true } else { const e = this.querySelector('[data-err]'); e.textContent = (event.detail.xhr && event.detail.xhr.status && event.detail.xhr.status < 500 && event.detail.xhr.responseText) || 'Das hat leider nicht geklappt. Versuch es bitte später nochmal.'; e.hidden = false; this.querySelector('[data-ok]').hidden = true }"
+		      class="relative flex flex-col gap-5 bg-lilac-300 p-8 text-ink sm:p-12 lg:border-l-2 lg:border-ink">
+
+			<!-- Spam-Falle: für Menschen unsichtbar, Bots füllen es aus -->
+			<div aria-hidden="true" class="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+				<label for="website">Website (bitte leer lassen)</label>
+				<input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+			</div>
 
 			<div>
 				<label for="name" class="mb-1.5 block font-headline font-bold">Name</label>
-				<input type="text" id="name" name="name" required autocomplete="name" class="field">
+				<input type="text" id="name" name="name" required maxlength="200" autocomplete="name" class="field">
 			</div>
 
 			<div>
 				<label for="email" class="mb-1.5 block font-headline font-bold">E-Mail</label>
-				<input type="email" id="email" name="email" required autocomplete="email" class="field">
+				<input type="email" id="email" name="email" required maxlength="254" autocomplete="email" class="field">
 			</div>
 
 			<div>
 				<label for="message" class="mb-1.5 block font-headline font-bold">Nachricht</label>
-				<textarea id="message" name="message" rows="5" required class="field resize-y"></textarea>
+				<textarea id="message" name="message" rows="5" required maxlength="5000" class="field resize-y"></textarea>
 			</div>
 
 			<label for="approval" class="flex items-start gap-3 text-sm">
