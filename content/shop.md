@@ -67,7 +67,7 @@ produkte:
   - id: jutebeutel
     name: "Jutebeutel „Einfach Else“"
     preis: 12.00
-    bild: media/spread-the-word-loud.webp
+    bild: media/back1.webp
     verfuegbar: false
     beschreibung: |
       **Beispielprodukt** – zeigt, wie ein ausverkaufter Artikel aussieht.
