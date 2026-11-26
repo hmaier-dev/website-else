@@ -27,6 +27,8 @@ Fehler brechen den Hugo-Build mit einer verständlichen Meldung ab.
     {{- if or (lt $price $min) (gt $price $max) -}}{{- errorf "shop.md: Produkt %q: preis (Vorschlag) liegt nicht zwischen preis_min und preis_max" $id -}}{{- end -}}
   {{- end -}}
   {{- if le $price 0.0 -}}{{- errorf "shop.md: Produkt %q hat keinen gültigen preis" $id -}}{{- end -}}
+  {{- $step := float ($p.preis_schritt | default 1) -}}
+  {{- if le $step 0.0 -}}{{- errorf "shop.md: Produkt %q: preis_schritt muss größer als 0 sein" $id -}}{{- end -}}
   {{- $available := true -}}
   {{- if isset $p "verfuegbar" -}}{{- $available = $p.verfuegbar -}}{{- end -}}
   {{- $products = $products | append (dict
@@ -39,6 +41,7 @@ Fehler brechen den Hugo-Build mit einer verständlichen Meldung ab.
         "max" $max
         "min_cents" (cond $flexible (int (math.Round (mul $min 100))) 0)
         "max_cents" (cond $flexible (int (math.Round (mul $max 100))) 0)
+        "step_cents" (int (math.Round (mul $step 100)))
         "available" $available
         "image" ($p.bild | default "")
         "description" ($p.beschreibung | default "")
