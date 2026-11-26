@@ -6,12 +6,12 @@
 	<div class="mb-6 flex flex-wrap items-center gap-2" role="tablist">
 		<button type="button" role="tab" aria-selected="{{ eq $view "inbox" }}"
 		        hx-get="/manage/api/messages?view=inbox" hx-target="#messages-panel" hx-swap="outerHTML"
-		        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq $view "inbox" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
+		        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq $view "inbox" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
 			Posteingang <span class="ml-1 opacity-70">{{ .Counts.Inbox }}</span>
 		</button>
 		<button type="button" role="tab" aria-selected="{{ eq $view "archived" }}"
 		        hx-get="/manage/api/messages?view=archived" hx-target="#messages-panel" hx-swap="outerHTML"
-		        class="rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq $view "archived" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
+		        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink px-5 py-2 font-headline font-bold {{ if eq $view "archived" }}bg-ink text-paper{{ else }}bg-white hover:bg-lilac-200{{ end }}">
 			Erledigt <span class="ml-1 opacity-70">{{ .Counts.Archived }}</span>
 		</button>
 		{{ if and (eq $view "inbox") .Counts.Unread }}
@@ -28,7 +28,7 @@
 						{{ if .Unread }}<span class="mr-1 inline-block h-2.5 w-2.5 rounded-full bg-lilac-500 align-middle" title="ungelesen"></span>{{ end }}
 						{{ .Name }}
 					</h3>
-					<a href="mailto:{{ .Email }}" class="break-all font-semibold text-lilac-700 underline">{{ .Email }}</a>
+					<a href="mailto:{{ .Email }}" class="inline-block break-all py-1 font-semibold text-lilac-700 underline">{{ .Email }}</a>
 				</div>
 				<p class="text-sm text-ink/60" title="{{ date .Date }}">{{ ago .Date }}</p>
 			</header>
@@ -37,24 +37,24 @@
 
 			<footer class="mt-5 flex flex-wrap gap-2 text-sm">
 				<a href="mailto:{{ .Email }}?subject=Re: Deine Nachricht an Einfach Else"
-				   class="rounded-full border-2 border-ink bg-lime px-4 py-1.5 font-bold">Antworten</a>
+				   class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink bg-lime px-4 py-1.5 font-bold">Antworten</a>
 				{{ if .Unread }}
 				<button type="button" hx-post="/manage/api/messages/{{ .ID }}/read?view={{ $view }}" hx-target="#messages-panel" hx-swap="outerHTML"
-				        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Gelesen</button>
+				        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Gelesen</button>
 				{{ else }}
 				<button type="button" hx-post="/manage/api/messages/{{ .ID }}/unread?view={{ $view }}" hx-target="#messages-panel" hx-swap="outerHTML"
-				        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Als ungelesen markieren</button>
+				        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Als ungelesen markieren</button>
 				{{ end }}
 				{{ if eq $view "inbox" }}
 				<button type="button" hx-post="/manage/api/messages/{{ .ID }}/archive?view=inbox" hx-target="#messages-panel" hx-swap="outerHTML"
-				        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Erledigt ✓</button>
+				        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Erledigt ✓</button>
 				{{ else }}
 				<button type="button" hx-post="/manage/api/messages/{{ .ID }}/unarchive?view=archived" hx-target="#messages-panel" hx-swap="outerHTML"
-				        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Zurück in den Posteingang</button>
+				        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-lilac-200">Zurück in den Posteingang</button>
 				{{ end }}
 				<button type="button" hx-delete="/manage/api/messages/{{ .ID }}?view={{ $view }}" hx-target="#messages-panel" hx-swap="outerHTML"
 				        hx-confirm="Nachricht von {{ .Name }} endgültig löschen?"
-				        class="ml-auto rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-ink hover:text-paper">Löschen</button>
+				        class="inline-flex min-h-11 items-center justify-center sm:min-h-0 ml-auto rounded-full border-2 border-ink bg-white px-4 py-1.5 font-bold hover:bg-ink hover:text-paper">Löschen</button>
 			</footer>
 		</article>
 	{{ else }}
