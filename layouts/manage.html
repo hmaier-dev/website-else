@@ -64,6 +64,33 @@
 		window.addEventListener("hashchange", show)
 		show()
 
+		// Termine: Kommende/Vergangene ohne Nachladen umschalten.
+		// Jede Liste merkt sich, wie weit man in ihr gescrollt hatte.
+		const scrollPos = {}
+		document.addEventListener("click", e => {
+			const jump = e.target.closest("[data-scroll-to]")
+			if (jump) {
+				document.getElementById(jump.dataset.scrollTo)?.scrollIntoView({ behavior: "smooth", block: "start" })
+				return
+			}
+			const tab = e.target.closest("[data-scope-tab]")
+			if (!tab) return
+			const panel = tab.closest(".events-lists")
+			const from = panel.dataset.scope
+			const to = tab.dataset.scopeTab
+			if (from === to) return
+			// Anfang der Listen (direkt unter der Reiterleiste)
+			const bar = panel.querySelector("[role=tablist]")
+			const listTop = panel.querySelector("[data-scope-list]").parentElement.getBoundingClientRect().top + window.scrollY - bar.offsetHeight - 80
+			scrollPos[from] = window.scrollY
+			panel.dataset.scope = to
+			panel.querySelectorAll("[data-scope-tab]").forEach(t => t.setAttribute("aria-selected", String(t === tab)))
+			panel.querySelectorAll("[data-scope-list]").forEach(l => l.hidden = l.dataset.scopeList !== to)
+			// Zurück an die gemerkte Stelle – oder an den Anfang der Liste, falls man weiter unten war
+			const target = scrollPos[to] ?? Math.min(window.scrollY, Math.max(0, listTop))
+			window.scrollTo({ top: target, behavior: "instant" })
+		})
+
 		// Fehler vom Backend sichtbar machen (z. B. abgelaufene Anmeldung)
 		document.body.addEventListener("htmx:responseError", e => {
 			const el = document.getElementById("manage-error")

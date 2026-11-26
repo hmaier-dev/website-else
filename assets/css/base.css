@@ -99,7 +99,14 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 6rem;
+    /* Scrollleiste im Website-Stil (Firefox, Chrome, Edge) */
+    scrollbar-color: var(--color-lilac-500) var(--color-lilac-100);
   }
+  /* Safari & ältere Chromium-Versionen */
+  html::-webkit-scrollbar { width: 14px; }
+  html::-webkit-scrollbar-track { background: var(--color-lilac-100); border-left: 2px solid var(--color-ink); }
+  html::-webkit-scrollbar-thumb { background: var(--color-lilac-500); border: 2px solid var(--color-ink); border-radius: 9999px; }
+  html::-webkit-scrollbar-thumb:hover { background: var(--color-lilac-600); }
   body {
     @apply bg-paper text-ink font-body antialiased;
     font-optical-sizing: auto;
@@ -238,6 +245,56 @@
     border: 2px solid var(--color-ink);
   }
   &::-webkit-scrollbar-thumb:hover { background: var(--color-lilac-600); }
+}
+
+
+/* --------------------------------------------------------------------------
+   Schieberegler im Website-Stil (Preis wählen)
+   -------------------------------------------------------------------------- */
+@utility range-else {
+  appearance: none;
+  height: 2.5rem;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+  &::-webkit-slider-runnable-track {
+    height: 0.875rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 9999px;
+    background: linear-gradient(to right, var(--color-lilac-500) var(--fill, 50%), var(--color-lilac-100) var(--fill, 50%));
+  }
+  &::-moz-range-track {
+    height: 0.875rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 9999px;
+    background: var(--color-lilac-100);
+  }
+  &::-moz-range-progress {
+    height: 0.875rem;
+    border-radius: 9999px;
+    background: var(--color-lilac-500);
+  }
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: calc((0.875rem - 4px - 1.75rem) / 2);
+    border: 2px solid var(--color-ink);
+    border-radius: 9999px;
+    background: var(--color-lime);
+    box-shadow: 2px 2px 0 0 var(--color-ink);
+  }
+  &::-moz-range-thumb {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 9999px;
+    background: var(--color-lime);
+    box-shadow: 2px 2px 0 0 var(--color-ink);
+  }
+  &:focus-visible { outline: none; }
+  &:focus-visible::-webkit-slider-thumb { outline: 3px solid var(--color-lilac-600); outline-offset: 2px; }
+  &:focus-visible::-moz-range-thumb { outline: 3px solid var(--color-lilac-600); outline-offset: 2px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
