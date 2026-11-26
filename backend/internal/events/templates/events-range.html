@@ -35,6 +35,8 @@
       <div class="mt-3">
         <a href="{{ .Link }}" class="font-semibold text-lilac-700 underline hover:bg-lime">Mehr Infos →</a>
       </div>
+    {{ else if .Note }}
+      <p class="mt-3 text-sm font-semibold text-ink/70">{{ .Note }}</p>
     {{ else }}
       <p class="mt-3 text-sm font-semibold text-ink/50">Infos folgen bald</p>
     {{ end }}

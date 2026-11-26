@@ -77,7 +77,9 @@ function generateHero(event) {
 		a.href = link
 		a.hidden = false
 	} else {
-		document.getElementById('hero-nolink').hidden = false
+		const nolink = document.getElementById('hero-nolink')
+		if (event['Note']) nolink.textContent = event['Note'] // z. B. "Eintritt: Spendenbasis"
+		nolink.hidden = false
 	}
 	const details = document.getElementById('hero-details')
 	details.classList.remove('hidden')
@@ -101,11 +103,11 @@ function generateUpcommingEvents(next) {
 					</div>
 					<span class="text-3xl text-lilac-500 transition-transform group-hover:rotate-90" aria-hidden="true">✦</span>
 				</div>
-				<h3 class="font-headline text-2xl font-extrabold leading-tight">${esc(event['Name'])}</h3>
+				<h3 lang="de" class="hyphens-auto break-words font-headline text-2xl font-extrabold leading-tight">${esc(event['Name'])}</h3>
 				<p class="mt-3 flex-1 text-ink/70">${esc(event['Place'])}, ${esc(event['City'])}</p>
 				${link
 					? `<a href="${esc(link)}" class="btn-lilac mt-6 w-full">Mehr Infos →</a>`
-					: `<p class="mt-6 rounded-full border-2 border-dashed border-ink/40 py-2.5 text-center font-headline font-bold text-ink/60">${esc(texts.noLink)}</p>`}
+					: `<p class="mt-6 rounded-full border-2 border-dashed border-ink/40 px-4 py-2.5 text-center font-headline font-bold text-ink/60">${esc(event['Note'] || texts.noLink)}</p>`}
 			</article>`
 	})
 	document.getElementById('next-events-cards-wrapper').innerHTML = html
@@ -124,7 +126,7 @@ function generatePreviousEvents(prev) {
 					<p class="text-xs font-bold uppercase text-ink/60">${esc(abbr)}</p>
 				</div>
 				<div>
-					<h3 class="font-headline text-lg font-bold">${esc(event['Name'])}</h3>
+					<h3 lang="de" class="hyphens-auto break-words font-headline text-lg font-bold">${esc(event['Name'])}</h3>
 					<p class="text-sm uppercase tracking-widest text-ink/60">${esc(event['Place'])} • ${esc(event['City'])}</p>
 				</div>
 			</div>`

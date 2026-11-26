@@ -10,7 +10,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -42,7 +41,9 @@ type AdminEvent struct {
 	Time  string // "20:00" oder ""
 	Place string
 	City  string
-	Link  string
+	Link  string // gültiger http(s)-Link
+	Note  string // Hinweistext statt Link, z. B. "Eintritt: Spendenbasis"
+	Raw   string // Feldinhalt fürs Bearbeiten
 }
 
 // formValues sind die Eingaben im Formular (auch bei Fehlern wieder angezeigt).
@@ -51,13 +52,18 @@ type formValues struct {
 }
 
 func (e AdminEvent) form() formValues {
-	return formValues{e.Name, e.Date.Format("2006-01-02"), e.Time, e.Place, e.City, e.Link}
+	return formValues{e.Name, e.Date.Format("2006-01-02"), e.Time, e.Place, e.City, e.Raw}
 }
 
 func toAdminEvent(id int64, name string, date time.Time, begin sql.NullTime, place, city string, link sql.NullString) AdminEvent {
+	l, note := splitLink(link.String)
+	raw := l
+	if raw == "" {
+		raw = note
+	}
 	return AdminEvent{
 		ID: id, Name: name, Date: date, Time: clockTime(begin),
-		Place: place, City: city, Link: link.String,
+		Place: place, City: city, Link: l, Note: note, Raw: raw,
 	}
 }
 
@@ -102,11 +108,8 @@ func parseEventForm(r *http.Request) (parsedEvent, formValues, string) {
 		}
 		begin = date.Add(time.Duration(t.Hour())*time.Hour + time.Duration(t.Minute())*time.Minute)
 	}
-	if f.Link != "" {
-		u, err := url.Parse(f.Link)
-		if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
-			return p, f, "Der Link muss mit https:// beginnen."
-		}
+	if msg := validLinkInput(f.Link); msg != "" {
+		return p, f, msg
 	}
 	p = parsedEvent{
 		Name: f.Name, Place: f.Place, City: f.City, Date: date,
