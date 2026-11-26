@@ -1,0 +1,27 @@
+{{ define "messages-panel" }}
+<div id="messages-panel" class="space-y-4">
+	<p class="text-ink/70">{{ if .Unread }}<b>{{ .Unread }}</b> ungelesen{{ else }}Alles gelesen ✓{{ end }}</p>
+	{{ range .Messages }}
+	<article class="rounded-3xl border-2 border-ink p-5 sm:p-6 {{ if eq .Isread.Int64 0 }}bg-white shadow-pop-sm{{ else }}bg-paper opacity-70{{ end }}">
+		<div class="flex flex-wrap items-start justify-between gap-3">
+			<div>
+				<h3 class="font-headline text-lg font-extrabold">{{ .Name }}
+					{{ if eq .Isread.Int64 0 }}<span class="sticker ml-2 !px-2 !py-0.5 !text-xs">neu</span>{{ end }}</h3>
+				<a href="mailto:{{ .Email }}" class="break-all font-semibold text-lilac-700 underline">{{ .Email }}</a>
+			</div>
+			<p class="text-sm text-ink/60">{{ date .Date }}</p>
+		</div>
+		<p class="mt-4 whitespace-pre-line">{{ .Message }}</p>
+		<div class="mt-4 flex flex-wrap gap-2">
+			<a href="mailto:{{ .Email }}?subject=Deine Nachricht an Einfach Else" class="rounded-full border-2 border-ink bg-lime px-4 py-1.5 text-sm font-bold">Antworten</a>
+			{{ if eq .Isread.Int64 0 }}
+			<button type="button" hx-post="/manage/api/messages/{{ .ID }}/read" hx-target="#messages-panel" hx-swap="outerHTML"
+			        class="rounded-full border-2 border-ink bg-white px-4 py-1.5 text-sm font-bold hover:bg-lilac-200">Als gelesen markieren</button>
+			{{ end }}
+		</div>
+	</article>
+	{{ else }}
+	<p class="rounded-3xl border-2 border-dashed border-ink/30 p-8 text-center text-ink/60">Noch keine Nachrichten.</p>
+	{{ end }}
+</div>
+{{ end }}

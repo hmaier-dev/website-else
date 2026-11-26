@@ -7,8 +7,10 @@ import (
 	"log"
 	"os"
 
+	"codeberg.org/schnelles_geraet/website-else/backend/internal/auth"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/events"
 	"codeberg.org/schnelles_geraet/website-else/backend/internal/mailbox"
+	"codeberg.org/schnelles_geraet/website-else/backend/internal/shop"
 
 	"github.com/gorilla/mux"
 
@@ -56,18 +58,42 @@ func New(sqlite *sql.DB, internalFS embed.FS) *Server {
 	events.HandleFunc("/load", e.PublicLoad).Methods("GET")
 	events.HandleFunc(`/cal/ics/{id:\d+:}`, e.ProvideICSFile).Methods("GET")
 
-	// and this stuff is like /events/manage behind an auth.
-	//
-	// We need the sub-path 'api' here, because in Traefik we need to address two different containers
-	// by the path 'events/manage'
-	manage := events.PathPrefix("/manage/api").Subrouter()
-	manage.HandleFunc("/load", e.PrivateLoad).Methods("GET")
-	manage.HandleFunc("/create", e.Create).Methods("POST")
-	manage.HandleFunc("/change", e.Change).Methods("POST")
+	//----------------------------------------------------------
+	// Shop endpoints (öffentlich)
+	sh := shop.FromEnv(sqlite, os.Getenv)
+	shopAPI := s.Router.PathPrefix("/shop/api").Subrouter()
+	shopAPI.HandleFunc("/config", sh.Config).Methods("GET")
+	shopAPI.HandleFunc("/orders", sh.CreateOrder).Methods("POST")
+	shopAPI.HandleFunc("/orders/{id:[A-Za-z0-9-]+}/capture", sh.CaptureOrder).Methods("POST")
 
-	bulk := manage.PathPrefix("/bulk").Subrouter()
-	bulk.HandleFunc("/create", e.BulkCreate).Methods("POST")
-	bulk.HandleFunc("/delete", e.BulkDelete).Methods("POST")
+	//----------------------------------------------------------
+	// Verwaltung: alles unter /manage/api.
+	//
+	// Traefik schützt /manage (statische Seite aus dem website-Container) und
+	// /manage/api (dieses Backend) mit Authentik/ForwardAuth. Zusätzlich lässt
+	// das Backend nur Anfragen durch, bei denen Authentik den Benutzer-Header setzt.
+	if h, ok := os.LookupEnv("MANAGE_AUTH_HEADER"); ok {
+		auth.Header = h
+	}
+	if auth.Header == "" {
+		log.Println("WARNUNG: MANAGE_AUTH_HEADER ist leer – /manage/api ist ohne Anmeldung erreichbar. Nur für lokale Entwicklung!")
+	}
+	manage := s.Router.PathPrefix("/manage/api").Subrouter()
+	manage.Use(auth.Require)
+
+	manage.HandleFunc("/events", e.AdminPanel).Methods("GET")
+	manage.HandleFunc("/events", e.AdminCreate).Methods("POST")
+	manage.HandleFunc("/events/bulk", e.BulkCreate).Methods("POST")
+	manage.HandleFunc(`/events/{id:\d+}`, e.AdminRow).Methods("GET")
+	manage.HandleFunc(`/events/{id:\d+}`, e.AdminUpdate).Methods("PUT")
+	manage.HandleFunc(`/events/{id:\d+}`, e.AdminDelete).Methods("DELETE")
+	manage.HandleFunc(`/events/{id:\d+}/edit`, e.AdminEdit).Methods("GET")
+
+	manage.HandleFunc("/orders", sh.AdminOrders).Methods("GET")
+	manage.HandleFunc(`/orders/{id:\d+}/shipped`, sh.AdminMarkShipped).Methods("POST")
+
+	manage.HandleFunc("/messages", m.AdminMessages).Methods("GET")
+	manage.HandleFunc(`/messages/{id:\d+}/read`, m.AdminMarkRead).Methods("POST")
 
 	// logs all routes when starting after they go defined
 	s.Router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {

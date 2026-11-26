@@ -46,8 +46,10 @@ func (h *Handler) HandlerContactRequest(w http.ResponseWriter, r *http.Request) 
 			Isread:   sql.NullInt64{Int64: 0, Valid: false},
 		})
 		if err != nil {
+			// Nicht log.Fatal: ein Fehler beim Speichern darf nicht das ganze Backend beenden.
+			log.Printf("mailbox: Nachricht speichern fehlgeschlagen: %v", err)
 			http.Error(w, "Something wen't wrong storing the data...", http.StatusInternalServerError)
-			log.Fatalf("Err: %v", err)
+			return
 		}
 		w.WriteHeader(http.StatusOK)
 		return
