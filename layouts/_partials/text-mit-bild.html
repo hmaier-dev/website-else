@@ -1,9 +1,20 @@
-{{- /* Gemeinsame Vorlage für text-mit-bild-auf-linker-seite / -rechter-seite. Param: ctx, side ("left"|"right") */ -}}
+{{- /* Gemeinsame Vorlage für text-mit-bild-auf-linker-seite / -rechter-seite. Param: ctx, inner, side ("left"|"right") */ -}}
 {{- $left := eq .side "left" -}}
+{{- $src := strings.TrimPrefix "./" (.ctx.Get "src") -}}
+{{- /* Rahmen passend zum Foto: Querformat → 4:3, Hochformat → 4:5.
+       So wird nicht nur ein schmaler Streifen herausgezoomt (das macht Fotos unscharf). */ -}}
+{{- $aspectClass := "aspect-[4/5]" -}}
+{{- $box := 0.8 -}}
+{{- with resources.Get $src -}}
+  {{- if and .Width (gt .Width .Height) -}}
+    {{- $aspectClass = "aspect-[4/3]" -}}
+    {{- $box = 1.3334 -}}
+  {{- end -}}
+{{- end -}}
 <div class="not-prose my-10 grid items-center gap-8 md:grid-cols-5 md:gap-12">
 	<div class="md:col-span-2 {{ if not $left }}md:order-2{{ end }}">
 		<div class="overflow-hidden rounded-3xl border-2 border-ink shadow-pop transition-transform duration-300 hover:rotate-0 {{ if $left }}-rotate-2{{ else }}rotate-2{{ end }}">
-			{{ partial "img.html" (dict "src" (.ctx.Get "src") "alt" (.ctx.Get "alt") "class" "aspect-[4/5] w-full object-cover" "sizes" "(min-width: 768px) 420px, 100vw") }}
+			{{ partial "img.html" (dict "src" $src "alt" (.ctx.Get "alt") "class" (printf "%s w-full object-cover" $aspectClass) "width" 420 "box" $box) }}
 		</div>
 	</div>
 	<div class="space-y-4 text-lg leading-relaxed text-ink/90 md:col-span-3">

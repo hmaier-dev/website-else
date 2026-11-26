@@ -1,35 +1,66 @@
 {{- /*
-Responsives Bild: Hugo erzeugt automatisch verkleinerte WebP-Versionen.
-Die Originale in assets/media sind teils mehrere MB groß.
+Responsives Bild: Hugo erzeugt automatisch verkleinerte WebP-Versionen,
+und der Browser lädt die passende Größe (auch für Retina-Bildschirme).
 
 @param src    Pfad unter assets/ (z. B. "media/jesus2.webp") oder eine Resource
 @param alt    Alternativtext
 @param class  CSS-Klassen für <img>
-@param sizes  sizes-Attribut (Standard: 100vw)
+@param width  wie breit das Bild auf dem Desktop höchstens angezeigt wird (CSS-Pixel), z. B. 420
+@param bp     ab welcher Bildschirmbreite "width" gilt (Standard 768); darunter volle Breite
+@param box    Seitenverhältnis des Rahmens (Breite/Höhe), wenn das Bild mit object-cover
+              zugeschnitten wird – z. B. 0.8 für aspect-[4/5]. Ein Querformat-Foto in einem
+              Hochformat-Rahmen wird auf die Höhe gezoomt und ist dann breiter als der Rahmen;
+              das wird hier eingerechnet, sonst lädt der Browser eine zu kleine Version (= unscharf).
+@param sizes  eigenes sizes-Attribut (überschreibt width/bp/box)
 @param eager  true → nicht lazy laden (z. B. Bild ganz oben)
+
+Ist das Original zu klein für die Darstellung, warnt der Hugo-Build.
 */ -}}
 {{- $res := .src -}}
 {{- if eq (printf "%T" $res) "string" -}}
   {{- $res = resources.Get (strings.TrimPrefix "./" $res) -}}
 {{- end -}}
 {{- with $res -}}
-  {{- $widths := slice 480 800 1200 1800 -}}
   {{- $srcset := slice -}}
   {{- $fallback := . -}}
+  {{- $sizes := $.sizes -}}
   {{- if and (eq .MediaType.MainType "image") (ne .MediaType.SubType "svg") -}}
-    {{- range $widths -}}
-      {{- if le . $res.Width -}}
-        {{- $r := $res.Resize (printf "%dx webp q78" .) -}}
+
+    {{- /* Wie stark ein zugeschnittenes Bild über den Rahmen hinausragt */ -}}
+    {{- $factor := 1.0 -}}
+    {{- $aspect := div (float $res.Width) $res.Height -}}
+    {{- with $.box -}}
+      {{- if gt $aspect (float .) -}}{{- $factor = div $aspect (float .) -}}{{- end -}}
+    {{- end -}}
+
+    {{- if and (not $sizes) $.width -}}
+      {{- $bp := $.bp | default 768 -}}
+      {{- $sizes = printf "(min-width: %dpx) %dpx, %dvw" (int $bp) (int (math.Ceil (mul (float $.width) $factor))) (int (math.Ceil (mul 100 $factor))) -}}
+      {{- /* Warnung, wenn das Original selbst für normale Bildschirme kaum reicht (Retina bräuchte doppelt so viel) */ -}}
+      {{- $need := int (math.Ceil (mul (float $.width) $factor)) -}}
+      {{- if lt $res.Width (int (mul (float $need) 1.5)) -}}
+        {{- warnf "Bild zu klein (wird unscharf): %s ist %d×%d px, angezeigt etwa %d px breit – für scharfe Darstellung mindestens %d px Breite verwenden." $res.Name $res.Width $res.Height $need (mul $need 2) -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- /* Varianten erzeugen (nie größer als das Original) */ -}}
+    {{- range slice 480 800 1200 1600 2000 2400 -}}
+      {{- if lt . $res.Width -}}
+        {{- $r := $res.Resize (printf "%dx webp q85" .) -}}
         {{- $srcset = $srcset | append (printf "%s %dw" $r.RelPermalink .) -}}
         {{- $fallback = $r -}}
       {{- end -}}
     {{- end -}}
-    {{- if not $srcset -}}
-      {{- $srcset = $srcset | append (printf "%s %dw" $res.RelPermalink $res.Width) -}}
+    {{- /* Größte Variante: das Original selbst, wenn es nicht riesig ist – sonst einmal neu kodiert */ -}}
+    {{- if and (in (slice "webp" "jpeg" "png") .MediaType.SubType) (le (len .Content) 1500000) -}}
+      {{- $srcset = $srcset | append (printf "%s %dw" .RelPermalink .Width) -}}
+    {{- else -}}
+      {{- $r := .Resize (printf "%dx webp q85" (math.Min .Width 2400 | int)) -}}
+      {{- $srcset = $srcset | append (printf "%s %dw" $r.RelPermalink $r.Width) -}}
     {{- end -}}
   {{- end -}}
 <img src="{{ $fallback.RelPermalink }}"
-  {{- with $srcset }} srcset="{{ delimit . ", " }}" sizes="{{ or $.sizes "100vw" }}"{{ end }}
+  {{- with $srcset }} srcset="{{ delimit . ", " }}" sizes="{{ or $sizes "100vw" }}"{{ end }}
   {{- if and $fallback.Width (ne $fallback.MediaType.SubType "svg") }} width="{{ $fallback.Width }}" height="{{ $fallback.Height }}"{{ end }}
   alt="{{ or $.alt "" }}"
   {{- with $.class }} class="{{ . }}"{{ end }}
