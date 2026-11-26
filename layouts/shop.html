@@ -30,18 +30,27 @@
 					<div class="mt-3 flex-1 space-y-2 text-ink/80 [&_strong]:text-ink">{{ .description | markdownify }}</div>
 					{{ if .available }}
 					{{ if .flexible }}
-					<label class="mt-5 block">
-						<span class="mb-1 block font-headline font-bold">Dein Preis</span>
-						<span class="flex items-center gap-2">
-							<input type="number" data-price-for="{{ .id }}" inputmode="decimal"
-							       min="{{ .min }}" max="{{ .max }}" step="0.5" value="{{ printf "%.2f" .price }}"
-							       class="field !w-32 text-right font-headline text-lg font-bold" aria-describedby="range-{{ .id }}">
-							<span class="font-headline text-lg font-bold">€</span>
-						</span>
-						<input type="range" data-slider-for="{{ .id }}" min="{{ .min }}" max="{{ .max }}" step="0.5" value="{{ printf "%.2f" .price }}"
-						       class="mt-3 w-full accent-lilac-600" aria-label="Preis wählen">
-						<span id="range-{{ .id }}" class="flex justify-between text-xs text-ink/60"><span>{{ partial "shop/price.html" .min }}</span><span>{{ partial "shop/price.html" .max }}</span></span>
-					</label>
+					<div class="mt-5" data-price-picker="{{ .id }}" data-min="{{ .min_cents }}" data-max="{{ .max_cents }}" data-step="{{ .step_cents }}" data-value="{{ .price_cents }}">
+						<p id="price-label-{{ .id }}" class="mb-2 font-headline font-bold">Dein Preis</p>
+						<div class="flex items-stretch gap-2">
+							<button type="button" data-price-step="-1" aria-label="Weniger"
+							        class="grid h-14 w-14 shrink-0 select-none place-items-center rounded-full border-2 border-ink bg-white text-3xl font-bold leading-none shadow-pop-sm transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-30 disabled:shadow-none">−</button>
+							<label class="relative min-w-0 flex-1">
+								<span class="sr-only">Preis in Euro</span>
+								<input type="text" inputmode="decimal" autocomplete="off" data-price-input
+								       value="{{ replace (printf "%.2f" .price) "." "," }}" aria-describedby="price-range-{{ .id }}"
+								       class="field h-14 !pr-10 text-center font-headline text-2xl font-extrabold tabular-nums">
+								<span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-headline text-xl font-extrabold">€</span>
+							</label>
+							<button type="button" data-price-step="1" aria-label="Mehr"
+							        class="grid h-14 w-14 shrink-0 select-none place-items-center rounded-full border-2 border-ink bg-lime text-3xl font-bold leading-none shadow-pop-sm transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-30 disabled:shadow-none">+</button>
+						</div>
+						<input type="range" data-price-slider min="{{ .min_cents }}" max="{{ .max_cents }}" step="1" value="{{ .price_cents }}"
+						       aria-labelledby="price-label-{{ .id }}" class="range-else mt-4 w-full">
+						<p id="price-range-{{ .id }}" class="mt-1 flex justify-between text-xs text-ink/60">
+							<span>{{ partial "shop/price.html" .min }}</span><span>{{ partial "shop/price.html" .max }}</span>
+						</p>
+					</div>
 					{{ end }}
 					<button type="button" data-add="{{ .id }}" class="btn-accent mt-6 w-full">In den Warenkorb</button>
 					{{ else }}

@@ -62,33 +62,107 @@ function totals() {
 }
 
 // --- Preis selbst wählen -----------------------------------------------------
+// Ein Preis-Wähler besteht aus −/+ Knöpfen, einem Textfeld und einem Schieberegler.
+// Alles rechnet in Cent (keine Kommazahl-Rundungsfehler); angezeigt wird "12,50".
 
-// gewählter Preis aus dem Eingabefeld, in Cent; null wenn ungültig
-function chosenPrice(id) {
-	const input = document.querySelector(`[data-price-for="${CSS.escape(id)}"]`)
-	if (!input) return products[id].price_cents
-	const cents = Math.round(parseFloat(String(input.value).replace(',', '.')) * 100)
-	return inRange(products[id], cents) ? cents : null
+const pickers = {}
+
+const fmt = cents => (cents / 100).toFixed(2).replace('.', ',')
+const parseEuro = text => {
+	const t = String(text).trim().replace(/\s|€/g, '').replace(',', '.')
+	if (!/^\d+(\.\d{0,2})?$/.test(t)) return null
+	return Math.round(parseFloat(t) * 100)
 }
 
-// Zahlenfeld und Schieberegler gegenseitig abgleichen
-document.addEventListener('input', e => {
-	const slider = e.target.closest('[data-slider-for]')
-	if (slider) {
-		const input = document.querySelector(`[data-price-for="${CSS.escape(slider.dataset.sliderFor)}"]`)
-		input.value = slider.value
-		input.setCustomValidity('')
-		return
+function setupPicker(el) {
+	const id = el.dataset.pricePicker
+	const min = +el.dataset.min, max = +el.dataset.max, step = +el.dataset.step || 100
+	const input = el.querySelector('[data-price-input]')
+	const slider = el.querySelector('[data-price-slider]')
+	const minus = el.querySelector('[data-price-step="-1"]')
+	const plus = el.querySelector('[data-price-step="1"]')
+	const picker = { value: +el.dataset.value }
+	pickers[id] = picker
+
+	const clamp = v => Math.min(max, Math.max(min, v))
+
+	// Wert setzen und alle Bedienelemente nachziehen.
+	// keepText: beim Tippen nicht in das Feld hineinformatieren
+	function set(v, { keepText = false } = {}) {
+		picker.value = clamp(v)
+		if (!keepText) input.value = fmt(picker.value)
+		slider.value = picker.value
+		slider.style.setProperty('--fill', `${((picker.value - min) / (max - min || 1)) * 100}%`)
+		minus.disabled = picker.value <= min
+		plus.disabled = picker.value >= max
+		input.setAttribute('aria-valuenow', picker.value)
 	}
-	const input = e.target.closest('[data-price-for]')
-	if (input) {
-		const id = input.dataset.priceFor
-		const ok = chosenPrice(id) !== null
-		input.setCustomValidity(ok ? '' : `Bitte zwischen ${euro(products[id].min_cents)} und ${euro(products[id].max_cents)}`)
-		const slider = document.querySelector(`[data-slider-for="${CSS.escape(id)}"]`)
-		if (ok && slider) slider.value = input.value
+
+	// Auf das Raster der Schrittweite springen (12,30 → + → 13,00)
+	const stepBy = dir => set(dir > 0
+		? Math.floor(picker.value / step) * step + step
+		: Math.ceil(picker.value / step) * step - step)
+
+	// Gedrückt halten: ein Schritt, kurze Pause, dann gleichmäßig weiter und nur sanft schneller
+	let timer = null
+	const stop = () => { clearTimeout(timer); timer = null }
+	const hold = (dir, n = 0) => {
+		stepBy(dir)
+		if ((dir > 0 && picker.value >= max) || (dir < 0 && picker.value <= min)) return stop()
+		const delay = n === 0 ? 450 : Math.max(70, 170 * Math.pow(0.93, n))
+		timer = setTimeout(() => hold(dir, n + 1), delay)
 	}
-})
+	for (const [btn, dir] of [[minus, -1], [plus, 1]]) {
+		btn.addEventListener('pointerdown', e => {
+			if (e.button !== 0) return
+			e.preventDefault() // kein Fokus-Sprung, kein Text markieren
+			btn.setPointerCapture?.(e.pointerId)
+			hold(dir)
+		})
+		for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) btn.addEventListener(ev, stop)
+		// Tastatur (Enter/Leertaste) löst nur "click" ohne Zeiger aus
+		btn.addEventListener('click', e => { if (e.detail === 0) stepBy(dir) })
+		btn.addEventListener('contextmenu', e => e.preventDefault()) // langes Drücken auf dem Handy
+	}
+
+	// Der Regler hat Cent-Auflösung (zeigt auch getippte Werte genau an),
+	// beim Ziehen wird auf die Schrittweite gerundet.
+	slider.addEventListener('input', () => set(min + Math.round((+slider.value - min) / step) * step))
+
+	input.addEventListener('input', () => {
+		const v = parseEuro(input.value)
+		const ok = v !== null && v >= min && v <= max
+		input.setAttribute('aria-invalid', String(!ok))
+		input.classList.toggle('!border-lilac-600', !ok)
+		if (ok) set(v, { keepText: true })
+	})
+	// Beim Verlassen: auf die Spanne begrenzen und schön formatieren
+	input.addEventListener('blur', () => {
+		const v = parseEuro(input.value)
+		set(v === null ? picker.value : v)
+		input.removeAttribute('aria-invalid')
+		input.classList.remove('!border-lilac-600')
+	})
+	input.addEventListener('keydown', e => {
+		if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+			e.preventDefault()
+			stepBy(e.key === 'ArrowUp' ? 1 : -1)
+		} else if (e.key === 'Enter') {
+			input.blur()
+		}
+	})
+
+	set(picker.value)
+}
+
+document.querySelectorAll('[data-price-picker]').forEach(setupPicker)
+
+// gewählter Preis in Cent (feste Preise: Katalogpreis)
+function chosenPrice(id) {
+	const picker = pickers[id]
+	if (!picker) return products[id].price_cents
+	return inRange(products[id], picker.value) ? picker.value : null
+}
 
 // --- Anzeige -----------------------------------------------------------------
 
@@ -140,12 +214,10 @@ document.addEventListener('click', e => {
 	const add = e.target.closest('[data-add]')
 	if (add) {
 		const id = add.dataset.add
+		// Ein gerade getippter Preis zählt, auch wenn das Feld noch den Fokus hat
+		document.activeElement?.matches?.('[data-price-input]') && document.activeElement.blur()
 		const price = chosenPrice(id)
-		if (price === null) {
-			const input = document.querySelector(`[data-price-for="${CSS.escape(id)}"]`)
-			input.reportValidity()
-			return
-		}
+		if (price === null) return
 		// Bei frei wählbarem Preis gilt der zuletzt gewählte Preis für alle Exemplare
 		cart[id] = { q: Math.min((cart[id] ? cart[id].q : 0) + 1, MAX_QTY), p: price }
 		saveCart()

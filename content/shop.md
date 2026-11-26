@@ -38,6 +38,7 @@ shop:
 #   preis:        in Euro, mit Punkt: 14.00
 #   preis_min /   Preis frei wählbar zwischen preis_min und preis_max (z. B. Soli-Preis).
 #   preis_max:    "preis" ist dann der Vorschlag, mit dem das Feld startet (optional).
+#   preis_schritt: um wie viel −/+ den Preis ändern (Standard 1 = 1 €, z. B. 0.5)
 #   bild:         Pfad unter assets/
 #   verfuegbar:   false → "Ausverkauft", kann nicht bestellt werden
 #   beschreibung: Markdown erlaubt
