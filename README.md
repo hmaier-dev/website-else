@@ -1,4 +1,5 @@
 ## Develop locally
+Benötigt **Hugo ≥ 0.158** (getestet mit 0.158, 0.160 und 0.170; das Docker-Image nutzt 0.160.1).
 Alles zum Entwickeln findet man in der `shell.nix`. Damit begibt man sich in eine passende Entwicklungsumgebung.
 
 ### Frontend Only

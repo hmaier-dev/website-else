@@ -1,6 +1,11 @@
 baseURL = "https://elisa-adam.com/"
 # baseURL = "http://localhost/"
-languageCode = "de-de"
+locale = "de-DE"
+
+# Keine Schlagwort-/Kategorie-Seiten (werden nicht genutzt; vermeidet die Warnung
+# 'found no layout file for "html" for kind "taxonomy"')
+disableKinds = ["taxonomy", "term"]
+
 title = "Einfach Else"
 disablePathToLower = true
 
@@ -75,3 +80,6 @@ disablePathToLower = true
     url = "/angebote/#kinderanimation--unterhaltung-für-geburtstage-feste--festivals"
     weight = 5
 
+# Neuere Hugo-Versionen führen externe Programme nur noch aus, wenn sie hier erlaubt sind
+[security.exec]
+  allow = ['^(dart-)?sass(-embedded)?$', '^go$', '^git$', '^node$', '^postcss$', '^tailwindcss$']
