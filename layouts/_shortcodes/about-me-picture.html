@@ -1,3 +1,9 @@
-<div class="mx-auto my-8 max-w-md -rotate-2 overflow-hidden rounded-3xl border-2 border-ink bg-lilac-200 shadow-pop-lg">
-	{{ partial "img.html" (dict "src" "media/about-me/finger-oben.webp" "alt" "Elisa Adam" "class" "w-full h-auto" "width" 448 "bp" 640) }}
-</div>
+{{- $src := "media/about-me/finger-oben.webp" -}}
+{{- $info := partial "bild/info.html" (dict "src" $src) -}}
+<figure class="mx-auto my-8 max-w-md">
+	<div class="relative -rotate-2 overflow-hidden rounded-3xl border-2 border-ink bg-lilac-200 shadow-pop-lg">
+		{{ partial "img.html" (dict "src" $src "alt" (or $info.beschreibung "Elisa Adam") "class" "w-full h-auto" "width" 448 "bp" 640) }}
+		{{ partial "bild/credit.html" $info }}
+	</div>
+	{{ with $info.beschreibung }}<figcaption class="mt-4 px-2 text-center text-sm italic leading-snug text-ink/60">{{ . }}</figcaption>{{ end }}
+</figure>

@@ -41,9 +41,11 @@ Solange es leer ist, erscheint ein Platzhalter.
 
 		<div class="relative mt-14">
 			<span aria-hidden="true" class="sticker absolute -top-5 right-6 z-10 rotate-6 bg-lilac-300 sm:right-16">Live on Stage</span>
-			<div class="overflow-hidden rounded-[2rem] border-2 border-ink shadow-pop-lg">
+			<div class="relative overflow-hidden rounded-[2rem] border-2 border-ink shadow-pop-lg">
 				{{- if $hero -}}
-					{{ partial "img.html" (dict "src" $hero "alt" "Elisa Adam alias Einfach Else" "class" "aspect-[16/9] md:aspect-[21/9] w-full object-cover" "eager" true "width" 1280 "box" 2.3334) }}
+					{{- $info := partial "bild/info.html" (dict "src" $hero) -}}
+					{{ partial "bild/credit.html" $info }}
+					{{ partial "img.html" (dict "src" $hero "alt" (or $info.beschreibung "Elisa Adam alias Einfach Else") "class" "aspect-[16/9] md:aspect-[21/9] w-full object-cover" "eager" true "width" 1280 "box" 2.3334) }}
 				{{- else -}}
 				<div class="relative grid aspect-[16/9] w-full place-items-center bg-lilac-200 md:aspect-[21/9]"
 				     style="background-image: repeating-linear-gradient(-45deg, transparent 0 22px, rgb(255 255 255 / .45) 22px 44px);">

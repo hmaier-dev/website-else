@@ -1,0 +1,78 @@
+# Bildnachweise und Bildbeschreibungen
+#
+# Pro Foto ein Eintrag. Gilt automatisch überall, wo das Foto auf der Website vorkommt.
+#
+#   datei:         Pfad unter assets/, genau wie im Inhalt (z. B. media/kreis4.webp)
+#   fotograf:      wird klein in der Bildecke angezeigt ("Foto: …") und im Impressum
+#                  unter "Bildnachweise" aufgelistet. Leer lassen = keine Angabe.
+#   link:          optional, z. B. Website oder Instagram der Fotografin / des Fotografen
+#   beschreibung:  was auf dem Foto zu sehen ist. Wird als Alternativtext genutzt
+#                  (Screenreader, Suchmaschinen) und bei den Angeboten sowie auf
+#                  "Über mich" sichtbar unter dem Bild angezeigt.
+#
+# Die Beschreibungen unten sind Vorschläge – bitte prüfen und gern Namen ergänzen.
+# Fehlt bei einem genutzten Foto der Fotograf, weist der Hugo-Build darauf hin.
+
+# --- Startseite: Talente ---------------------------------------------------
+- datei: media/jesus2.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Person auf der Bühne der Moritzbastei reißt jubelnd die Arme hoch, Mikrofon in der Hand, im Gegenlicht der Scheinwerfer"
+
+- datei: media/IMG_5516.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Person im orangefarbenen Anzug spricht auf der Bühne ins Mikrofon"
+
+- datei: media/hiphop-in-crowd.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Tanzendes Publikum bei einem Konzert in violettem Licht"
+
+# --- Angebote ---------------------------------------------------------------
+- datei: media/kreis4.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Jonglierworkshop im Park: Eine Gruppe jongliert mit bunten Bällen auf der Wiese"
+
+- datei: media/IMG_0913.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Poetry Slam: Person im Regenbogen-Top steht lachend am Mikrofon, einen Text in der Hand"
+
+- datei: media/zettel-in-hand.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Nahaufnahme einer Hand, die ein Blatt Papier mit einem Text hält"
+
+- datei: media/IMG_9981.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Moderation: Person in schwarzem Netzoberteil spricht auf der Bühne ins Mikrofon, violettes Licht"
+
+- datei: media/explain5.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Kinderanimation im Park: Eine Person hockt auf der Wiese und erklärt einem Kind ein Spiel"
+
+# --- Über mich --------------------------------------------------------------
+- datei: media/about-me/finger-oben.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Person mit Mikrofon zeigt auf einer Festivalbühne mit dem Finger nach oben, im Vordergrund das Publikum"
+
+# --- Shop -------------------------------------------------------------------
+- datei: media/book-poetry.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Das Buch „Schlicht und Dicht Kunst“ mit buntem Aquarell-Cover"
+
+- datei: media/lachen1.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Zwei Personen lachen gemeinsam im Park"
+
+- datei: media/back1.webp
+  fotograf: ""
+  link: ""
+  beschreibung: "Person von hinten auf einer blau beleuchteten Bühne, mit Jutebeutel „Hip Hop“ über der Schulter"

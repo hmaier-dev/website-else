@@ -1,0 +1,23 @@
+{{- /*
+Liefert Fotograf:in, Link und Beschreibung zu einem Bild aus data/bilder.yaml.
+
+  {{ $info := partial "bild/info.html" (dict "src" "media/kreis4.webp") }}
+  → dict "fotograf" "…" "link" "…" "beschreibung" "…"
+
+Optional überschreiben (z. B. aus Shortcode-Parametern): "fotograf", "link", "beschreibung".
+Fehlt der Fotograf bei einem genutzten Bild, gibt der Hugo-Build einen Hinweis aus.
+*/ -}}
+{{- $src := strings.TrimPrefix "./" (.src | default "" | string) -}}
+{{- $entry := dict -}}
+{{- with site.Data.bilder -}}
+  {{- with where . "datei" $src -}}{{- $entry = index . 0 -}}{{- end -}}
+{{- end -}}
+{{- $info := dict
+      "fotograf" (or $.fotograf $entry.fotograf "")
+      "link" (or $.link $entry.link "")
+      "beschreibung" (or $.beschreibung $entry.beschreibung "")
+-}}
+{{- if and $src (not $info.fotograf) -}}
+  {{- warnf "Bildnachweis fehlt: %s – Fotograf:in in data/bilder.yaml eintragen." $src -}}
+{{- end -}}
+{{- return $info -}}

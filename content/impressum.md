@@ -19,6 +19,8 @@ Kurt-Eisner-Straße 72
 
 **Haftungshinweis:** Trotz sorgfältiger inhaltlicher Kontrolle übernehme ich keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
 
+{{< bildnachweise >}}
+
 ---
 
 ## **Datenschutzerklärung**
