@@ -1,39 +1,39 @@
-# Bildnachweise und Bildbeschreibungen
-#
-# Pro Foto ein Eintrag. Gilt automatisch überall, wo das Foto auf der Website vorkommt.
-#
-#   datei:         Pfad unter assets/, genau wie im Inhalt (z. B. media/kreis4.webp)
-#   fotograf:      wird klein in der Bildecke angezeigt ("Foto: …") und im Impressum
-#                  unter "Bildnachweise" aufgelistet. Leer lassen = keine Angabe.
-#   link:          optional, z. B. Website oder Instagram der Fotografin / des Fotografen
-#   beschreibung:  was auf dem Foto zu sehen ist. Wird als Alternativtext genutzt
-#                  (Screenreader, Suchmaschinen) und bei den Angeboten sowie auf
-#                  "Über mich" sichtbar unter dem Bild angezeigt.
-#
-# Die Beschreibungen unten sind Vorschläge – bitte prüfen und gern Namen ergänzen.
-# Fehlt bei einem genutzten Foto der Fotograf, weist der Hugo-Build darauf hin.
-
 # --- Startseite: Talente ---------------------------------------------------
+- datei: media/meisterinnenschaften_2026_breite_arme.webp
+  fotograf: "jonassamsonfotos"
+  link: "https://www.instagram.com/jonassamsonfotos/"
+  beschreibung: "Deutschsprachige Meister:inschaften 2026"
+
+- datei: media/meisterinnenschaften_2026_von_seite.webp
+  fotograf: "jonassamsonfotos"
+  link: "https://www.instagram.com/jonassamsonfotos/"
+  beschreibung: "Deutschsprachige Meister:inschaften 2026"
+
+- datei: media/late_night_show_gelber_blazer.webp
+  fotograf: "Paul Podbielski"
+  link: ""
+  beschreibung: "Scheune Dresden, Einfach Elses Late Night Show, Oktober 2026"
+
 - datei: media/jesus2.webp
   fotograf: ""
   link: ""
-  beschreibung: "Person auf der Bühne der Moritzbastei reißt jubelnd die Arme hoch, Mikrofon in der Hand, im Gegenlicht der Scheinwerfer"
+  beschreibung: ""
 
 - datei: media/IMG_5516.webp
   fotograf: ""
   link: ""
-  beschreibung: "Person im orangefarbenen Anzug spricht auf der Bühne ins Mikrofon"
+  beschreibung: ""
 
 - datei: media/hiphop-in-crowd.webp
   fotograf: ""
   link: ""
-  beschreibung: "Tanzendes Publikum bei einem Konzert in violettem Licht"
+  beschreibung: ""
 
 # --- Angebote ---------------------------------------------------------------
 - datei: media/kreis4.webp
   fotograf: ""
   link: ""
-  beschreibung: "Jonglierworkshop im Park: Eine Gruppe jongliert mit bunten Bällen auf der Wiese"
+  beschreibung: ""
 
 - datei: media/IMG_0913.webp
   fotograf: "Fabi Fusenich"
@@ -43,7 +43,7 @@
 - datei: media/zettel-in-hand.webp
   fotograf: ""
   link: ""
-  beschreibung: "Nahaufnahme einer Hand, die ein Blatt Papier mit einem Text hält"
+  beschreibung: ""
 
 - datei: media/IMG_9981.webp
   fotograf: "Eileen Borawski"
@@ -53,7 +53,7 @@
 - datei: media/explain5.webp
   fotograf: ""
   link: ""
-  beschreibung: "Kinderanimation im Park: Eine Person hockt auf der Wiese und erklärt einem Kind ein Spiel"
+  beschreibung: ""
 
 # --- Über mich --------------------------------------------------------------
 - datei: media/about-me/finger-oben.webp
@@ -70,9 +70,9 @@
 - datei: media/lachen1.webp
   fotograf: ""
   link: ""
-  beschreibung: "Zwei Personen lachen gemeinsam im Park"
+  beschreibung: ""
 
 - datei: media/back1.webp
   fotograf: ""
   link: ""
-  beschreibung: "Person von hinten auf einer blau beleuchteten Bühne, mit Jutebeutel „Hip Hop“ über der Schulter"
+  beschreibung: ""

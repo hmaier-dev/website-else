@@ -3,21 +3,21 @@ description: Elisa Adam, Kunstschaffende lädt zu diversen Möglichkeiten ein.
 title: Home
 # Querbild für den Startbereich, z. B. "media/querbild.webp" (Datei nach assets/media legen).
 # Leer lassen → Platzhalter wird angezeigt.
-hero_image: ""
+hero_image: "media/meisterinnenschaften_2026_breite_arme.webp"
 ---
 
 {{< erster-kontakt >}}
 
 {{< talent-section >}}
 
-{{< talent title="Moderation" img="media/jesus2.webp" >}}
+{{< talent title="Moderation" img="media/late_night_show_gelber_blazer.webp" >}}
 Egal, ob für Abendveranstaltungen, Events oder Hochzeiten:
 **Einfach Else** sorgt mit ihrer authentischen Art für eine Atmosphäre, bei der sich jeder Mensch wohlfühlt.
 Sie schafft einen Rahmen, der gleichzeitig locker und professionell ist.
 Auch bei Gesprächsrunden oder Talks nimmt sie eine neutrale, aber spannende Rolle ein und sorgt für lebendige Diskussionsrunden.
 {{< /talent >}}
 
-{{< talent title="Poetry Slam" img="media/IMG_5516.webp" >}}
+{{< talent title="Poetry Slam" img="media/meisterinnenschaften_2026_von_seite.webp" >}}
 Wenn du Wortakrobatik liebst, bist du bei Elisa Adam genau richtig.
 Ihr einzigartiger Stil lässt sie auf Bühnen im ganzen Land glänzen – frech, lebendig und gesellschaftskritisch.
 Das ist **Einfach Else**.
