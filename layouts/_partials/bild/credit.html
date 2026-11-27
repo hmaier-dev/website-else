@@ -1,0 +1,9 @@
+{{- /*
+Kleiner Bildnachweis in der Bildecke. Der umgebende Container braucht "relative".
+  {{ partial "bild/credit.html" $info }}
+*/ -}}
+{{- with .fotograf -}}
+<span class="pointer-events-auto absolute bottom-2 right-2 z-10 max-w-[calc(100%-1rem)] truncate rounded-full bg-ink/70 px-2.5 py-1 text-[11px] font-semibold leading-none text-paper backdrop-blur-sm">
+	Foto: {{ with $.link }}<a href="{{ . }}" target="_blank" rel="noopener" class="underline decoration-paper/50 underline-offset-2 hover:decoration-lime">{{ $.fotograf }}</a>{{ else }}{{ $.fotograf }}{{ end }}
+</span>
+{{- end -}}

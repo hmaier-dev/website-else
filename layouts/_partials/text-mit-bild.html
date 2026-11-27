@@ -3,6 +3,7 @@
 {{- $src := strings.TrimPrefix "./" (.ctx.Get "src") -}}
 {{- /* Rahmen passend zum Foto: Querformat → 4:3, Hochformat → 4:5.
        So wird nicht nur ein schmaler Streifen herausgezoomt (das macht Fotos unscharf). */ -}}
+{{- $info := partial "bild/info.html" (dict "src" $src "fotograf" (.ctx.Get "fotograf") "link" (.ctx.Get "fotolink") "beschreibung" (.ctx.Get "beschreibung")) -}}
 {{- $aspectClass := "aspect-[4/5]" -}}
 {{- $box := 0.8 -}}
 {{- with resources.Get $src -}}
@@ -12,11 +13,13 @@
   {{- end -}}
 {{- end -}}
 <div class="not-prose my-10 grid items-center gap-8 md:grid-cols-5 md:gap-12">
-	<div class="md:col-span-2 {{ if not $left }}md:order-2{{ end }}">
-		<div class="overflow-hidden rounded-3xl border-2 border-ink shadow-pop transition-transform duration-300 hover:rotate-0 {{ if $left }}-rotate-2{{ else }}rotate-2{{ end }}">
-			{{ partial "img.html" (dict "src" $src "alt" (.ctx.Get "alt") "class" (printf "%s w-full object-cover" $aspectClass) "width" 420 "box" $box) }}
+	<figure class="md:col-span-2 {{ if not $left }}md:order-2{{ end }}">
+		<div class="relative overflow-hidden rounded-3xl border-2 border-ink shadow-pop transition-transform duration-300 hover:rotate-0 {{ if $left }}-rotate-2{{ else }}rotate-2{{ end }}">
+			{{ partial "img.html" (dict "src" $src "alt" (or $info.beschreibung (.ctx.Get "alt")) "class" (printf "%s w-full object-cover" $aspectClass) "width" 420 "box" $box) }}
+			{{ partial "bild/credit.html" $info }}
 		</div>
-	</div>
+		{{ with $info.beschreibung }}<figcaption class="mt-4 px-2 text-sm italic leading-snug text-ink/60">{{ . }}</figcaption>{{ end }}
+	</figure>
 	<div class="space-y-4 text-lg leading-relaxed text-ink/90 md:col-span-3">
 		{{ .inner | markdownify }}
 	</div>

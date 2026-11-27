@@ -44,6 +44,8 @@ Fehler brechen den Hugo-Build mit einer verständlichen Meldung ab.
         "step_cents" (int (math.Round (mul $step 100)))
         "available" $available
         "image" ($p.bild | default "")
+        "photographer" ($p.fotograf | default "")
+        "image_description" ($p.bildbeschreibung | default "")
         "description" ($p.beschreibung | default "")
      ) -}}
 {{- end -}}

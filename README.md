@@ -44,3 +44,15 @@ If you have a valid auth-token for the container registry, the `--push`-flag wil
 Beware: no tag is set and the new image will overwrite the old on.
 
 
+
+## Bilder: Fotograf:innen und Beschreibungen
+Alle Angaben zu Fotos stehen zentral in `data/bilder.yaml`. Pro Foto gibt es einen Eintrag:
+```yaml
+- datei: media/kreis4.webp          # Pfad unter assets/, wie im Inhalt
+  fotograf: "Name"                  # klein in der Bildecke + im Impressum unter "Bildnachweise"
+  link: "https://…"                 # optional
+  beschreibung: "Was zu sehen ist"  # Alternativtext; bei Angeboten/Über mich auch als Bildunterschrift
+```
+Das gilt automatisch überall, wo das Foto vorkommt. Fehlt bei einem genutzten Foto der Fotograf, weist `hugo` beim Bauen darauf hin.
+Einzelne Stellen lassen sich überschreiben: in Shortcodes mit `fotograf="…" fotolink="…" beschreibung="…"`,
+im Shop pro Produkt mit `fotograf:` und `bildbeschreibung:`.

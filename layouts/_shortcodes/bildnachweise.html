@@ -1,0 +1,26 @@
+{{- /*
+Listet alle Fotograf:innen aus data/bilder.yaml auf (fürs Impressum), z. B.
+"Fotos: Anna Beispiel, Tom Fotograf". Mit Link, wenn einer eingetragen ist.
+  {{< bildnachweise >}}
+*/ -}}
+{{- $names := slice -}}
+{{- $links := dict -}}
+{{- range site.Data.bilder -}}
+  {{- with .fotograf -}}
+    {{- if not (in $names .) -}}{{- $names = $names | append . -}}{{- end -}}
+  {{- end -}}
+  {{- if and .fotograf .link -}}{{- $links = merge $links (dict .fotograf .link) -}}{{- end -}}
+{{- end -}}
+{{- $out := slice -}}
+{{- range sort $names -}}
+  {{- $n := . -}}
+  {{- with index $links $n -}}
+    {{- $out = $out | append (printf `<a href="%s" target="_blank" rel="noopener">%s</a>` . $n) -}}
+  {{- else -}}
+    {{- $out = $out | append (htmlEscape $n) -}}
+  {{- end -}}
+{{- end -}}
+{{- /* Ohne Einträge wird nichts angezeigt (kein Platzhalter für Besucher:innen) */ -}}
+{{- if $out -}}
+<p><strong>Bildnachweise:</strong><br>Fotos: {{ delimit $out ", " | safeHTML }}</p>
+{{- end -}}
