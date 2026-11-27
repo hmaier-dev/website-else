@@ -5,7 +5,7 @@ Listet alle Fotograf:innen aus data/bilder.yaml auf (fürs Impressum), z. B.
 */ -}}
 {{- $names := slice -}}
 {{- $links := dict -}}
-{{- range site.Data.bilder -}}
+{{- range hugo.Data.bilder -}}
   {{- with .fotograf -}}
     {{- if not (in $names .) -}}{{- $names = $names | append . -}}{{- end -}}
   {{- end -}}

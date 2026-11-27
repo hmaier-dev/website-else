@@ -9,7 +9,7 @@ Fehlt der Fotograf bei einem genutzten Bild, gibt der Hugo-Build einen Hinweis a
 */ -}}
 {{- $src := strings.TrimPrefix "./" (.src | default "" | string) -}}
 {{- $entry := dict -}}
-{{- with site.Data.bilder -}}
+{{- with hugo.Data.bilder -}}
   {{- with where . "datei" $src -}}{{- $entry = index . 0 -}}{{- end -}}
 {{- end -}}
 {{- $info := dict
